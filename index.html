@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Unfollowers">
+<title>Unfollowers</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap&subset=greek" rel="stylesheet">
+<style>
+/* VOICE: calm, private, a little playful in Wrapped
+   IDEA: a phone app in a dark room, one violet light
+   PICTURE: the working lists and the unfollow queue themselves
+   COLOUR and TYPE: near-black #0d0d10, cards #18181d, violet #8b7cf6, pink alerts; Inter
+   LAYOUT: one 520px column, stacked cards, sticky bottom action bar */
+:root{color-scheme:dark;--bg:#0d0d10;--card:#18181d;--card2:#202027;--line:#26262d;--ink:#ededf0;--mu:#8b8b95;--ac:#8b7cf6;--ac2:#a99bff;--acbg:#241f3d;--pink:#ff8fa8;--pinkln:#5a2d3a;--ok:#7ee0a3;--okln:#2c5a3f;--warn:#f5b860}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip}
+#app{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px calc(110px + env(safe-area-inset-bottom));min-height:100vh}
+h1{font-size:22px;font-weight:600;margin:0;letter-spacing:-.01em}
+h2{font-size:17px;font-weight:600;margin:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;min-height:40px}
+.top .sp{flex:1}
+.ib{width:40px;height:40px;border-radius:12px;border:0;background:var(--card);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.ib svg{width:20px;height:20px}
+.chip{border:1px solid #34343b;background:transparent;color:#c5c5cc;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer;min-height:34px}
+.chip.on{background:var(--acbg);border-color:#4b4380;color:#d4ccff}
+.lang{display:inline-flex;border:1px solid #34343b;border-radius:999px;overflow:hidden}
+.lang button{border:0;background:transparent;color:var(--mu);font:inherit;font-size:13px;padding:7px 11px;cursor:pointer}
+.lang button.on{color:#fff;background:#26262d}
+.card{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.mu{color:var(--mu);font-size:13px}
+.sm{font-size:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.grid2 .card{margin:0}
+.stat{cursor:pointer;border:0;text-align:left;color:inherit;font:inherit;width:100%}
+.stat b{display:block;font-size:24px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.row{display:flex;align-items:center;gap:12px;min-height:48px}
+.navrow{display:flex;align-items:center;gap:12px;width:100%;border:0;background:var(--card);color:inherit;font:inherit;text-align:left;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;min-height:54px}
+.navrow .ic{color:var(--ac2);display:flex}
+.navrow .ic svg{width:20px;height:20px}
+.navrow .cnt{margin-left:auto;color:var(--mu);font-variant-numeric:tabular-nums}
+.chev{color:var(--mu);display:flex;margin-left:auto}
+.chev svg{width:16px;height:16px}
+.sec{color:var(--mu);font-size:13px;margin:18px 2px 8px}
+.drop{display:flex;align-items:center;gap:12px;border:1.5px dashed #3a3a42;border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;position:relative}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.drop .ic svg{width:26px;height:26px;color:var(--ac2)}
+.drop.big{flex-direction:column;text-align:center;padding:30px 16px}
+.alert{border:1px solid var(--pinkln)}
+.alert .h{color:var(--pink);font-size:13px}
+.okc{border:1px solid var(--okln)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 16px;font:inherit;font-weight:500;border:1px solid #3a3a42;background:transparent;color:var(--ink);cursor:pointer;min-height:46px;text-decoration:none;text-align:center}
+.btn svg{width:18px;height:18px}
+.btn.pri{background:var(--ac);border-color:var(--ac);color:#0d0d10}
+.btn.ghost{border-color:transparent;color:var(--mu)}
+.btn.danger{border-color:var(--pinkln);color:var(--pink)}
+.btn.w{width:100%}
+.btn[aria-disabled=true]{opacity:.45}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:0 12px;margin-bottom:10px}
+.search svg{width:18px;height:18px;color:var(--mu);flex:none}
+.search input{flex:1;background:transparent;border:0;color:var(--ink);font:inherit;font-size:16px;padding:11px 0;outline:none}
+.search select{background:transparent;border:0;color:var(--mu);font:inherit;font-size:13px;outline:none;max-width:44%}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.list{background:var(--card);border-radius:14px;padding:2px 12px}
+.it{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);min-height:56px}
+.it:last-child{border:0}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex:none;text-transform:uppercase}
+.it .nm{flex:1;min-width:0}
+.it .nm a,.it .nm span.u{color:var(--ink);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cb{width:24px;height:24px;border-radius:7px;border:1.5px solid #4a4a52;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;padding:0}
+.cb.on{background:var(--ac);border-color:var(--ac);color:#0d0d10}
+.cb svg{width:15px;height:15px}
+.star{border:0;background:transparent;color:#55555e;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex:none}
+.star.on{color:#f5c95c}
+.star svg{width:20px;height:20px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(13,13,16,.94);border-top:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:5}
+.bar .in{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.empty{text-align:center;padding:30px 16px;color:var(--mu)}
+.prog{height:6px;background:#2a2a30;border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--ac);border-radius:3px}
+.big{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.qcard{text-align:center;padding:22px 16px}
+.qcard .av{width:72px;height:72px;font-size:28px;margin:0 auto}
+.qcard .u{font-size:18px;font-weight:600;margin-top:10px;word-break:break-all}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btns>*{flex:1}
+.hbars .hb{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:14px}
+.hbars .hb span:first-child{width:38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbars .hb .tr{flex:1;height:8px;background:#26262d;border-radius:4px;overflow:hidden}
+.hbars .hb .tr i{display:block;height:100%;background:var(--ac);border-radius:4px}
+.hbars .hb b{font-weight:500;color:var(--mu);font-size:13px;min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.months{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:8px}
+.months div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%}
+.months i{display:block;width:100%;background:#3a3460;border-radius:3px;min-height:2px}
+.months i.mx{background:var(--ac)}
+.months span{font-size:10px;color:var(--mu)}
+.heat{display:grid;grid-template-columns:28px repeat(24,minmax(0,1fr));gap:2px;margin-top:8px;font-size:10px;color:var(--mu)}
+.heat i{display:block;aspect-ratio:1;border-radius:2px;background:var(--ac)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{background:var(--card2);border-radius:999px;padding:5px 10px;font-size:13px}
+.step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border:0}
+.step .n{width:28px;height:28px;border-radius:50%;background:var(--acbg);color:var(--ac2);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex:none}
+.step b{font-weight:600}
+details summary{cursor:pointer;color:var(--ac2);font-size:14px;padding:6px 0;list-style:none}
+details summary::-webkit-details-marker{display:none}
+.swipe{position:relative;height:360px;margin:6px 0 14px;touch-action:pan-y}
+.sc{position:absolute;inset:0;background:var(--card);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;user-select:none;touch-action:none;cursor:grab}
+.sc.back{transform:scale(.95) translateY(12px);opacity:.6}
+.sc .av{width:96px;height:96px;font-size:38px}
+.sc .u{font-size:20px;font-weight:600;word-break:break-all}
+.sc .lbl{position:absolute;top:18px;padding:5px 12px;border-radius:8px;font-weight:600;font-size:14px;opacity:0}
+.sc .lbl.l{left:18px;color:var(--pink);border:2px solid var(--pink)}
+.sc .lbl.r{right:18px;color:#f5c95c;border:2px solid #f5c95c}
+.rbtn{width:64px;height:64px;border-radius:50%;border:1px solid #3a3a42;background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.rbtn svg{width:26px;height:26px}
+.rbtn.x{color:var(--pink);border-color:var(--pinkln)}
+.rbtn.k{color:#f5c95c;border-color:#5a4a22}
+.rbtn.sm2{width:48px;height:48px;color:var(--mu)}
+.rbtn.sm2 svg{width:20px;height:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding:16px}
+.modal .card{max-width:488px;width:100%;padding:18px;margin:0 0 env(safe-area-inset-bottom)}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#2b2b33;color:var(--ink);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;max-width:90vw;text-align:center}
+.spin{width:26px;height:26px;border:3px solid #3a3a42;border-top-color:var(--ac);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+input[type=range]{width:100%;accent-color:var(--ac)}
+a{color:var(--ac2)}
+:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div class="empty"><div class="spin"></div></div></div>
+<div id="layer"></div>
+<script>((e,t)=>{"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).zip={})})(this,(function(e){"use strict";const{Array:t,Object:n,String:i,Number:r,BigInt:a,Math:s,Date:o,Map:l,Set:c,Response:d,URL:u,Error:f,Uint8Array:h,Uint16Array:w,Uint32Array:_,DataView:p,Blob:b,Promise:g,TextEncoder:m,TextDecoder:y,document:x,crypto:k,btoa:v,TransformStream:S,ReadableStream:z,WritableStream:R,CompressionStream:D,DecompressionStream:T,navigator:E,Worker:A}="undefined"!=typeof globalThis?globalThis:this||self,C=0,F=1,U=-2,W=-3,L=-4,O=-5,I=[0,1,3,7,15,31,63,127,255,511,1023,2047,4095,8191,16383,32767,65535],N=1440,P=[96,7,256,0,8,80,0,8,16,84,8,115,82,7,31,0,8,112,0,8,48,0,9,192,80,7,10,0,8,96,0,8,32,0,9,160,0,8,0,0,8,128,0,8,64,0,9,224,80,7,6,0,8,88,0,8,24,0,9,144,83,7,59,0,8,120,0,8,56,0,9,208,81,7,17,0,8,104,0,8,40,0,9,176,0,8,8,0,8,136,0,8,72,0,9,240,80,7,4,0,8,84,0,8,20,85,8,227,83,7,43,0,8,116,0,8,52,0,9,200,81,7,13,0,8,100,0,8,36,0,9,168,0,8,4,0,8,132,0,8,68,0,9,232,80,7,8,0,8,92,0,8,28,0,9,152,84,7,83,0,8,124,0,8,60,0,9,216,82,7,23,0,8,108,0,8,44,0,9,184,0,8,12,0,8,140,0,8,76,0,9,248,80,7,3,0,8,82,0,8,18,85,8,163,83,7,35,0,8,114,0,8,50,0,9,196,81,7,11,0,8,98,0,8,34,0,9,164,0,8,2,0,8,130,0,8,66,0,9,228,80,7,7,0,8,90,0,8,26,0,9,148,84,7,67,0,8,122,0,8,58,0,9,212,82,7,19,0,8,106,0,8,42,0,9,180,0,8,10,0,8,138,0,8,74,0,9,244,80,7,5,0,8,86,0,8,22,192,8,0,83,7,51,0,8,118,0,8,54,0,9,204,81,7,15,0,8,102,0,8,38,0,9,172,0,8,6,0,8,134,0,8,70,0,9,236,80,7,9,0,8,94,0,8,30,0,9,156,84,7,99,0,8,126,0,8,62,0,9,220,82,7,27,0,8,110,0,8,46,0,9,188,0,8,14,0,8,142,0,8,78,0,9,252,96,7,256,0,8,81,0,8,17,85,8,131,82,7,31,0,8,113,0,8,49,0,9,194,80,7,10,0,8,97,0,8,33,0,9,162,0,8,1,0,8,129,0,8,65,0,9,226,80,7,6,0,8,89,0,8,25,0,9,146,83,7,59,0,8,121,0,8,57,0,9,210,81,7,17,0,8,105,0,8,41,0,9,178,0,8,9,0,8,137,0,8,73,0,9,242,80,7,4,0,8,85,0,8,21,80,8,258,83,7,43,0,8,117,0,8,53,0,9,202,81,7,13,0,8,101,0,8,37,0,9,170,0,8,5,0,8,133,0,8,69,0,9,234,80,7,8,0,8,93,0,8,29,0,9,154,84,7,83,0,8,125,0,8,61,0,9,218,82,7,23,0,8,109,0,8,45,0,9,186,0,8,13,0,8,141,0,8,77,0,9,250,80,7,3,0,8,83,0,8,19,85,8,195,83,7,35,0,8,115,0,8,51,0,9,198,81,7,11,0,8,99,0,8,35,0,9,166,0,8,3,0,8,131,0,8,67,0,9,230,80,7,7,0,8,91,0,8,27,0,9,150,84,7,67,0,8,123,0,8,59,0,9,214,82,7,19,0,8,107,0,8,43,0,9,182,0,8,11,0,8,139,0,8,75,0,9,246,80,7,5,0,8,87,0,8,23,192,8,0,83,7,51,0,8,119,0,8,55,0,9,206,81,7,15,0,8,103,0,8,39,0,9,174,0,8,7,0,8,135,0,8,71,0,9,238,80,7,9,0,8,95,0,8,31,0,9,158,84,7,99,0,8,127,0,8,63,0,9,222,82,7,27,0,8,111,0,8,47,0,9,190,0,8,15,0,8,143,0,8,79,0,9,254,96,7,256,0,8,80,0,8,16,84,8,115,82,7,31,0,8,112,0,8,48,0,9,193,80,7,10,0,8,96,0,8,32,0,9,161,0,8,0,0,8,128,0,8,64,0,9,225,80,7,6,0,8,88,0,8,24,0,9,145,83,7,59,0,8,120,0,8,56,0,9,209,81,7,17,0,8,104,0,8,40,0,9,177,0,8,8,0,8,136,0,8,72,0,9,241,80,7,4,0,8,84,0,8,20,85,8,227,83,7,43,0,8,116,0,8,52,0,9,201,81,7,13,0,8,100,0,8,36,0,9,169,0,8,4,0,8,132,0,8,68,0,9,233,80,7,8,0,8,92,0,8,28,0,9,153,84,7,83,0,8,124,0,8,60,0,9,217,82,7,23,0,8,108,0,8,44,0,9,185,0,8,12,0,8,140,0,8,76,0,9,249,80,7,3,0,8,82,0,8,18,85,8,163,83,7,35,0,8,114,0,8,50,0,9,197,81,7,11,0,8,98,0,8,34,0,9,165,0,8,2,0,8,130,0,8,66,0,9,229,80,7,7,0,8,90,0,8,26,0,9,149,84,7,67,0,8,122,0,8,58,0,9,213,82,7,19,0,8,106,0,8,42,0,9,181,0,8,10,0,8,138,0,8,74,0,9,245,80,7,5,0,8,86,0,8,22,192,8,0,83,7,51,0,8,118,0,8,54,0,9,205,81,7,15,0,8,102,0,8,38,0,9,173,0,8,6,0,8,134,0,8,70,0,9,237,80,7,9,0,8,94,0,8,30,0,9,157,84,7,99,0,8,126,0,8,62,0,9,221,82,7,27,0,8,110,0,8,46,0,9,189,0,8,14,0,8,142,0,8,78,0,9,253,96,7,256,0,8,81,0,8,17,85,8,131,82,7,31,0,8,113,0,8,49,0,9,195,80,7,10,0,8,97,0,8,33,0,9,163,0,8,1,0,8,129,0,8,65,0,9,227,80,7,6,0,8,89,0,8,25,0,9,147,83,7,59,0,8,121,0,8,57,0,9,211,81,7,17,0,8,105,0,8,41,0,9,179,0,8,9,0,8,137,0,8,73,0,9,243,80,7,4,0,8,85,0,8,21,80,8,258,83,7,43,0,8,117,0,8,53,0,9,203,81,7,13,0,8,101,0,8,37,0,9,171,0,8,5,0,8,133,0,8,69,0,9,235,80,7,8,0,8,93,0,8,29,0,9,155,84,7,83,0,8,125,0,8,61,0,9,219,82,7,23,0,8,109,0,8,45,0,9,187,0,8,13,0,8,141,0,8,77,0,9,251,80,7,3,0,8,83,0,8,19,85,8,195,83,7,35,0,8,115,0,8,51,0,9,199,81,7,11,0,8,99,0,8,35,0,9,167,0,8,3,0,8,131,0,8,67,0,9,231,80,7,7,0,8,91,0,8,27,0,9,151,84,7,67,0,8,123,0,8,59,0,9,215,82,7,19,0,8,107,0,8,43,0,9,183,0,8,11,0,8,139,0,8,75,0,9,247,80,7,5,0,8,87,0,8,23,192,8,0,83,7,51,0,8,119,0,8,55,0,9,207,81,7,15,0,8,103,0,8,39,0,9,175,0,8,7,0,8,135,0,8,71,0,9,239,80,7,9,0,8,95,0,8,31,0,9,159,84,7,99,0,8,127,0,8,63,0,9,223,82,7,27,0,8,111,0,8,47,0,9,191,0,8,15,0,8,143,0,8,79,0,9,255],H=[80,5,1,87,5,257,83,5,17,91,5,4097,81,5,5,89,5,1025,85,5,65,93,5,16385,80,5,3,88,5,513,84,5,33,92,5,8193,82,5,9,90,5,2049,86,5,129,192,5,24577,80,5,2,87,5,385,83,5,25,91,5,6145,81,5,7,89,5,1537,85,5,97,93,5,24577,80,5,4,88,5,769,84,5,49,92,5,12289,82,5,13,90,5,3073,86,5,193,192,5,24577],q=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],B=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,112,112],M=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577],V=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],K=15;function Z(){let e,t,n,i,r,a;function s(e,t,s,o,l,c,d,u,f,h,w){let _,p,b,g,m,y,x,k,v,S,z,R,D,T,E;S=0,m=s;do{n[e[t+S]]++,S++,m--}while(0!==m);if(n[0]==s)return d[0]=-1,u[0]=0,C;for(k=u[0],y=1;K>=y&&0===n[y];y++);for(x=y,y>k&&(k=y),m=K;0!==m&&0===n[m];m--);for(b=m,k>m&&(k=m),u[0]=k,T=1<<y;m>y;y++,T<<=1)if(0>(T-=n[y]))return W;if(0>(T-=n[m]))return W;for(n[m]+=T,a[1]=y=0,S=1,D=2;0!=--m;)a[D]=y+=n[S],D++,S++;m=0,S=0;do{0!==(y=e[t+S])&&(w[a[y]++]=m),S++}while(++m<s);for(s=a[b],a[0]=m=0,S=0,g=-1,R=-k,r[0]=0,z=0,E=0;b>=x;x++)for(_=n[x];0!=_--;){for(;x>R+k;){if(g++,R+=k,E=b-R,E=E>k?k:E,(p=1<<(y=x-R))>_+1&&(p-=_+1,D=x,E>y))for(;++y<E&&(p<<=1)>n[++D];)p-=n[D];if(E=1<<y,h[0]+E>N)return W;r[g]=z=h[0],h[0]+=E,0!==g?(a[g]=m,i[0]=y,i[1]=k,y=m>>>R-k,i[2]=z-r[g-1]-y,f.set(i,3*(r[g-1]+y))):d[0]=z}for(i[1]=x-R,s>S?w[S]<o?(i[0]=256>w[S]?0:96,i[2]=w[S++]):(i[0]=c[w[S]-o]+16+64,i[2]=l[w[S++]-o]):i[0]=192,p=1<<x-R,y=m>>>R;E>y;y+=p)f.set(i,3*(z+y));for(y=1<<x-1;m&y;y>>>=1)m^=y;for(m^=y,v=(1<<R)-1;(m&v)!=a[g];)g--,R-=k,v=(1<<R)-1}return 0!==T&&1!=b?O:C}function o(s){let o;for(e||(e=[],t=[],n=new Int32Array(K+1),i=[],r=new Int32Array(K),a=new Int32Array(K+1)),t.length<s&&(t=[]),o=0;s>o;o++)t[o]=0;for(o=0;K+1>o;o++)n[o]=0;for(o=0;3>o;o++)i[o]=0;r.set(n.subarray(0,K),0),a.set(n.subarray(0,K+1),0)}this.inflate_trees_bits=(n,i,r,a,l)=>{let c;return o(19),e[0]=0,c=s(n,0,19,19,null,null,r,i,a,e,t),c==W?l.msg="oversubscribed dynamic bit lengths tree":c!=O&&0!==i[0]||(l.msg="incomplete dynamic bit lengths tree",c=W),c},this.inflate_trees_dynamic=(n,i,r,a,l,c,d,u,f)=>{let h;return o(288),e[0]=0,h=s(r,0,n,257,q,B,c,a,u,e,t),h!=C||0===a[0]?(h==W?f.msg="oversubscribed literal/length tree":h!=L&&(f.msg="incomplete literal/length tree",h=W),h):(o(288),h=s(r,n,i,0,M,V,d,l,u,e,t),h!=C||0===l[0]&&n>257?(h==W?f.msg="oversubscribed distance tree":h==O?(f.msg="incomplete distance tree",h=W):h!=L&&(f.msg="empty distance tree with lengths",h=W),h):C)}}Z.inflate_trees_fixed=(e,t,n,i)=>(e[0]=9,t[0]=5,n[0]=P,i[0]=H,C);const G=0,j=1,X=2,Y=3,J=4,Q=5,$=6,ee=7,te=8,ne=9;function ie(){const e=this;let t,n,i,r,a=0,s=0,o=0,l=0,c=0,d=0,u=0,f=0,h=0,w=0;function _(e,t,n,i,r,a,s,o){let l,c,d,u,f,h,w,_,p,b,g,m,y,x,k,v;w=o.next_in_index,_=o.avail_in,f=s.bitb,h=s.bitk,p=s.write,b=p<s.read?s.read-p-1:s.end-p,g=I[e],m=I[t];do{for(;20>h;)_--,f|=(255&o.read_byte(w++))<<h,h+=8;if(l=f&g,c=n,d=i,v=3*(d+l),0!==(u=c[v]))for(;;){if(f>>=c[v+1],h-=c[v+1],16&u){for(u&=15,y=c[v+2]+(f&I[u]),f>>=u,h-=u;15>h;)_--,f|=(255&o.read_byte(w++))<<h,h+=8;for(l=f&m,c=r,d=a,v=3*(d+l),u=c[v];;){if(f>>=c[v+1],h-=c[v+1],16&u){for(u&=15;u>h;)_--,f|=(255&o.read_byte(w++))<<h,h+=8;if(x=c[v+2]+(f&I[u]),f>>=u,h-=u,b-=y,x>p){k=p-x;do{k+=s.end}while(0>k);if(u=s.end-k,y>u){if(y-=u,p-k>0&&u>p-k)do{s.win[p++]=s.win[k++]}while(0!=--u);else s.win.set(s.win.subarray(k,k+u),p),p+=u,k+=u,u=0;k=0}}else k=p-x,p-k>0&&2>p-k?(s.win[p++]=s.win[k++],s.win[p++]=s.win[k++],y-=2):(s.win.set(s.win.subarray(k,k+2),p),p+=2,k+=2,y-=2);if(p-k>0&&y>p-k)do{s.win[p++]=s.win[k++]}while(0!=--y);else s.win.set(s.win.subarray(k,k+y),p),p+=y,k+=y,y=0;break}if(64&u)return o.msg="invalid distance code",y=o.avail_in-_,y=y>h>>3?h>>3:y,_+=y,w-=y,h-=y<<3,s.bitb=f,s.bitk=h,o.avail_in=_,o.total_in+=w-o.next_in_index,o.next_in_index=w,s.write=p,W;l+=c[v+2],l+=f&I[u],v=3*(d+l),u=c[v]}break}if(64&u)return 32&u?(y=o.avail_in-_,y=y>h>>3?h>>3:y,_+=y,w-=y,h-=y<<3,s.bitb=f,s.bitk=h,o.avail_in=_,o.total_in+=w-o.next_in_index,o.next_in_index=w,s.write=p,F):(o.msg="invalid literal/length code",y=o.avail_in-_,y=y>h>>3?h>>3:y,_+=y,w-=y,h-=y<<3,s.bitb=f,s.bitk=h,o.avail_in=_,o.total_in+=w-o.next_in_index,o.next_in_index=w,s.write=p,W);if(l+=c[v+2],l+=f&I[u],v=3*(d+l),0===(u=c[v])){f>>=c[v+1],h-=c[v+1],s.win[p++]=c[v+2],b--;break}}else f>>=c[v+1],h-=c[v+1],s.win[p++]=c[v+2],b--}while(b>=258&&_>=10);return y=o.avail_in-_,y=y>h>>3?h>>3:y,_+=y,w-=y,h-=y<<3,s.bitb=f,s.bitk=h,o.avail_in=_,o.total_in+=w-o.next_in_index,o.next_in_index=w,s.write=p,C}e.init=(e,a,s,o,l,c)=>{t=G,u=e,f=a,i=s,h=o,r=l,w=c,n=null},e.proc=(e,p,b)=>{let g,m,y,x,k,v,S,z=0,R=0,D=0;for(D=p.next_in_index,x=p.avail_in,z=e.bitb,R=e.bitk,k=e.write,v=k<e.read?e.read-k-1:e.end-k;;)switch(t){case G:if(v>=258&&x>=10&&(e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,b=_(u,f,i,h,r,w,e,p),D=p.next_in_index,x=p.avail_in,z=e.bitb,R=e.bitk,k=e.write,v=k<e.read?e.read-k-1:e.end-k,b!=C)){t=b==F?ee:ne;break}o=u,n=i,s=h,t=j;case j:for(g=o;g>R;){if(0===x)return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);b=C,x--,z|=(255&p.read_byte(D++))<<R,R+=8}if(m=3*(s+(z&I[g])),z>>>=n[m+1],R-=n[m+1],y=n[m],0===y){l=n[m+2],t=$;break}if(16&y){c=15&y,a=n[m+2],t=X;break}if(!(64&y)){o=y,s=m/3+n[m+2];break}if(32&y){t=ee;break}return t=ne,p.msg="invalid literal/length code",b=W,e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);case X:for(g=c;g>R;){if(0===x)return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);b=C,x--,z|=(255&p.read_byte(D++))<<R,R+=8}a+=z&I[g],z>>=g,R-=g,o=f,n=r,s=w,t=Y;case Y:for(g=o;g>R;){if(0===x)return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);b=C,x--,z|=(255&p.read_byte(D++))<<R,R+=8}if(m=3*(s+(z&I[g])),z>>=n[m+1],R-=n[m+1],y=n[m],16&y){c=15&y,d=n[m+2],t=J;break}if(!(64&y)){o=y,s=m/3+n[m+2];break}return t=ne,p.msg="invalid distance code",b=W,e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);case J:for(g=c;g>R;){if(0===x)return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);b=C,x--,z|=(255&p.read_byte(D++))<<R,R+=8}d+=z&I[g],z>>=g,R-=g,t=Q;case Q:for(S=k-d;0>S;)S+=e.end;for(;0!==a;){if(0===v&&(k==e.end&&0!==e.read&&(k=0,v=k<e.read?e.read-k-1:e.end-k),0===v&&(e.write=k,b=e.inflate_flush(p,b),k=e.write,v=k<e.read?e.read-k-1:e.end-k,k==e.end&&0!==e.read&&(k=0,v=k<e.read?e.read-k-1:e.end-k),0===v)))return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);e.win[k++]=e.win[S++],v--,S==e.end&&(S=0),a--}t=G;break;case $:if(0===v&&(k==e.end&&0!==e.read&&(k=0,v=k<e.read?e.read-k-1:e.end-k),0===v&&(e.write=k,b=e.inflate_flush(p,b),k=e.write,v=k<e.read?e.read-k-1:e.end-k,k==e.end&&0!==e.read&&(k=0,v=k<e.read?e.read-k-1:e.end-k),0===v)))return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);b=C,e.win[k++]=l,v--,t=G;break;case ee:if(R>7&&(R-=8,x++,D--),e.write=k,b=e.inflate_flush(p,b),k=e.write,v=k<e.read?e.read-k-1:e.end-k,e.read!=e.write)return e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);t=te;case te:return b=F,e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);case ne:return b=W,e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b);default:return b=U,e.bitb=z,e.bitk=R,p.avail_in=x,p.total_in+=D-p.next_in_index,p.next_in_index=D,e.write=k,e.inflate_flush(p,b)}},e.free=()=>{}}const re=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],ae=0,se=1,oe=2,le=3,ce=4,de=5,ue=6,fe=7,he=8,we=9;function _e(e,t){const n=this;let i,r=ae,a=0,s=0,o=0;const l=[0],c=[0],d=new ie;let u=0,f=new Int32Array(3*N);const w=new Z;n.bitk=0,n.bitb=0,n.win=new h(t),n.end=t,n.read=0,n.write=0,n.reset=(e,t)=>{t&&(t[0]=0),r==ue&&d.free(e),r=ae,n.bitk=0,n.bitb=0,n.read=n.write=0},n.reset(e,null),n.inflate_flush=(e,t)=>{let i,r,a;return r=e.next_out_index,a=n.read,i=(a>n.write?n.end:n.write)-a,i>e.avail_out&&(i=e.avail_out),0!==i&&t==O&&(t=C),e.avail_out-=i,e.total_out+=i,e.next_out.set(n.win.subarray(a,a+i),r),r+=i,a+=i,a==n.end&&(a=0,n.write==n.end&&(n.write=0),i=n.write-a,i>e.avail_out&&(i=e.avail_out),0!==i&&t==O&&(t=C),e.avail_out-=i,e.total_out+=i,e.next_out.set(n.win.subarray(a,a+i),r),r+=i,a+=i),e.next_out_index=r,n.read=a,t},n.proc=(e,t)=>{let h,_,p,b,g,m,y,x;for(b=e.next_in_index,g=e.avail_in,_=n.bitb,p=n.bitk,m=n.write,y=m<n.read?n.read-m-1:n.end-m;;){let k,v,S,z,R,D,T,E;switch(r){case ae:for(;3>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}switch(h=7&_,u=1&h,h>>>1){case 0:_>>>=3,p-=3,h=7&p,_>>>=h,p-=h,r=se;break;case 1:k=[],v=[],S=[[]],z=[[]],Z.inflate_trees_fixed(k,v,S,z),d.init(k[0],v[0],S[0],0,z[0],0),_>>>=3,p-=3,r=ue;break;case 2:_>>>=3,p-=3,r=le;break;case 3:return _>>>=3,p-=3,r=we,e.msg="invalid block type",t=W,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t)}break;case se:for(;32>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}if((~_>>>16&65535)!=(65535&_))return r=we,e.msg="invalid stored block lengths",t=W,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);a=65535&_,_=p=0,r=0!==a?oe:0!==u?fe:ae;break;case oe:if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);if(0===y&&(m==n.end&&0!==n.read&&(m=0,y=m<n.read?n.read-m-1:n.end-m),0===y&&(n.write=m,t=n.inflate_flush(e,t),m=n.write,y=m<n.read?n.read-m-1:n.end-m,m==n.end&&0!==n.read&&(m=0,y=m<n.read?n.read-m-1:n.end-m),0===y)))return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);if(t=C,h=a,h>g&&(h=g),h>y&&(h=y),n.win.set(e.read_buf(b,h),m),b+=h,g-=h,m+=h,y-=h,0!=(a-=h))break;r=0!==u?fe:ae;break;case le:for(;14>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}if(s=h=16383&_,(31&h)>29||(h>>5&31)>29)return r=we,e.msg="too many length or distance symbols",t=W,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);if(h=258+(31&h)+(h>>5&31),!i||i.length<h)i=[];else for(x=0;h>x;x++)i[x]=0;_>>>=14,p-=14,o=0,r=ce;case ce:for(;4+(s>>>10)>o;){for(;3>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}i[re[o++]]=7&_,_>>>=3,p-=3}for(;19>o;)i[re[o++]]=0;if(l[0]=7,h=w.inflate_trees_bits(i,l,c,f,e),h!=C)return(t=h)==W&&(i=null,r=we),n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);o=0,r=de;case de:for(;h=s,258+(31&h)+(h>>5&31)>o;){let a,d;for(h=l[0];h>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}if(h=f[3*(c[0]+(_&I[h]))+1],d=f[3*(c[0]+(_&I[h]))+2],16>d)_>>>=h,p-=h,i[o++]=d;else{for(x=18==d?7:d-14,a=18==d?11:3;h+x>p;){if(0===g)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);t=C,g--,_|=(255&e.read_byte(b++))<<p,p+=8}if(_>>>=h,p-=h,a+=_&I[x],_>>>=x,p-=x,x=o,h=s,x+a>258+(31&h)+(h>>5&31)||16==d&&1>x)return i=null,r=we,e.msg="invalid bit length repeat",t=W,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);d=16==d?i[x-1]:0;do{i[x++]=d}while(0!=--a);o=x}}if(c[0]=-1,R=[],D=[],T=[],E=[],R[0]=9,D[0]=6,h=s,h=w.inflate_trees_dynamic(257+(31&h),1+(h>>5&31),i,R,D,T,E,f,e),h!=C)return h==W&&(i=null,r=we),t=h,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);d.init(R[0],D[0],f,T[0],f,E[0]),r=ue;case ue:if(n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,(t=d.proc(n,e,t))!=F)return n.inflate_flush(e,t);if(t=C,d.free(e),b=e.next_in_index,g=e.avail_in,_=n.bitb,p=n.bitk,m=n.write,y=m<n.read?n.read-m-1:n.end-m,0===u){r=ae;break}r=fe;case fe:if(n.write=m,t=n.inflate_flush(e,t),m=n.write,y=m<n.read?n.read-m-1:n.end-m,n.read!=n.write)return n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);r=he;case he:return t=F,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);case we:return t=W,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t);default:return t=U,n.bitb=_,n.bitk=p,e.avail_in=g,e.total_in+=b-e.next_in_index,e.next_in_index=b,n.write=m,n.inflate_flush(e,t)}}},n.free=e=>{n.reset(e,null),n.win=null,f=null},n.set_dictionary=(e,t,i)=>{n.win.set(e.subarray(t,t+i),0),n.read=n.write=i},n.sync_point=()=>r==se?1:0}const pe=13,be=[0,0,255,255];function ge(){const e=this;function t(e){return e&&e.istate?(e.total_in=e.total_out=0,e.msg=null,e.istate.mode=7,e.istate.blocks.reset(e,null),C):U}e.mode=0,e.method=0,e.was=[0],e.need=0,e.marker=0,e.wbits=0,e.inflateEnd=t=>(e.blocks&&e.blocks.free(t),e.blocks=null,C),e.inflateInit=(n,i)=>(n.msg=null,e.blocks=null,8>i||i>15?(e.inflateEnd(n),U):(e.wbits=i,n.istate.blocks=new _e(n,1<<i),t(n),C)),e.inflate=(e,t)=>{let n,i;if(!e||!e.istate||!e.next_in)return U;const r=e.istate;for(t=4==t?O:C,n=O;;)switch(r.mode){case 0:if(0===e.avail_in)return n;if(n=t,e.avail_in--,e.total_in++,8!=(15&(r.method=e.read_byte(e.next_in_index++)))){r.mode=pe,e.msg="unknown compression method",r.marker=5;break}if(8+(r.method>>4)>r.wbits){r.mode=pe,e.msg="invalid win size",r.marker=5;break}r.mode=1;case 1:if(0===e.avail_in)return n;if(n=t,e.avail_in--,e.total_in++,i=255&e.read_byte(e.next_in_index++),((r.method<<8)+i)%31!=0){r.mode=pe,e.msg="incorrect header check",r.marker=5;break}if(!(32&i)){r.mode=7;break}r.mode=2;case 2:if(0===e.avail_in)return n;n=t,e.avail_in--,e.total_in++,r.need=(255&e.read_byte(e.next_in_index++))<<24&4278190080,r.mode=3;case 3:if(0===e.avail_in)return n;n=t,e.avail_in--,e.total_in++,r.need+=(255&e.read_byte(e.next_in_index++))<<16&16711680,r.mode=4;case 4:if(0===e.avail_in)return n;n=t,e.avail_in--,e.total_in++,r.need+=(255&e.read_byte(e.next_in_index++))<<8&65280,r.mode=5;case 5:return 0===e.avail_in?n:(n=t,e.avail_in--,e.total_in++,r.need+=255&e.read_byte(e.next_in_index++),r.mode=6,2);case 6:return r.mode=pe,e.msg="need dictionary",r.marker=0,U;case 7:if(n=r.blocks.proc(e,n),n==W){r.mode=pe,r.marker=0;break}if(n==C&&(n=t),n!=F)return n;n=t,r.blocks.reset(e,r.was),r.mode=12;case 12:return e.avail_in=0,F;case pe:return W;default:return U}},e.inflateSetDictionary=(e,t,n)=>{let i=0,r=n;if(!e||!e.istate||6!=e.istate.mode)return U;const a=e.istate;return r<1<<a.wbits||(r=(1<<a.wbits)-1,i=n-r),a.blocks.set_dictionary(t,i,r),a.mode=7,C},e.inflateSync=e=>{let n,i,r,a,s;if(!e||!e.istate)return U;const o=e.istate;if(o.mode!=pe&&(o.mode=pe,o.marker=0),0===(n=e.avail_in))return O;for(i=e.next_in_index,r=o.marker;0!==n&&4>r;)e.read_byte(i)==be[r]?r++:r=0!==e.read_byte(i)?0:4-r,i++,n--;return e.total_in+=i-e.next_in_index,e.next_in_index=i,e.avail_in=n,o.marker=r,4!=r?W:(a=e.total_in,s=e.total_out,t(e),e.total_in=a,e.total_out=s,o.mode=7,C)},e.inflateSyncPoint=e=>e&&e.istate&&e.istate.blocks?e.istate.blocks.sync_point():U}function me(){}me.prototype={inflateInit(e){const t=this;return t.istate=new ge,e||(e=15),t.istate.inflateInit(t,e)},inflate(e){const t=this;return t.istate?t.istate.inflate(t,e):U},inflateEnd(){const e=this;if(!e.istate)return U;const t=e.istate.inflateEnd(e);return e.istate=null,t},inflateSync(){const e=this;return e.istate?e.istate.inflateSync(e):U},inflateSetDictionary(e,t){const n=this;return n.istate?n.istate.inflateSetDictionary(n,e,t):U},read_byte(e){return this.next_in[e]},read_buf(e,t){return this.next_in.subarray(e,e+t)}};const ye=4294967295,xe=65535,ke=33639248,ve=101075792,Se=22,ze=void 0,Re="undefined",De="function";class Te{constructor(e){return class extends S{constructor(t,n){const i=new e(n);super({transform(e,t){t.enqueue(i.append(e))},flush(e){const t=i.flush();t&&e.enqueue(t)}})}}}}let Ee=2;try{typeof E!=Re&&E.hardwareConcurrency&&(Ee=E.hardwareConcurrency)}catch(e){}const Ae={chunkSize:524288,maxWorkers:Ee,terminateWorkerTimeout:5e3,useWebWorkers:!0,useCompressionStream:!0,workerScripts:ze,CompressionStreamNative:typeof D!=Re&&D,DecompressionStreamNative:typeof T!=Re&&T},Ce=n.assign({},Ae);function Fe(){return Ce}function Ue(e){const{baseURL:n,chunkSize:i,maxWorkers:r,terminateWorkerTimeout:a,useCompressionStream:s,useWebWorkers:o,Deflate:l,Inflate:c,CompressionStream:d,DecompressionStream:u,workerScripts:h}=e;if(We("baseURL",n),We("chunkSize",i),We("maxWorkers",r),We("terminateWorkerTimeout",a),We("useCompressionStream",s),We("useWebWorkers",o),l&&(Ce.CompressionStream=new Te(l)),c&&(Ce.DecompressionStream=new Te(c)),We("CompressionStream",d),We("DecompressionStream",u),h!==ze){const{deflate:e,inflate:n}=h;if((e||n)&&(Ce.workerScripts||(Ce.workerScripts={})),e){if(!t.isArray(e))throw new f("workerScripts.deflate must be an array");Ce.workerScripts.deflate=e}if(n){if(!t.isArray(n))throw new f("workerScripts.inflate must be an array");Ce.workerScripts.inflate=n}}}function We(e,t){t!==ze&&(Ce[e]=t)}const Le=[];for(let e=0;256>e;e++){let t=e;for(let e=0;8>e;e++)1&t?t=t>>>1^3988292384:t>>>=1;Le[e]=t}class Oe{constructor(e){this.crc=e||-1}append(e){let t=0|this.crc;for(let n=0,i=0|e.length;i>n;n++)t=t>>>8^Le[255&(t^e[n])];this.crc=t}get(){return~this.crc}}class Ie extends S{constructor(){let e;const t=new Oe;super({transform(e,n){t.append(e),n.enqueue(e)},flush(){const n=new h(4);new p(n.buffer).setUint32(0,t.get()),e.value=n}}),e=this}}const Ne={concat(e,t){if(0===e.length||0===t.length)return e.concat(t);const n=e[e.length-1],i=Ne.getPartial(n);return 32===i?e.concat(t):Ne._shiftRight(t,i,0|n,e.slice(0,e.length-1))},bitLength(e){const t=e.length;if(0===t)return 0;const n=e[t-1];return 32*(t-1)+Ne.getPartial(n)},clamp(e,t){if(32*e.length<t)return e;const n=(e=e.slice(0,s.ceil(t/32))).length;return t&=31,n>0&&t&&(e[n-1]=Ne.partial(t,e[n-1]&2147483648>>t-1,1)),e},partial:(e,t,n)=>32===e?t:(n?0|t:t<<32-e)+1099511627776*e,getPartial:e=>s.round(e/1099511627776)||32,_shiftRight(e,t,n,i){for(void 0===i&&(i=[]);t>=32;t-=32)i.push(n),n=0;if(0===t)return i.concat(e);for(let r=0;r<e.length;r++)i.push(n|e[r]>>>t),n=e[r]<<32-t;const r=e.length?e[e.length-1]:0,a=Ne.getPartial(r);return i.push(Ne.partial(t+a&31,t+a>32?n:i.pop(),1)),i}},Pe={bytes:{fromBits(e){const t=Ne.bitLength(e)/8,n=new h(t);let i;for(let r=0;t>r;r++)3&r||(i=e[r/4]),n[r]=i>>>24,i<<=8;return n},toBits(e){const t=[];let n,i=0;for(n=0;n<e.length;n++)i=i<<8|e[n],3&~n||(t.push(i),i=0);return 3&n&&t.push(Ne.partial(8*(3&n),i)),t}}},He=class{constructor(e){const t=this;t.blockSize=512,t._init=[1732584193,4023233417,2562383102,271733878,3285377520],t._key=[1518500249,1859775393,2400959708,3395469782],e?(t._h=e._h.slice(0),t._buffer=e._buffer.slice(0),t._length=e._length):t.reset()}reset(){const e=this;return e._h=e._init.slice(0),e._buffer=[],e._length=0,e}update(e){const t=this;"string"==typeof e&&(e=Pe.utf8String.toBits(e));const n=t._buffer=Ne.concat(t._buffer,e),i=t._length,r=t._length=i+Ne.bitLength(e);if(r>9007199254740991)throw new f("Cannot hash more than 2^53 - 1 bits");const a=new _(n);let s=0;for(let e=t.blockSize+i-(t.blockSize+i&t.blockSize-1);r>=e;e+=t.blockSize)t._block(a.subarray(16*s,16*(s+1))),s+=1;return n.splice(0,16*s),t}finalize(){const e=this;let t=e._buffer;const n=e._h;t=Ne.concat(t,[Ne.partial(1,1)]);for(let e=t.length+2;15&e;e++)t.push(0);for(t.push(s.floor(e._length/4294967296)),t.push(0|e._length);t.length;)e._block(t.splice(0,16));return e.reset(),n}_f(e,t,n,i){return e>19?e>39?e>59?e>79?void 0:t^n^i:t&n|t&i|n&i:t^n^i:t&n|~t&i}_S(e,t){return t<<e|t>>>32-e}_block(e){const n=this,i=n._h,r=t(80);for(let t=0;16>t;t++)r[t]=e[t];let a=i[0],o=i[1],l=i[2],c=i[3],d=i[4];for(let e=0;79>=e;e++){16>e||(r[e]=n._S(1,r[e-3]^r[e-8]^r[e-14]^r[e-16]));const t=n._S(5,a)+n._f(e,o,l,c)+d+r[e]+n._key[s.floor(e/20)]|0;d=c,c=l,l=n._S(30,o),o=a,a=t}i[0]=i[0]+a|0,i[1]=i[1]+o|0,i[2]=i[2]+l|0,i[3]=i[3]+c|0,i[4]=i[4]+d|0}},qe={getRandomValues(e){const t=new _(e.buffer),n=e=>{let t=987654321;const n=4294967295;return()=>(t=36969*(65535&t)+(t>>16)&n,(((t<<16)+(e=18e3*(65535&e)+(e>>16)&n)&n)/4294967296+.5)*(s.random()>.5?1:-1))};for(let i,r=0;r<e.length;r+=4){const e=n(4294967296*(i||s.random()));i=987654071*e(),t[r/4]=4294967296*e()|0}return e}},Be={importKey:e=>new Be.hmacSha1(Pe.bytes.toBits(e)),pbkdf2(e,t,n,i){if(n=n||1e4,0>i||0>n)throw new f("invalid params to pbkdf2");const r=1+(i>>5)<<2;let a,s,o,l,c;const d=new ArrayBuffer(r),u=new p(d);let h=0;const w=Ne;for(t=Pe.bytes.toBits(t),c=1;(r||1)>h;c++){for(a=s=e.encrypt(w.concat(t,[c])),o=1;n>o;o++)for(s=e.encrypt(s),l=0;l<s.length;l++)a[l]^=s[l];for(o=0;(r||1)>h&&o<a.length;o++)u.setInt32(h,a[o]),h+=4}return d.slice(0,i/8)},hmacSha1:class{constructor(e){const t=this,n=t._hash=He,i=[[],[]];t._baseHash=[new n,new n];const r=t._baseHash[0].blockSize/32;e.length>r&&(e=(new n).update(e).finalize());for(let t=0;r>t;t++)i[0][t]=909522486^e[t],i[1][t]=1549556828^e[t];t._baseHash[0].update(i[0]),t._baseHash[1].update(i[1]),t._resultHash=new n(t._baseHash[0])}reset(){const e=this;e._resultHash=new e._hash(e._baseHash[0]),e._updated=!1}update(e){this._updated=!0,this._resultHash.update(e)}digest(){const e=this,t=e._resultHash.finalize(),n=new e._hash(e._baseHash[1]).update(t).finalize();return e.reset(),n}encrypt(e){if(this._updated)throw new f("encrypt on already updated hmac called!");return this.update(e),this.digest(e)}}},Me=typeof k!=Re&&typeof k.getRandomValues==De,Ve="Invalid password",Ke="Invalid signature",Ze="zipjs-abort-check-password";function Ge(e){return Me?k.getRandomValues(e):qe.getRandomValues(e)}const je=16,Xe={name:"PBKDF2"},Ye=n.assign({hash:{name:"HMAC"}},Xe),Je=n.assign({iterations:1e3,hash:{name:"SHA-1"}},Xe),Qe=["deriveBits"],$e=[8,12,16],et=[16,24,32],tt=10,nt=[0,0,0,0],it=typeof k!=Re,rt=it&&k.subtle,at=it&&typeof rt!=Re,st=Pe.bytes,ot=class{constructor(e){const t=this;t._tables=[[[],[],[],[],[]],[[],[],[],[],[]]],t._tables[0][0][0]||t._precompute();const n=t._tables[0][4],i=t._tables[1],r=e.length;let a,s,o,l=1;if(4!==r&&6!==r&&8!==r)throw new f("invalid aes key size");for(t._key=[s=e.slice(0),o=[]],a=r;4*r+28>a;a++){let e=s[a-1];(a%r==0||8===r&&a%r==4)&&(e=n[e>>>24]<<24^n[e>>16&255]<<16^n[e>>8&255]<<8^n[255&e],a%r==0&&(e=e<<8^e>>>24^l<<24,l=l<<1^283*(l>>7))),s[a]=s[a-r]^e}for(let e=0;a;e++,a--){const t=s[3&e?a:a-4];o[e]=4>=a||4>e?t:i[0][n[t>>>24]]^i[1][n[t>>16&255]]^i[2][n[t>>8&255]]^i[3][n[255&t]]}}encrypt(e){return this._crypt(e,0)}decrypt(e){return this._crypt(e,1)}_precompute(){const e=this._tables[0],t=this._tables[1],n=e[4],i=t[4],r=[],a=[];let s,o,l,c;for(let e=0;256>e;e++)a[(r[e]=e<<1^283*(e>>7))^e]=e;for(let d=s=0;!n[d];d^=o||1,s=a[s]||1){let a=s^s<<1^s<<2^s<<3^s<<4;a=a>>8^255&a^99,n[d]=a,i[a]=d,c=r[l=r[o=r[d]]];let u=16843009*c^65537*l^257*o^16843008*d,f=257*r[a]^16843008*a;for(let n=0;4>n;n++)e[n][d]=f=f<<24^f>>>8,t[n][a]=u=u<<24^u>>>8}for(let n=0;5>n;n++)e[n]=e[n].slice(0),t[n]=t[n].slice(0)}_crypt(e,t){if(4!==e.length)throw new f("invalid aes block size");const n=this._key[t],i=n.length/4-2,r=[0,0,0,0],a=this._tables[t],s=a[0],o=a[1],l=a[2],c=a[3],d=a[4];let u,h,w,_=e[0]^n[0],p=e[t?3:1]^n[1],b=e[2]^n[2],g=e[t?1:3]^n[3],m=4;for(let e=0;i>e;e++)u=s[_>>>24]^o[p>>16&255]^l[b>>8&255]^c[255&g]^n[m],h=s[p>>>24]^o[b>>16&255]^l[g>>8&255]^c[255&_]^n[m+1],w=s[b>>>24]^o[g>>16&255]^l[_>>8&255]^c[255&p]^n[m+2],g=s[g>>>24]^o[_>>16&255]^l[p>>8&255]^c[255&b]^n[m+3],m+=4,_=u,p=h,b=w;for(let e=0;4>e;e++)r[t?3&-e:e]=d[_>>>24]<<24^d[p>>16&255]<<16^d[b>>8&255]<<8^d[255&g]^n[m++],u=_,_=p,p=b,b=g,g=u;return r}},lt=class{constructor(e,t){this._prf=e,this._initIv=t,this._iv=t}reset(){this._iv=this._initIv}update(e){return this.calculate(this._prf,e,this._iv)}incWord(e){if(255&~(e>>24))e+=1<<24;else{let t=e>>16&255,n=e>>8&255,i=255&e;255===t?(t=0,255===n?(n=0,255===i?i=0:++i):++n):++t,e=0,e+=t<<16,e+=n<<8,e+=i}return e}incCounter(e){0===(e[0]=this.incWord(e[0]))&&(e[1]=this.incWord(e[1]))}calculate(e,t,n){let i;if(!(i=t.length))return[];const r=Ne.bitLength(t);for(let r=0;i>r;r+=4){this.incCounter(n);const i=e.encrypt(n);t[r]^=i[0],t[r+1]^=i[1],t[r+2]^=i[2],t[r+3]^=i[3]}return Ne.clamp(t,r)}},ct=Be.hmacSha1;let dt=it&&at&&typeof rt.importKey==De,ut=it&&at&&typeof rt.deriveBits==De;class ft extends S{constructor({password:e,rawPassword:t,signed:i,encryptionStrength:r,checkPasswordOnly:a}){super({start(){n.assign(this,{ready:new g((e=>this.resolveReady=e)),password:pt(e,t),signed:i,strength:r-1,pending:new h})},async transform(e,t){const n=this,{password:i,strength:r,resolveReady:s,ready:o}=n;i?(await(async(e,t,n,i)=>{const r=await _t(e,t,n,gt(i,0,$e[t])),a=gt(i,$e[t]);if(r[0]!=a[0]||r[1]!=a[1])throw new f(Ve)})(n,r,i,gt(e,0,$e[r]+2)),e=gt(e,$e[r]+2),a?t.error(new f(Ze)):s()):await o;const l=new h(e.length-tt-(e.length-tt)%je);t.enqueue(wt(n,e,l,0,tt,!0))},async flush(e){const{signed:t,ctr:n,hmac:i,pending:r,ready:a}=this;if(i&&n){await a;const s=gt(r,0,r.length-tt),o=gt(r,r.length-tt);let l=new h;if(s.length){const e=yt(st,s);i.update(e);const t=n.update(e);l=mt(st,t)}if(t){const e=gt(mt(st,i.digest()),0,tt);for(let t=0;tt>t;t++)if(e[t]!=o[t])throw new f(Ke)}e.enqueue(l)}}})}}class ht extends S{constructor({password:e,rawPassword:t,encryptionStrength:i}){let r;super({start(){n.assign(this,{ready:new g((e=>this.resolveReady=e)),password:pt(e,t),strength:i-1,pending:new h})},async transform(e,t){const n=this,{password:i,strength:r,resolveReady:a,ready:s}=n;let o=new h;i?(o=await(async(e,t,n)=>{const i=Ge(new h($e[t]));return bt(i,await _t(e,t,n,i))})(n,r,i),a()):await s;const l=new h(o.length+e.length-e.length%je);l.set(o,0),t.enqueue(wt(n,e,l,o.length,0))},async flush(e){const{ctr:t,hmac:n,pending:i,ready:a}=this;if(n&&t){await a;let s=new h;if(i.length){const e=t.update(yt(st,i));n.update(e),s=mt(st,e)}r.signature=mt(st,n.digest()).slice(0,tt),e.enqueue(bt(s,r.signature))}}}),r=this}}function wt(e,t,n,i,r,a){const{ctr:s,hmac:o,pending:l}=e,c=t.length-r;let d;for(l.length&&(t=bt(l,t),n=((e,t)=>{if(t&&t>e.length){const n=e;(e=new h(t)).set(n,0)}return e})(n,c-c%je)),d=0;c-je>=d;d+=je){const e=yt(st,gt(t,d,d+je));a&&o.update(e);const r=s.update(e);a||o.update(r),n.set(mt(st,r),d+i)}return e.pending=gt(t,d),n}async function _t(e,i,r,a){e.password=null;const s=await(async(e,t,n,i,r)=>{if(!dt)return Be.importKey(t);try{return await rt.importKey("raw",t,n,!1,r)}catch(e){return dt=!1,Be.importKey(t)}})(0,r,Ye,0,Qe),o=await(async(e,t,n)=>{if(!ut)return Be.pbkdf2(t,e.salt,Je.iterations,n);try{return await rt.deriveBits(e,t,n)}catch(i){return ut=!1,Be.pbkdf2(t,e.salt,Je.iterations,n)}})(n.assign({salt:a},Je),s,8*(2*et[i]+2)),l=new h(o),c=yt(st,gt(l,0,et[i])),d=yt(st,gt(l,et[i],2*et[i])),u=gt(l,2*et[i]);return n.assign(e,{keys:{key:c,authentication:d,passwordVerification:u},ctr:new lt(new ot(c),t.from(nt)),hmac:new ct(d)}),u}function pt(e,t){return t===ze?(e=>{if(typeof m==Re){const t=new h((e=unescape(encodeURIComponent(e))).length);for(let n=0;n<t.length;n++)t[n]=e.charCodeAt(n);return t}return(new m).encode(e)})(e):t}function bt(e,t){let n=e;return e.length+t.length&&(n=new h(e.length+t.length),n.set(e,0),n.set(t,e.length)),n}function gt(e,t,n){return e.subarray(t,n)}function mt(e,t){return e.fromBits(t)}function yt(e,t){return e.toBits(t)}class xt extends S{constructor({password:e,passwordVerification:t,checkPasswordOnly:i}){super({start(){n.assign(this,{password:e,passwordVerification:t}),zt(this,e)},transform(e,t){const n=this;if(n.password){const t=vt(n,e.subarray(0,12));if(n.password=null,t[11]!=n.passwordVerification)throw new f(Ve);e=e.subarray(12)}i?t.error(new f(Ze)):t.enqueue(vt(n,e))}})}}class kt extends S{constructor({password:e,passwordVerification:t}){super({start(){n.assign(this,{password:e,passwordVerification:t}),zt(this,e)},transform(e,t){const n=this;let i,r;if(n.password){n.password=null;const t=Ge(new h(12));t[11]=n.passwordVerification,i=new h(e.length+t.length),i.set(St(n,t),0),r=12}else i=new h(e.length),r=0;i.set(St(n,e),r),t.enqueue(i)}})}}function vt(e,t){const n=new h(t.length);for(let i=0;i<t.length;i++)n[i]=Dt(e)^t[i],Rt(e,n[i]);return n}function St(e,t){const n=new h(t.length);for(let i=0;i<t.length;i++)n[i]=Dt(e)^t[i],Rt(e,t[i]);return n}function zt(e,t){const i=[305419896,591751049,878082192];n.assign(e,{keys:i,crcKey0:new Oe(i[0]),crcKey2:new Oe(i[2])});for(let n=0;n<t.length;n++)Rt(e,t.charCodeAt(n))}function Rt(e,t){let[n,i,r]=e.keys;e.crcKey0.append([t]),n=~e.crcKey0.get(),i=Et(s.imul(Et(i+Tt(n)),134775813)+1),e.crcKey2.append([i>>>24]),r=~e.crcKey2.get(),e.keys=[n,i,r]}function Dt(e){const t=2|e.keys[2];return Tt(s.imul(t,1^t)>>>8)}function Tt(e){return 255&e}function Et(e){return 4294967295&e}const At="deflate-raw";class Ct extends S{constructor(e,{chunkSize:t,CompressionStream:n,CompressionStreamNative:i}){super({});const{compressed:r,encrypted:a,useCompressionStream:s,zipCrypto:o,signed:l,level:c}=e,d=this;let u,f,h=Ut(super.readable);a&&!o||!l||(u=new Ie,h=Ot(h,u)),r&&(h=Lt(h,s,{level:c,chunkSize:t},i,n)),a&&(o?h=Ot(h,new kt(e)):(f=new ht(e),h=Ot(h,f))),Wt(d,h,(()=>{let e;a&&!o&&(e=f.signature),a&&!o||!l||(e=new p(u.value.buffer).getUint32(0)),d.signature=e}))}}class Ft extends S{constructor(e,{chunkSize:t,DecompressionStream:n,DecompressionStreamNative:i}){super({});const{zipCrypto:r,encrypted:a,signed:s,signature:o,compressed:l,useCompressionStream:c}=e;let d,u,h=Ut(super.readable);a&&(r?h=Ot(h,new xt(e)):(u=new ft(e),h=Ot(h,u))),l&&(h=Lt(h,c,{chunkSize:t},i,n)),a&&!r||!s||(d=new Ie,h=Ot(h,d)),Wt(this,h,(()=>{if((!a||r)&&s){const e=new p(d.value.buffer);if(o!=e.getUint32(0,!1))throw new f(Ke)}}))}}function Ut(e){return Ot(e,new S({transform(e,t){e&&e.length&&t.enqueue(e)}}))}function Wt(e,t,i){t=Ot(t,new S({flush:i})),n.defineProperty(e,"readable",{get:()=>t})}function Lt(e,t,n,i,r){try{e=Ot(e,new(t&&i?i:r)(At,n))}catch(i){if(!t)return e;try{e=Ot(e,new r(At,n))}catch(t){return e}}return e}function Ot(e,t){return e.pipeThrough(t)}const It="data",Nt="close",Pt="inflate";class Ht extends S{constructor(e,t){super({});const i=this,{codecType:r}=e;let a;r.startsWith("deflate")?a=Ct:r.startsWith(Pt)&&(a=Ft);let s=0,o=0;const l=new a(e,t),c=super.readable,d=new S({transform(e,t){e&&e.length&&(o+=e.length,t.enqueue(e))},flush(){n.assign(i,{inputSize:o})}}),u=new S({transform(e,t){e&&e.length&&(s+=e.length,t.enqueue(e))},flush(){const{signature:e}=l;n.assign(i,{signature:e,outputSize:s,inputSize:o})}});n.defineProperty(i,"readable",{get:()=>c.pipeThrough(d).pipeThrough(l).pipeThrough(u)})}}class qt extends S{constructor(e){let t;super({transform:function n(i,r){if(t){const e=new h(t.length+i.length);e.set(t),e.set(i,t.length),i=e,t=null}i.length>e?(r.enqueue(i.slice(0,e)),n(i.slice(e),r)):t=i},flush(e){t&&t.length&&e.enqueue(t)}})}}let Bt=typeof A!=Re;class Mt{constructor(e,{readable:t,writable:i},{options:r,config:a,streamOptions:s,useWebWorkers:o,transferStreams:l,scripts:c},d){const{signal:u}=s;return n.assign(e,{busy:!0,readable:t.pipeThrough(new qt(a.chunkSize)).pipeThrough(new Vt(t,s),{signal:u}),writable:i,options:n.assign({},r),scripts:c,transferStreams:l,terminate:()=>new g((t=>{const{worker:n,busy:i}=e;n?(i?e.resolveTerminated=t:(n.terminate(),t()),e.interface=null):t()})),onTaskFinished(){const{resolveTerminated:t}=e;t&&(e.resolveTerminated=null,e.terminated=!0,e.worker.terminate(),t()),e.busy=!1,d(e)}}),(o&&Bt?Gt:Zt)(e,a)}}class Vt extends S{constructor(e,{onstart:t,onprogress:n,size:i,onend:r}){let a=0;super({async start(){t&&await Kt(t,i)},async transform(e,t){a+=e.length,n&&await Kt(n,a,i),t.enqueue(e)},async flush(){e.size=a,r&&await Kt(r,a)}})}}async function Kt(e,...t){try{await e(...t)}catch(e){}}function Zt(e,t){return{run:()=>(async({options:e,readable:t,writable:n,onTaskFinished:i},r)=>{try{const i=new Ht(e,r);await t.pipeThrough(i).pipeTo(n,{preventClose:!0,preventAbort:!0});const{signature:a,inputSize:s,outputSize:o}=i;return{signature:a,inputSize:s,outputSize:o}}finally{i()}})(e,t)}}function Gt(e,t){const{baseURL:i,chunkSize:r}=t;if(!e.interface){let a;try{a=((e,t,i)=>{const r={type:"module"};let a,s;typeof e==De&&(e=e());try{a=new u(e,t)}catch(t){a=e}if(jt)try{s=new A(a)}catch(e){jt=!1,s=new A(a,r)}else s=new A(a,r);return s.addEventListener("message",(e=>(async({data:e},t)=>{const{type:i,value:r,messageId:a,result:s,error:o}=e,{reader:l,writer:c,resolveResult:d,rejectResult:u,onTaskFinished:w}=t;try{if(o){const{message:e,stack:t,code:i,name:r}=o,a=new f(e);n.assign(a,{stack:t,code:i,name:r}),_(a)}else{if("pull"==i){const{value:e,done:n}=await l.read();Yt({type:It,value:e,done:n,messageId:a},t)}i==It&&(await c.ready,await c.write(new h(r)),Yt({type:"ack",messageId:a},t)),i==Nt&&_(null,s)}}catch(o){Yt({type:Nt,messageId:a},t),_(o)}function _(e,t){e?u(e):d(t),c&&c.releaseLock(),w()}})(e,i))),s})(e.scripts[0],i,e)}catch(n){return Bt=!1,Zt(e,t)}n.assign(e,{worker:a,interface:{run:()=>(async(e,t)=>{let i,r;const a=new g(((e,t)=>{i=e,r=t}));n.assign(e,{reader:null,writer:null,resolveResult:i,rejectResult:r,result:a});const{readable:s,options:o,scripts:l}=e,{writable:c,closed:d}=(e=>{let t;const n=new g((e=>t=e));return{writable:new R({async write(t){const n=e.getWriter();await n.ready,await n.write(t),n.releaseLock()},close(){t()},abort:t=>e.getWriter().abort(t)}),closed:n}})(e.writable),u=Yt({type:"start",scripts:l.slice(1),options:o,config:t,readable:s,writable:c},e);u||n.assign(e,{reader:s.getReader(),writer:c.getWriter()});const f=await a;return u||await c.getWriter().close(),await d,f})(e,{chunkSize:r})}})}return e.interface}let jt=!0,Xt=!0;function Yt(e,{worker:t,writer:n,onTaskFinished:i,transferStreams:r}){try{let{value:n,readable:i,writable:a}=e;const s=[];if(n&&(n.byteLength<n.buffer.byteLength?e.value=n.buffer.slice(0,n.byteLength):e.value=n.buffer,s.push(e.value)),r&&Xt?(i&&s.push(i),a&&s.push(a)):e.readable=e.writable=null,s.length)try{return t.postMessage(e,s),!0}catch(n){Xt=!1,e.readable=e.writable=null,t.postMessage(e)}else t.postMessage(e)}catch(e){throw n&&n.releaseLock(),i(),e}}let Jt=[];const Qt=[];let $t=0;function en(e){const{terminateTimeout:t}=e;t&&(clearTimeout(t),e.terminateTimeout=null)}const tn="HTTP error ",nn="HTTP Range not supported",rn="Writer iterator completed too soon",an="Content-Length",sn="Range",on="HEAD",ln="GET",cn="bytes",dn=65536,un="writable";class fn{constructor(){this.size=0}init(){this.initialized=!0}}class hn extends fn{get readable(){const e=this,{chunkSize:t=dn}=e,n=new z({start(){this.chunkOffset=0},async pull(i){const{offset:r=0,size:a,diskNumberStart:o}=n,{chunkOffset:l}=this;i.enqueue(await On(e,r+l,s.min(t,a-l),o)),l+t>a?i.close():this.chunkOffset+=t}});return n}}class wn extends fn{constructor(){super();const e=this,t=new R({write:t=>e.writeUint8Array(t)});n.defineProperty(e,un,{get:()=>t})}writeUint8Array(){}}class _n extends hn{constructor(e){super(),n.assign(this,{blob:e,size:e.size})}async readUint8Array(e,t){const n=this,i=e+t,r=e||i<n.size?n.blob.slice(e,i):n.blob;let a=await r.arrayBuffer();return a.byteLength>t&&(a=a.slice(e,i)),new h(a)}}class pn extends fn{constructor(e){super();const t=new S,i=[];e&&i.push(["Content-Type",e]),n.defineProperty(this,un,{get:()=>t.writable}),this.blob=new d(t.readable,{headers:i}).blob()}getData(){return this.blob}}class bn extends hn{constructor(e,t){super(),mn(this,e,t)}async init(){await yn(this,Tn,Sn),super.init()}readUint8Array(e,t){return xn(this,e,t,Tn,Sn)}}class gn extends hn{constructor(e,t){super(),mn(this,e,t)}async init(){await yn(this,En,zn),super.init()}readUint8Array(e,t){return xn(this,e,t,En,zn)}}function mn(e,t,i){const{preventHeadRequest:r,useRangeHeader:a,forceRangeRequests:s,combineSizeEocd:o}=i;delete(i=n.assign({},i)).preventHeadRequest,delete i.useRangeHeader,delete i.forceRangeRequests,delete i.combineSizeEocd,delete i.useXHR,n.assign(e,{url:t,options:i,preventHeadRequest:r,useRangeHeader:a,forceRangeRequests:s,combineSizeEocd:o})}async function yn(e,t,n){const{url:i,preventHeadRequest:a,useRangeHeader:s,forceRangeRequests:o,combineSizeEocd:l}=e;if((e=>{const{baseURL:t}=Fe(),{protocol:n}=new u(e,t);return"http:"==n||"https:"==n})(i)&&(s||o)&&(void 0===a||a)){const i=await t(ln,e,kn(e,l?-22:void 0));if(!o&&i.headers.get("Accept-Ranges")!=cn)throw new f(nn);{let a;l&&(e.eocdCache=new h(await i.arrayBuffer()));const s=i.headers.get("Content-Range");if(s){const e=s.trim().split(/\s*\/\s*/);if(e.length){const t=e[1];t&&"*"!=t&&(a=r(t))}}a===ze?await Dn(e,t,n):e.size=a}}else await Dn(e,t,n)}async function xn(e,t,n,i,r){const{useRangeHeader:a,forceRangeRequests:s,eocdCache:o,size:l,options:c}=e;if(a||s){if(o&&t==l-Se&&n==Se)return o;const r=await i(ln,e,kn(e,t,n));if(206!=r.status)throw new f(nn);return new h(await r.arrayBuffer())}{const{data:i}=e;return i||await r(e,c),new h(e.data.subarray(t,t+n))}}function kn(e,t=0,i=1){return n.assign({},vn(e),{[sn]:cn+"="+(0>t?t:t+"-"+(t+i-1))})}function vn({options:e}){const{headers:t}=e;if(t)return Symbol.iterator in t?n.fromEntries(t):t}async function Sn(e){await Rn(e,Tn)}async function zn(e){await Rn(e,En)}async function Rn(e,t){const n=await t(ln,e,vn(e));e.data=new h(await n.arrayBuffer()),e.size||(e.size=e.data.length)}async function Dn(e,t,n){if(e.preventHeadRequest)await n(e,e.options);else{const i=(await t(on,e,vn(e))).headers.get(an);i?e.size=r(i):await n(e,e.options)}}async function Tn(e,{options:t,url:i},r){const a=await fetch(i,n.assign({},t,{method:e,headers:r}));if(400>a.status)return a;throw 416==a.status?new f(nn):new f(tn+(a.statusText||a.status))}function En(e,{url:t},i){return new g(((r,a)=>{const s=new XMLHttpRequest;if(s.addEventListener("load",(()=>{if(400>s.status){const e=[];s.getAllResponseHeaders().trim().split(/[\r\n]+/).forEach((t=>{const n=t.trim().split(/\s*:\s*/);n[0]=n[0].trim().replace(/^[a-z]|-[a-z]/g,(e=>e.toUpperCase())),e.push(n)})),r({status:s.status,arrayBuffer:()=>s.response,headers:new l(e)})}else a(416==s.status?new f(nn):new f(tn+(s.statusText||s.status)))}),!1),s.addEventListener("error",(e=>a(e.detail?e.detail.error:new f("Network error"))),!1),s.open(e,t),i)for(const e of n.entries(i))s.setRequestHeader(e[0],e[1]);s.responseType="arraybuffer",s.send()}))}class An extends hn{constructor(e,t={}){super(),n.assign(this,{url:e,reader:t.useXHR?new gn(e,t):new bn(e,t)})}set size(e){}get size(){return this.reader.size}async init(){await this.reader.init(),super.init()}readUint8Array(e,t){return this.reader.readUint8Array(e,t)}}class Cn extends hn{constructor(e){super(),this.readers=e}async init(){const e=this,{readers:t}=e;e.lastDiskNumber=0,e.lastDiskOffset=0,await g.all(t.map((async(n,i)=>{await n.init(),i!=t.length-1&&(e.lastDiskOffset+=n.size),e.size+=n.size}))),super.init()}async readUint8Array(e,t,n=0){const i=this,{readers:r}=this;let a,o=n;-1==o&&(o=r.length-1);let l=e;for(;l>=r[o].size;)l-=r[o].size,o++;const c=r[o],d=c.size;if(l+t>d){const r=d-l;a=new h(t),a.set(await On(c,l,r)),a.set(await i.readUint8Array(e+r,t-r,n),r)}else a=await On(c,l,t);return i.lastDiskNumber=s.max(o,i.lastDiskNumber),a}}class Fn extends fn{constructor(e,t=4294967295){super();const i=this;let r,a,s;n.assign(i,{diskNumber:0,diskOffset:0,size:0,maxSize:t,availableSize:t});const o=new R({async write(t){const{availableSize:n}=i;if(s)t.length<n?await l(t):(await l(t.slice(0,n)),await c(),i.diskOffset+=r.size,i.diskNumber++,s=null,await this.write(t.slice(n)));else{const{value:n,done:o}=await e.next();if(o&&!n)throw new f(rn);r=n,r.size=0,r.maxSize&&(i.maxSize=r.maxSize),i.availableSize=i.maxSize,await Un(r),a=n.writable,s=a.getWriter(),await this.write(t)}},async close(){await s.ready,await c()}});async function l(e){const t=e.length;t&&(await s.ready,await s.write(e),r.size+=t,i.size+=t,i.availableSize-=t)}async function c(){a.size=r.size,await s.close()}n.defineProperty(i,un,{get:()=>o})}}async function Un(e,t){if(!e.init||e.initialized)return g.resolve();await e.init(t)}function Wn(e){return t.isArray(e)&&(e=new Cn(e)),e instanceof z&&(e={readable:e}),e}function Ln(e){e.writable===ze&&typeof e.next==De&&(e=new Fn(e)),e instanceof R&&(e={writable:e});const{writable:t}=e;return t.size===ze&&(t.size=0),e instanceof Fn||n.assign(e,{diskNumber:0,diskOffset:0,availableSize:1/0,maxSize:1/0}),e}function On(e,t,n,i){return e.readUint8Array(t,n,i)}const In=Cn,Nn=Fn,Pn="\0☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ".split(""),Hn=256==Pn.length;function qn(e,t){return t&&"cp437"==t.trim().toLowerCase()?(e=>{if(Hn){let t="";for(let n=0;n<e.length;n++)t+=Pn[e[n]];return t}return(new y).decode(e)})(e):new y(t).decode(e)}const Bn="filename",Mn="rawFilename",Vn="comment",Kn="rawComment",Zn="uncompressedSize",Gn="compressedSize",jn="offset",Xn="diskNumberStart",Yn="lastModDate",Jn="rawLastModDate",Qn="lastAccessDate",$n="creationDate",ei=[Bn,Mn,Gn,Zn,Yn,Jn,Vn,Kn,Qn,$n,jn,Xn,Xn,"internalFileAttribute","externalFileAttribute","msDosCompatible","zip64","encrypted","version","versionMadeBy","zipCrypto","directory","bitFlag","signature","filenameUTF8","commentUTF8","compressionMethod","extraField","rawExtraField","extraFieldZip64","extraFieldUnicodePath","extraFieldUnicodeComment","extraFieldAES","extraFieldNTFS","extraFieldExtendedTimestamp"];class ti{constructor(e){ei.forEach((t=>this[t]=e[t]))}}const ni="File format is not recognized",ii="End of central directory not found",ri="End of Zip64 central directory locator not found",ai="Central directory header not found",si="Local file header not found",oi="Zip64 extra field not found",li="File contains encrypted entry",ci="Encryption method not supported",di="Compression method not supported",ui="Split zip file",fi="utf-8",hi="cp437",wi=[[Zn,ye],[Gn,ye],[jn,ye],[Xn,xe]],_i={[xe]:{getValue:Ri,bytes:4},[ye]:{getValue:Di,bytes:8}};class pi{constructor(e,t={}){n.assign(this,{reader:Wn(e),options:t,config:Fe()})}async*getEntriesGenerator(e={}){const t=this;let{reader:i}=t;const{config:r}=t;if(await Un(i),i.size!==ze&&i.readUint8Array||(i=new _n(await new d(i.readable).blob()),await Un(i)),i.size<Se)throw new f(ni);i.chunkSize=(e=>s.max(e.chunkSize,64))(r);const a=await(async(e,t,n)=>{const i=new h(4);return Ti(i).setUint32(0,101010256,!0),await r(22)||await r(s.min(1048582,n));async function r(t){const r=n-t,a=await On(e,r,t);for(let e=a.length-22;e>=0;e--)if(a[e]==i[0]&&a[e+1]==i[1]&&a[e+2]==i[2]&&a[e+3]==i[3])return{offset:r+e,buffer:a.slice(e,e+22).buffer}}})(i,0,i.size);if(!a)throw 134695760==Ri(Ti(await On(i,0,4)))?new f(ui):new f(ii);const o=Ti(a);let l=Ri(o,12),c=Ri(o,16);const u=a.offset,w=zi(o,20),_=u+Se+w;let p=zi(o,4);const b=i.lastDiskNumber||0;let g=zi(o,6),m=zi(o,8),y=0,x=0;if(c==ye||l==ye||m==xe||g==xe){const e=Ti(await On(i,a.offset-20,20));if(117853008==Ri(e,0)){c=Di(e,8);let t=await On(i,c,56,-1),n=Ti(t);const r=a.offset-20-56;if(Ri(n,0)!=ve&&c!=r){const e=c;c=r,y=c-e,t=await On(i,c,56,-1),n=Ti(t)}if(Ri(n,0)!=ve)throw new f(ri);p==xe&&(p=Ri(n,16)),g==xe&&(g=Ri(n,20)),m==xe&&(m=Di(n,32)),l==ye&&(l=Di(n,40)),c-=l}}if(c<i.size||(y=i.size-c-l-Se,c=i.size-l-Se),b!=p)throw new f(ui);if(0>c)throw new f(ni);let k=0,v=await On(i,c,l,g),S=Ti(v);if(l){const e=a.offset-l;if(Ri(S,k)!=ke&&c!=e){const t=c;c=e,y+=c-t,v=await On(i,c,l,g),S=Ti(v)}}const z=a.offset-c-(i.lastDiskOffset||0);if(l==z||0>z||(l=z,v=await On(i,c,l,g),S=Ti(v)),0>c||c>=i.size)throw new f(ni);const R=xi(t,e,"filenameEncoding"),D=xi(t,e,"commentEncoding");for(let a=0;m>a;a++){const o=new bi(i,r,t.options);if(Ri(S,k)!=ke)throw new f(ai);gi(o,S,k+6);const l=!!o.bitFlag.languageEncodingFlag,c=k+46,d=c+o.filenameLength,u=d+o.extraFieldLength,h=zi(S,k+4),w=!0,_=v.subarray(c,d),p=zi(S,k+32),b=u+p,g=v.subarray(u,b),z=l,T=l,E=w&&!(16&~Si(S,k+38)),A=Ri(S,k+42)+y;n.assign(o,{versionMadeBy:h,msDosCompatible:w,compressedSize:0,uncompressedSize:0,commentLength:p,directory:E,offset:A,diskNumberStart:zi(S,k+34),internalFileAttribute:zi(S,k+36),externalFileAttribute:Ri(S,k+38),rawFilename:_,filenameUTF8:z,commentUTF8:T,rawExtraField:v.subarray(d,u)});const C=xi(t,e,"decodeText")||qn,F=z?fi:R||hi,U=T?fi:D||hi;let W=C(_,F);W===ze&&(W=qn(_,F));let L=C(g,U);L===ze&&(L=qn(g,U)),n.assign(o,{rawComment:g,filename:W,comment:L,directory:E||W.endsWith("/")}),x=s.max(A,x),await mi(o,o,S,k+6),o.zipCrypto=o.encrypted&&!o.extraFieldAES;const O=new ti(o);O.getData=(e,t)=>o.getData(e,O,t),k=b;const{onprogress:I}=e;if(I)try{await I(a+1,m,new ti(o))}catch(e){}yield O}const T=xi(t,e,"extractPrependedData"),E=xi(t,e,"extractAppendedData");return T&&(t.prependedData=x>0?await On(i,0,x):new h),t.comment=w?await On(i,u+Se,w):new h,E&&(t.appendedData=_<i.size?await On(i,_,i.size-_):new h),!0}async getEntries(e={}){const t=[];for await(const n of this.getEntriesGenerator(e))t.push(n);return t}async close(){}}class bi{constructor(e,t,i){n.assign(this,{reader:e,config:t,options:i})}async getData(e,t,i={}){const a=this,{reader:s,offset:o,diskNumberStart:l,extraFieldAES:c,compressionMethod:d,config:u,bitFlag:w,signature:_,rawLastModDate:p,uncompressedSize:b,compressedSize:m}=a,y=t.localDirectory={},x=Ti(await On(s,o,30,l));let k=xi(a,i,"password"),v=xi(a,i,"rawPassword");const S=xi(a,i,"passThrough");if(k=k&&k.length&&k,v=v&&v.length&&v,c&&99!=c.originalCompressionMethod)throw new f(di);if(0!=d&&8!=d&&!S)throw new f(di);if(67324752!=Ri(x,0))throw new f(si);gi(y,x,4),y.rawExtraField=y.extraFieldLength?await On(s,o+30+y.filenameLength,y.extraFieldLength,l):new h,await mi(a,y,x,4,!0),n.assign(t,{lastAccessDate:y.lastAccessDate,creationDate:y.creationDate});const z=a.encrypted&&y.encrypted&&!S,D=z&&!c;if(S||(t.zipCrypto=D),z){if(!D&&c.strength===ze)throw new f(ci);if(!k&&!v)throw new f(li)}const T=o+30+y.filenameLength+y.extraFieldLength,E=m,A=s.readable;n.assign(A,{diskNumberStart:l,offset:T,size:E});const C=xi(a,i,"signal"),F=xi(a,i,"checkPasswordOnly");F&&(e=new R),e=Ln(e),await Un(e,S?m:b);const{writable:U}=e,{onstart:W,onprogress:L,onend:O}=i,I={options:{codecType:Pt,password:k,rawPassword:v,zipCrypto:D,encryptionStrength:c&&c.strength,signed:xi(a,i,"checkSignature")&&!S,passwordVerification:D&&(w.dataDescriptor?p>>>8&255:_>>>24&255),signature:_,compressed:0!=d&&!S,encrypted:a.encrypted&&!S,useWebWorkers:xi(a,i,"useWebWorkers"),useCompressionStream:xi(a,i,"useCompressionStream"),transferStreams:xi(a,i,"transferStreams"),checkPasswordOnly:F},config:u,streamOptions:{signal:C,size:E,onstart:W,onprogress:L,onend:O}};let N=0;try{({outputSize:N}=await(async(e,t)=>{const{options:n,config:i}=t,{transferStreams:a,useWebWorkers:s,useCompressionStream:o,codecType:l,compressed:c,signed:d,encrypted:u}=n,{workerScripts:f,maxWorkers:h}=i;t.transferStreams=a||a===ze;const w=!(c||d||u||t.transferStreams);return t.useWebWorkers=!w&&(s||s===ze&&i.useWebWorkers),t.scripts=t.useWebWorkers&&f?f[l]:[],n.useCompressionStream=o||o===ze&&i.useCompressionStream,(await(async()=>{const n=Jt.find((e=>!e.busy));if(n)return en(n),new Mt(n,e,t,_);if(Jt.length<h){const n={indexWorker:$t};return $t++,Jt.push(n),new Mt(n,e,t,_)}return new g((n=>Qt.push({resolve:n,stream:e,workerOptions:t})))})()).run();function _(e){if(Qt.length){const[{resolve:t,stream:n,workerOptions:i}]=Qt.splice(0,1);t(new Mt(e,n,i,_))}else e.worker?(en(e),((e,t)=>{const{config:n}=t,{terminateWorkerTimeout:i}=n;r.isFinite(i)&&i>=0&&(e.terminated?e.terminated=!1:e.terminateTimeout=setTimeout((async()=>{Jt=Jt.filter((t=>t!=e));try{await e.terminate()}catch(e){}}),i))})(e,t)):Jt=Jt.filter((t=>t!=e))}})({readable:A,writable:U},I))}catch(e){if(!F||e.message!=Ze)throw e}finally{const e=xi(a,i,"preventClose");U.size+=N,e||U.locked||await U.getWriter().close()}return F?ze:e.getData?e.getData():U}}function gi(e,t,i){const r=e.rawBitFlag=zi(t,i+2),a=!(1&~r),s=Ri(t,i+6);n.assign(e,{encrypted:a,version:zi(t,i),bitFlag:{level:(6&r)>>1,dataDescriptor:!(8&~r),languageEncodingFlag:!(2048&~r)},rawLastModDate:s,lastModDate:ki(s),filenameLength:zi(t,i+22),extraFieldLength:zi(t,i+24)})}async function mi(e,t,i,r,a){const{rawExtraField:s}=t,c=t.extraField=new l,d=Ti(new h(s));let u=0;try{for(;u<s.length;){const e=zi(d,u),t=zi(d,u+2);c.set(e,{type:e,data:s.slice(u+4,u+4+t)}),u+=4+t}}catch(e){}const w=zi(i,r+4);n.assign(t,{signature:Ri(i,r+10),uncompressedSize:Ri(i,r+18),compressedSize:Ri(i,r+14)});const _=c.get(1);_&&(((e,t)=>{t.zip64=!0;const n=Ti(e.data),i=wi.filter((([e,n])=>t[e]==n));for(let r=0,a=0;r<i.length;r++){const[s,o]=i[r];if(t[s]==o){const i=_i[o];t[s]=e[s]=i.getValue(n,a),a+=i.bytes}else if(e[s])throw new f(oi)}})(_,t),t.extraFieldZip64=_);const p=c.get(28789);p&&(await yi(p,Bn,Mn,t,e),t.extraFieldUnicodePath=p);const b=c.get(25461);b&&(await yi(b,Vn,Kn,t,e),t.extraFieldUnicodeComment=b);const g=c.get(39169);g?(((e,t,i)=>{const r=Ti(e.data),a=Si(r,4);n.assign(e,{vendorVersion:Si(r,0),vendorId:Si(r,2),strength:a,originalCompressionMethod:i,compressionMethod:zi(r,5)}),t.compressionMethod=e.compressionMethod})(g,t,w),t.extraFieldAES=g):t.compressionMethod=w;const m=c.get(10);m&&(((e,t)=>{const i=Ti(e.data);let r,a=4;try{for(;a<e.data.length&&!r;){const t=zi(i,a),n=zi(i,a+2);1==t&&(r=e.data.slice(a+4,a+4+n)),a+=4+n}}catch(e){}try{if(r&&24==r.length){const i=Ti(r),a=i.getBigUint64(0,!0),s=i.getBigUint64(8,!0),o=i.getBigUint64(16,!0);n.assign(e,{rawLastModDate:a,rawLastAccessDate:s,rawCreationDate:o});const l={lastModDate:vi(a),lastAccessDate:vi(s),creationDate:vi(o)};n.assign(e,l),n.assign(t,l)}}catch(e){}})(m,t),t.extraFieldNTFS=m);const y=c.get(21589);y&&(((e,t,n)=>{const i=Ti(e.data),r=Si(i,0),a=[],s=[];n?(1&~r||(a.push(Yn),s.push(Jn)),2&~r||(a.push(Qn),s.push("rawLastAccessDate")),4&~r||(a.push($n),s.push("rawCreationDate"))):5>e.data.length||(a.push(Yn),s.push(Jn));let l=1;a.forEach(((n,r)=>{if(e.data.length>=l+4){const a=Ri(i,l);t[n]=e[n]=new o(1e3*a);const c=s[r];e[c]=a}l+=4}))})(y,t,a),t.extraFieldExtendedTimestamp=y);const x=c.get(6534);x&&(t.extraFieldUSDZ=x)}async function yi(e,t,i,r,a){const s=Ti(e.data),o=new Oe;o.append(a[i]);const l=Ti(new h(4));l.setUint32(0,o.get(),!0);const c=Ri(s,1);n.assign(e,{version:Si(s,0),[t]:qn(e.data.subarray(5)),valid:!a.bitFlag.languageEncodingFlag&&c==Ri(l,0)}),e.valid&&(r[t]=e[t],r[t+"UTF8"]=!0)}function xi(e,t,n){return t[n]===ze?e.options[n]:t[n]}function ki(e){const t=(4294901760&e)>>16,n=65535&e;try{return new o(1980+((65024&t)>>9),((480&t)>>5)-1,31&t,(63488&n)>>11,(2016&n)>>5,2*(31&n),0)}catch(e){}}function vi(e){return new o(r(e/a(1e4)-a(116444736e5)))}function Si(e,t){return e.getUint8(t)}function zi(e,t){return e.getUint16(t,!0)}function Ri(e,t){return e.getUint32(t,!0)}function Di(e,t){return r(e.getBigUint64(t,!0))}function Ti(e){return new p(e.buffer)}Ue({Inflate:function(e){const t=new me,n=e&&e.chunkSize?s.floor(2*e.chunkSize):131072,i=new h(n);let r=!1;t.inflateInit(),t.next_out=i,this.append=(e,a)=>{const s=[];let o,l,c=0,d=0,u=0;if(0!==e.length){t.next_in_index=0,t.next_in=e,t.avail_in=e.length;do{if(t.next_out_index=0,t.avail_out=n,0!==t.avail_in||r||(t.next_in_index=0,r=!0),o=t.inflate(0),r&&o===O){if(0!==t.avail_in)throw new f("inflating: bad input")}else if(o!==C&&o!==F)throw new f("inflating: "+t.msg);if((r||o===F)&&t.avail_in===e.length)throw new f("inflating: bad input");t.next_out_index&&(t.next_out_index===n?s.push(new h(i)):s.push(i.subarray(0,t.next_out_index))),u+=t.next_out_index,a&&t.next_in_index>0&&t.next_in_index!=c&&(a(t.next_in_index),c=t.next_in_index)}while(t.avail_in>0||0===t.avail_out);return s.length>1?(l=new h(u),s.forEach((e=>{l.set(e,d),d+=e.length}))):l=s[0]?new h(s[0]):new h,l}},this.flush=()=>{t.inflateEnd()}}}),e.BlobReader=_n,e.BlobWriter=pn,e.Data64URIReader=class extends hn{constructor(e){super();let t=e.length;for(;"="==e.charAt(t-1);)t--;const i=e.indexOf(",")+1;n.assign(this,{dataURI:e,dataStart:i,size:s.floor(.75*(t-i))})}readUint8Array(e,t){const{dataStart:n,dataURI:i}=this,r=new h(t),a=4*s.floor(e/3),o=atob(i.substring(a+n,4*s.ceil((e+t)/3)+n)),l=e-3*s.floor(a/4);for(let e=l;l+t>e;e++)r[e-l]=o.charCodeAt(e);return r}},e.Data64URIWriter=class extends wn{constructor(e){super(),n.assign(this,{data:"data:"+(e||"")+";base64,",pending:[]})}writeUint8Array(e){const t=this;let n=0,r=t.pending;const a=t.pending.length;for(t.pending="",n=0;n<3*s.floor((a+e.length)/3)-a;n++)r+=i.fromCharCode(e[n]);for(;n<e.length;n++)t.pending+=i.fromCharCode(e[n]);r.length>2?t.data+=v(r):t.pending=r}getData(){return this.data+v(this.pending)}},e.ERR_BAD_FORMAT=ni,e.ERR_CENTRAL_DIRECTORY_NOT_FOUND=ai,e.ERR_ENCRYPTED=li,e.ERR_EOCDR_LOCATOR_ZIP64_NOT_FOUND=ri,e.ERR_EOCDR_NOT_FOUND=ii,e.ERR_EXTRAFIELD_ZIP64_NOT_FOUND=oi,e.ERR_HTTP_RANGE=nn,e.ERR_INVALID_PASSWORD=Ve,e.ERR_INVALID_SIGNATURE=Ke,e.ERR_ITERATOR_COMPLETED_TOO_SOON=rn,e.ERR_LOCAL_FILE_HEADER_NOT_FOUND=si,e.ERR_SPLIT_ZIP_FILE=ui,e.ERR_UNSUPPORTED_COMPRESSION=di,e.ERR_UNSUPPORTED_ENCRYPTION=ci,e.HttpRangeReader=class extends An{constructor(e,t={}){t.useRangeHeader=!0,super(e,t)}},e.HttpReader=An,e.Reader=hn,e.SplitDataReader=Cn,e.SplitDataWriter=Fn,e.SplitZipReader=In,e.SplitZipWriter=Nn,e.TextReader=class extends _n{constructor(e){super(new b([e],{type:"text/plain"}))}},e.TextWriter=class extends pn{constructor(e){super(e),n.assign(this,{encoding:e,utf8:!e||"utf-8"==e.toLowerCase()})}async getData(){const{encoding:e,utf8:t}=this,i=await super.getData();if(i.text&&t)return i.text();{const t=new FileReader;return new g(((r,a)=>{n.assign(t,{onload:({target:e})=>r(e.result),onerror:()=>a(t.error)}),t.readAsText(i,e)}))}}},e.Uint8ArrayReader=class extends hn{constructor(e){super(),n.assign(this,{array:e,size:e.length})}readUint8Array(e,t){return this.array.slice(e,e+t)}},e.Uint8ArrayWriter=class extends wn{init(e=0){n.assign(this,{offset:0,array:new h(e)}),super.init()}writeUint8Array(e){const t=this;if(t.offset+e.length>t.array.length){const n=t.array;t.array=new h(n.length+e.length),t.array.set(n)}t.array.set(e,t.offset),t.offset+=e.length}getData(){return this.array}},e.Writer=wn,e.ZipReader=pi,e.ZipReaderStream=class{constructor(e={}){const{readable:t,writable:n}=new S,i=new pi(t,e).getEntriesGenerator();this.readable=new z({async pull(e){const{done:t,value:n}=await i.next();if(t)return e.close();const r={...n,readable:(()=>{const{readable:e,writable:t}=new S;if(n.getData)return n.getData(t),e})()};delete r.getData,e.enqueue(r)}}),this.writable=n}},e.configure=Ue,e.getMimeType=()=>"application/octet-stream",e.initReader=Wn,e.initStream=Un,e.initWriter=Ln,e.readUint8Array=On,e.terminateWorkers=async()=>{await g.allSettled(Jt.map((e=>(en(e),e.terminate()))))}}));
+;try{zip.configure({useWebWorkers:false})}catch(e){}</script>
+<script>const IGParser = (() => {
+  const UREG = /^[a-z0-9._]{1,30}$/i;
+  const fix = s => { if (typeof s !== 'string') return s; try { return decodeURIComponent(escape(s)); } catch (e) { return s; } };
+  const okU = s => typeof s === 'string' && UREG.test(s) && !/^\d+$/.test(s) && !/^\.|\.$/.test(s);
+
+  function userFromHref(h) {
+    if (typeof h !== 'string') return null;
+    const m = h.match(/instagram\.com\/(?:_u\/)?([A-Za-z0-9._]{1,30})\/?(?:[?#].*)?$/);
+    if (!m) return null;
+    const u = m[1];
+    if (['p', 'reel', 'reels', 'stories', 'explore', 'accounts', 'tv'].includes(u.toLowerCase())) return null;
+    return okU(u) ? u : null;
+  }
+
+  function deepLabel(o, label, depth = 0) {
+    if (!o || typeof o !== 'object' || depth > 8) return null;
+    if (Array.isArray(o)) { for (const x of o) { const r = deepLabel(x, label, depth + 1); if (r) return r; } return null; }
+    if (typeof o.label === 'string' && o.label.toLowerCase() === label && typeof o.value === 'string' && o.value) return o.value;
+    for (const k in o) { const v = o[k]; if (v && typeof v === 'object') { const r = deepLabel(v, label, depth + 1); if (r) return r; } }
+    return null;
+  }
+
+  function flat(e) {
+    const out = {};
+    const add = (k, v, ts) => { if (!k) return; k = fix(k).toLowerCase(); if (!(k in out)) out[k] = { v: fix(v), ts }; };
+    const smd = e && e.string_map_data;
+    if (smd && typeof smd === 'object') for (const k in smd) add(k, smd[k] && smd[k].value, smd[k] && smd[k].timestamp);
+    const walk = (a, d) => {
+      if (!Array.isArray(a) || d > 6) return;
+      for (const x of a) {
+        if (!x || typeof x !== 'object') continue;
+        if (typeof x.label === 'string') add(x.label, x.value != null ? x.value : x.href, x.timestamp_value);
+        if (Array.isArray(x.dict)) walk(x.dict, d + 1);
+        if (Array.isArray(x.vec)) walk(x.vec, d + 1);
+      }
+    };
+    if (e) walk(e.label_values, 0);
+    return out;
+  }
+
+  function tsOf(e) {
+    const s = e && e.string_list_data && e.string_list_data[0];
+    let t = (s && s.timestamp) || (e && e.timestamp);
+    if (!t) { const f = flat(e); for (const k of ['time', 'date', 'timestamp', 'creation time', 'change date']) if (f[k]) { t = f[k].ts || Number(f[k].v) || Date.parse(f[k].v) / 1000; if (t) break; } }
+    if (t && t > 1e12) t = Math.round(t / 1000);
+    return t || 0;
+  }
+
+  function userOf(e) {
+    if (!e || typeof e !== 'object') return null;
+    const s = e.string_list_data && e.string_list_data[0];
+    if (s && okU(s.value)) return s.value;
+    if (okU(e.title)) return e.title;
+    const lu = deepLabel(e, 'username'); if (okU(lu)) return lu;
+    if (s) { const h = userFromHref(s.href); if (h) return h; }
+    const f = flat(e);
+    for (const k of ['username', 'media owner', 'owner', 'account']) if (f[k] && okU(f[k].v)) return f[k].v;
+    const hu = deepLabel(e, 'url'); const h2 = userFromHref(hu); if (h2) return h2;
+    return null;
+  }
+
+  function entries(j) {
+    if (Array.isArray(j)) return j;
+    if (j && typeof j === 'object') { let out = []; for (const k in j) if (Array.isArray(j[k])) out = out.concat(j[k]); return out; }
+    return [];
+  }
+
+  function people(j) {
+    const m = new Map();
+    for (const e of entries(j)) { const u = userOf(e); if (!u) continue; const k = u.toLowerCase(); const t = tsOf(e); if (!m.has(k) || (t && t < m.get(k).t)) m.set(k, { u, t }); }
+    return [...m.values()];
+  }
+
+  const base = n => n.split('/').pop().toLowerCase();
+
+  function classify(name) {
+    const n = name.toLowerCase(); const b = base(n);
+    if (!n.endsWith('.json')) return null;
+    if (/\/messages\/inbox\/[^/]+\/message_\d+\.json$/.test(n)) return 'msg';
+    if (/^followers(_\d+)?\.json$/.test(b)) return 'followers';
+    if (b === 'following.json') return 'following';
+    if (b.startsWith('pending_follow_requests')) return 'pending';
+    if (b.startsWith('recently_unfollowed')) return 'recentUnf';
+    if (b.startsWith('close_friends')) return 'close';
+    if (b.startsWith('blocked_profiles') || b.startsWith('blocked_accounts')) return 'blocked';
+    if (b.startsWith('restricted_profiles') || b.startsWith('restricted_accounts')) return 'restricted';
+    if (b.startsWith('hide_story_from')) return 'hidden';
+    if (b === 'liked_posts.json' || b === 'liked_comments.json') return 'likes';
+    if (b === 'story_likes.json') return 'storyLikes';
+    if (n.includes('/comments/') && /comments/.test(b)) return 'comments';
+    if (b.startsWith('login_activity')) return 'logins';
+    if (b.startsWith('advertisers_using_your_activity')) return 'advertisers';
+    if (b === 'your_topics.json' || b === 'ads_interests.json' || b === 'recommended_topics.json') return 'topics';
+    if (b === 'profile_changes.json') return 'changes';
+    if (b === 'personal_information.json') return 'personal';
+    return null;
+  }
+
+  function deviceOf(ua) {
+    ua = ua || '';
+    let m;
+    if ((m = ua.match(/Instagram [\d.]+ Android \([^;]*;[^;]*;[^;]*;\s*([^;]+);\s*([^;]+);/))) return (m[1].trim() + ' ' + m[2].trim()).replace(/\b\w/g, c => c.toUpperCase());
+    if ((m = ua.match(/(iPhone|iPad)[\d,]*/))) return m[1];
+    if (/Android/i.test(ua)) { m = ua.match(/Android [\d.]+; ([^;)]+)/); return 'Android' + (m ? ' · ' + m[1].trim() : ''); }
+    const br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'Browser';
+    const os = /Windows/.test(ua) ? 'Windows' : /Mac OS X|Macintosh/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : '';
+    return ua ? br + (os ? ' · ' + os : '') : 'Unknown device';
+  }
+
+  function newYear() { return { likes: 0, comments: 0, sent: 0, month: Array(12).fill(0), wh: Array(7 * 24).fill(0), liked: {}, commented: {}, dms: {} }; }
+
+  async function parse(files, onProgress) {
+    const R = { followers: [], following: [], pending: [], recentUnf: [], close: [], blocked: [], restricted: [], hidden: [], logins: [], advertisers: [], topics: [], changes: [], me: null, myName: null, has: {} };
+    const groups = {};
+    for (const f of files) { const c = classify(f.name); if (c) (groups[c] = groups[c] || []).push(f); }
+    if (!Object.keys(groups).length) {
+      const html = files.some(f => /\.html$/i.test(f.name));
+      throw new Error(html ? 'HTML_FORMAT' : 'NO_DATA');
+    }
+    const total = files.filter(f => classify(f.name)).length; let done = 0;
+    const read = async f => { let j = null; try { j = JSON.parse(await f.text()); } catch (e) { } done++; if (onProgress && (done % 20 === 0 || done === total)) onProgress(done, total); return j; };
+    const merge = (arr, list) => { const seen = new Set(arr.map(x => x.u.toLowerCase())); for (const p of list) if (!seen.has(p.u.toLowerCase())) { seen.add(p.u.toLowerCase()); arr.push(p); } };
+
+    for (const k of ['followers', 'following', 'pending', 'recentUnf', 'close', 'blocked', 'restricted', 'hidden']) {
+      for (const f of groups[k] || []) { const j = await read(f); if (j) { merge(R[k], people(j)); R.has[k] = true; } }
+    }
+    for (const f of groups.personal || []) {
+      const j = await read(f); for (const e of entries(j)) { const fl = flat(e); if (fl.username && fl.username.v) R.me = fl.username.v; if (fl.name && fl.name.v) R.myName = fl.name.v; }
+    }
+
+    const Y = { all: newYear() };
+    const yr = t => { const y = String(new Date(t * 1000).getFullYear()); return (Y[y] = Y[y] || newYear()); };
+    const bump = (t, fn) => { if (!t) return; const d = new Date(t * 1000); for (const o of [Y.all, yr(t)]) { o.month[d.getMonth()]++; o.wh[d.getDay() * 24 + d.getHours()]++; fn && fn(o); } };
+    const inc = (m, k) => { m[k] = (m[k] || 0) + 1; };
+
+    for (const f of (groups.likes || []).concat(groups.storyLikes || [])) {
+      const j = await read(f); if (!j) continue; R.has.likes = true;
+      for (const e of entries(j)) { const u = userOf(e); bump(tsOf(e), o => { o.likes++; if (u) inc(o.liked, u); }); }
+    }
+    for (const f of groups.comments || []) {
+      const j = await read(f); if (!j) continue; R.has.comments = true;
+      for (const e of entries(j)) { const fl = flat(e); const u = (fl['media owner'] && okU(fl['media owner'].v)) ? fl['media owner'].v : null; bump(tsOf(e), o => { o.comments++; if (u) inc(o.commented, u); }); }
+    }
+    if (groups.msg) {
+      R.has.msgs = true;
+      const threads = {};
+      for (const f of groups.msg) {
+        const j = await read(f); if (!j || !Array.isArray(j.messages)) continue;
+        const parts = (j.participants || []).map(p => fix(p.name));
+        if (parts.length !== 2) continue;
+        const key = f.name.split('/').slice(-2, -1)[0];
+        const th = threads[key] = threads[key] || { title: fix(j.title) || parts.join(', '), parts, msgs: [] };
+        for (const m of j.messages) th.msgs.push([Math.round((m.timestamp_ms || 0) / 1000), fix(m.sender_name)]);
+      }
+      if (!R.myName) { const c = {}; for (const k in threads) for (const p of threads[k].parts) inc(c, p); R.myName = Object.keys(c).sort((a, b) => c[b] - c[a])[0] || null; }
+      for (const k in threads) {
+        const th = threads[k]; const other = th.parts.find(p => p !== R.myName) || th.title;
+        for (const [t, s] of th.msgs) {
+          if (!t) continue;
+          const mine = s === R.myName;
+          const targets = [Y.all, yr(t)];
+          for (const o of targets) inc(o.dms, other);
+          if (mine) bump(t, o => { o.sent++; });
+        }
+      }
+    }
+    const top = (m, n = 10) => Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, n);
+    const wrapped = {};
+    for (const y in Y) { const o = Y[y]; wrapped[y] = { likes: o.likes, comments: o.comments, sent: o.sent, month: o.month, wh: o.wh, liked: top(o.liked), commented: top(o.commented), dms: top(o.dms) }; }
+    R.wrapped = wrapped;
+
+    for (const f of groups.logins || []) {
+      const j = await read(f); if (!j) continue; R.has.logins = true;
+      for (const e of entries(j)) {
+        const fl = flat(e); const ua = fl['user agent'] ? fl['user agent'].v : '';
+        let t = tsOf(e); if (!t && e.title) t = Math.round(Date.parse(e.title) / 1000) || 0;
+        R.logins.push({ t, ip: fl['ip address'] ? fl['ip address'].v : '', dev: deviceOf(ua), ua });
+      }
+    }
+    R.logins.sort((a, b) => b.t - a.t);
+    for (const f of groups.advertisers || []) {
+      const j = await read(f); if (!j) continue; R.has.advertisers = true;
+      for (const e of entries(j)) { const n = fix(e.advertiser_name) || (flat(e).name || {}).v || deepLabel(e, 'name'); if (n && !R.advertisers.includes(n)) R.advertisers.push(n); }
+    }
+    for (const f of groups.topics || []) {
+      const j = await read(f); if (!j) continue; R.has.topics = true;
+      for (const e of entries(j)) { const fl = flat(e); const v = (fl.name || fl.interest || fl.topic || {}).v || (typeof e === 'string' ? e : (e.value || e.title)); if (v && typeof v === 'string' && !R.topics.includes(fix(v))) R.topics.push(fix(v)); }
+    }
+    for (const f of groups.changes || []) {
+      const j = await read(f); if (!j) continue; R.has.changes = true;
+      for (const e of entries(j)) { const fl = flat(e); R.changes.push({ what: (fl.changed || {}).v || '', from: (fl['previous value'] || {}).v || '', to: (fl['new value'] || {}).v || '', t: tsOf(e) }); }
+    }
+    R.changes.sort((a, b) => b.t - a.t);
+    return R;
+  }
+
+  return { parse, userOf, tsOf, classify, deviceOf, fix };
+})();
+if (typeof module !== 'undefined') module.exports = IGParser;
+</script>
+<script>
+{
+const I = {
+  back:'<path d="M15 6l-6 6 6 6"/>', chev:'<path d="M9 6l6 6-6 6"/>', zip:'<path d="M6 20.5V3.5A1.5 1.5 0 0 1 7.5 2h6l4.5 4.5v14A1.5 1.5 0 0 1 16.5 22h-9A1.5 1.5 0 0 1 6 20.5z"/><path d="M11 5h1M11 8h1M11 11h1M10.5 14h2v3h-2z"/>',
+  minus:'<circle cx="9" cy="8" r="4"/><path d="M3 21v-1a6 6 0 0 1 12 0v1M16 11h6"/>', hour:'<path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/>',
+  star:'<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/>', users:'<circle cx="9" cy="8" r="4"/><path d="M3 21v-1a6 6 0 0 1 12 0v1M16 4a4 4 0 0 1 0 8M21 21v-1a6 6 0 0 0-3-5.2"/>',
+  ban:'<circle cx="12" cy="12" r="9"/><path d="M5.7 5.7l12.6 12.6"/>', undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>', shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  hist:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/>', book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5zM4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  ig:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".8"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  pause:'<path d="M8 5v14M16 5v14"/>', play:'<path d="M7 4l13 8-13 8z"/>', queue:'<path d="M4 6h16M4 12h10M4 18h7M17 15l3 3-3 3"/>', cards:'<rect x="6" y="4" width="13" height="16" rx="2.5"/><path d="M3 7v11a3 3 0 0 0 3 3"/>',
+  dev:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>', desk:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>', warn:'<path d="M12 3L2 20h20zM12 9v5M12 17h.01"/>',
+  ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>', ad:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l2-6 2 6M7.7 13h2.6M14 9v6h1.5a2.5 2.5 0 0 0 0-5H14"/>', tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.3"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>', home:'<path d="M3 11l9-8 9 8M5 9.5V21h14V9.5"/>', gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  ghost:'<path d="M5 21V10a7 7 0 0 1 14 0v11l-2.5-2-2.3 2-2.2-2-2.2 2-2.3-2z"/><path d="M9.5 10h.01M14.5 10h.01"/>', phone:'<rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/>'
+};
+const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
+
+const L = {
+en:{
+ title:'Unfollowers', upload:'Upload Instagram ZIP', uploadNew:'Upload a new ZIP', staysHere:'Your data stays on this phone', exportOf:'Export', reading:'Reading your file…',
+ welcome:'See who doesn’t follow you back', welcomeSub:'Instagram lets you download your own data. Upload that ZIP here and everything is sorted for you. Nothing leaves your phone and you never type your password.',
+ howGet:'How to get your file', notBack:'Not following back', fans:'Fans', mutual:'Mutual', kept:'Kept', since:'Since your last upload', unfollowedYou:'unfollowed you', newF:'new followers',
+ accounts:'Accounts', pending:'Pending requests', closeChk:'Close friends check', fmk:'Fans, mutual, kept', bri:'Blocked, restricted, hidden', recentUnf:'Recently unfollowed by you', more:'More',
+ wrapped:'Wrapped', security:'Security', history:'History', guide:'Guide', plan:'Unfollow plan', search:'Search', sortOld:'Oldest follow first', sortNew:'Newest follow first', sortAZ:'A to Z',
+ all:'All', y2:'2+ years', y1:'1–2 years', lt1:'Under 1 year', m1:'Last month', followed:'Followed', requested:'Requested', selected:'selected', selAll:'Select all', selNone:'Clear', addQ:'Add to queue', addedQ:'Added to the queue',
+ quickSort:'Quick sort by swipe', keepHint:'Star accounts you want to keep following. They stay hidden from this list.', none:'Nothing here', noneSub:'Nice and clean.',
+ swipeTitle:'Quick sort', swipeHelp:'Swipe left to unfollow, right to keep. Not sure who it is? Open the profile.', toUnf:'Unfollow', keep:'Keep', left:'left', openProfile:'Open profile', undo:'Undo', allSorted:'All sorted', allSortedSub:'Everyone left is either kept or in your queue.', goQueue:'Go to queue',
+ day:'Day', of:'of', today:'Today', nextBreak:'break in', open:'Open in Instagram', done:'Done', gone:'Gone / renamed', skip:'Skip', nextIn:'Next in', upNext:'Up next', tryLater:'Saw “Try again later”? Pause 48h',
+ qEmpty:'Your queue is empty', qEmptySub:'Pick accounts from a list and tap “Add to queue”.', dailyDone:'Done for today', dailyDoneSub:'You hit today’s limit. Come back tomorrow, that’s how you stay safe.', breakT:'Take a break', breakSub:'Short sessions look human. Next session from', paused:'Plan paused', pausedSub:'Instagram slowed you down, so the plan rests until', resume:'Resume now', resumeWarn:'Resuming early raises the risk of a block. Resume anyway?',
+ settings:'Pace settings', dailyLimit:'Daily limit', delay:'Wait between accounts', calm:'Calm · 3–6 min', normal:'Normal · 2–4 min', fast:'Faster · 1–2 min (riskier)', clearQ:'Clear queue', clearQSure:'Remove everyone from the queue?', unfollowAct:'Unfollow', cancelAct:'Cancel request',
+ cancelHint:'Open the profile and tap “Requested” to cancel.', unfHint:'Open the profile, tap “Following”, then “Unfollow”. Come back and tap Done.', remaining:'remaining', estDays:'about {n} days left', estToday:'finishes today',
+ histTitle:'History', histEmpty:'Upload a ZIP and it’s saved here. Upload again in a week to see who unfollowed you.', followersN:'followers', followingN:'following', vsPrev:'vs previous', first:'First upload', del:'Delete', delSure:'Delete this upload from history?',
+ likesGiven:'Likes given', comments:'Comments', msgsSent:'Messages sent', peak:'Most active', topDM:'Top DMs', mostLiked:'Most liked accounts', mostComm:'Most commented', byMonth:'Activity by month', firstFollow:'First account you followed', oldestFollower:'Your oldest follower', allTime:'All time', whenActive:'When you’re active', msgs:'messages',
+ needLikes:'Include “Likes” and “Comments” in your export to see this.', needMsgs:'Include “Messages” in your export to see your top DMs.',
+ secOk:'No unusual devices', secOkSub:'Every login came from a device you use often.', secWarn:'Check these devices', secWarnSub:'Seen only once or twice in the last 90 days. If it wasn’t you, change your password.', logins:'Logins and devices', times:'logins', lastSeen:'last', rare:'Rare', advertisers:'Advertisers with your data', companies:'companies', interests:'Your ad interests', changes:'Account changes', needSec:'Include “Security and login information” in your export to see this.', needAds:'Include “Ads information” in your export to see this.', needPers:'Include “Personal information” in your export to see this.', showAll:'Show all',
+ errHtml:'This ZIP is in HTML format. Request it again and choose JSON.', errNone:'No Instagram data found in this file. Make sure it’s the ZIP Instagram sent you.', errRead:'Couldn’t read this file. Try downloading it again.',
+ imported:'Loaded', rangeWarn:'Looks like the date range was “Last year”. Request the file again with “All time”, or the lists will be wrong.', noStore:'Saving isn’t available in this browser, so your data resets when you close the page.', wipe:'Delete all data', wipeSure:'This deletes your uploads, history, queue and kept list from this phone.', cancel:'Cancel', yes:'Yes', privacy:'Everything is processed on this device. Nothing is uploaded.',
+ install:'Add to your home screen', installA:'Android (Chrome): menu ⋮ → “Add to Home screen”.', installI:'iPhone (Safari): Share button → “Add to Home Screen”.',
+ blocked:'Blocked', restricted:'Restricted', hidden:'Story hidden from', closeSub:'In your close friends but not following you', inQueue:'In queue', pendingSub:'Requests you sent that were never accepted',
+ g:[['Open settings','In Instagram go to your profile, tap the menu ☰ at the top right, then “Meta Account” (at the top, under “Your account”).'],['Export your information','Tap “Your information and permissions” → “Export your information” → “Create export”.'],['Pick your profile','Choose the Instagram profile you want to check (not Facebook or Threads), then “Export to device”.'],['Customize information','Tap “Customize information”. Required: “Followers and following”. For Wrapped add “Likes”, “Comments” and “Messages”. For Security add “Security and login information”, “Ads information” and “Personal information”. Leaving “All available information” also works, but the file is much bigger.'],['Date range: All time','Tap “Date range” and change “Last year” to “All time”. Otherwise older followers are missing and the lists come out wrong.'],['Format: JSON','Tap “Format” and change “HTML” to “JSON”. The app can’t read HTML.'],['Media quality: Low','Set “Media quality” to “Low” so the file stays small, then tap “Start export”.'],['Wait','Instagram prepares the file, usually within minutes, sometimes a few hours. You get an email when it’s ready.'],['Download','Go back to “Export your information”. Under “Current activity” you’ll see your export with a Download button. Android saves it to Downloads, iPhone to the Files app.'],['Upload here','Tap “Upload Instagram ZIP” and pick the file. If Instagram split it into several ZIPs, select them all together.']],
+ gTip:'Do it again every week or two, and History will show you who unfollowed you in between.'
+},
+el:{
+ title:'Unfollowers', upload:'Ανέβασε το ZIP του Instagram', uploadNew:'Ανέβασε νέο ZIP', staysHere:'Τα δεδομένα μένουν σε αυτό το κινητό', exportOf:'Αρχείο', reading:'Διαβάζω το αρχείο σου…',
+ welcome:'Δες ποιοι δεν σε ακολουθούν πίσω', welcomeSub:'Το Instagram σου δίνει τα δεδομένα σου σε ένα ZIP. Ανέβασέ το εδώ και όλα ταξινομούνται αυτόματα. Τίποτα δεν φεύγει από το κινητό σου και δεν βάζεις ποτέ κωδικό.',
+ howGet:'Πώς παίρνω το αρχείο', notBack:'Δεν σε ακολουθούν πίσω', fans:'Fans', mutual:'Αμοιβαίοι', kept:'Κρατάω', since:'Από το προηγούμενο ανέβασμα', unfollowedYou:'σε έκαναν unfollow', newF:'νέοι followers',
+ accounts:'Λογαριασμοί', pending:'Αιτήματα σε αναμονή', closeChk:'Έλεγχος close friends', fmk:'Fans, αμοιβαίοι, κρατάω', bri:'Μπλοκαρισμένοι, περιορισμένοι, κρυφά', recentUnf:'Πρόσφατα unfollow που έκανες', more:'Περισσότερα',
+ wrapped:'Wrapped', security:'Ασφάλεια', history:'Ιστορικό', guide:'Οδηγός', plan:'Πλάνο unfollow', search:'Αναζήτηση', sortOld:'Παλαιότεροι πρώτα', sortNew:'Νεότεροι πρώτα', sortAZ:'Α έως Ω',
+ all:'Όλοι', y2:'2+ χρόνια', y1:'1–2 χρόνια', lt1:'Κάτω από 1 χρόνο', m1:'Τελευταίος μήνας', followed:'Από', requested:'Αίτημα', selected:'επιλεγμένοι', selAll:'Όλοι', selNone:'Καθαρισμός', addQ:'Στην ουρά', addedQ:'Μπήκαν στην ουρά',
+ quickSort:'Γρήγορη διαλογή με swipe', keepHint:'Βάλε αστέρι σε όσους θες να συνεχίσεις να ακολουθείς. Κρύβονται από αυτή τη λίστα.', none:'Δεν υπάρχει κανείς', noneSub:'Όλα καθαρά.',
+ swipeTitle:'Γρήγορη διαλογή', swipeHelp:'Αριστερά για unfollow, δεξιά για να τον κρατήσεις. Δεν ξέρεις ποιος είναι; Άνοιξε το προφίλ.', toUnf:'Unfollow', keep:'Κρατάω', left:'απομένουν', openProfile:'Άνοιγμα προφίλ', undo:'Αναίρεση', allSorted:'Τελείωσε η διαλογή', allSortedSub:'Όλοι οι υπόλοιποι είναι είτε στους «Κρατάω» είτε στην ουρά.', goQueue:'Πήγαινε στην ουρά',
+ day:'Μέρα', of:'από', today:'Σήμερα', nextBreak:'διάλειμμα σε', open:'Άνοιγμα στο Instagram', done:'Έγινε', gone:'Δεν υπάρχει / άλλαξε όνομα', skip:'Παράλειψη', nextIn:'Επόμενος σε', upNext:'Επόμενος', tryLater:'Είδες «Try again later»; Παύση 48 ωρών',
+ qEmpty:'Η ουρά είναι άδεια', qEmptySub:'Διάλεξε λογαριασμούς από μια λίστα και πάτα «Στην ουρά».', dailyDone:'Τελείωσες για σήμερα', dailyDoneSub:'Έφτασες το σημερινό όριο. Συνέχισε αύριο, έτσι μένεις ασφαλής.', breakT:'Κάνε διάλειμμα', breakSub:'Οι μικρές συνεδρίες μοιάζουν ανθρώπινες. Επόμενη συνεδρία από', paused:'Το πλάνο σε παύση', pausedSub:'Το Instagram σε περιόρισε, οπότε το πλάνο ξεκουράζεται μέχρι', resume:'Συνέχεια τώρα', resumeWarn:'Αν συνεχίσεις νωρίτερα, αυξάνεται ο κίνδυνος μπλοκαρίσματος. Συνέχεια;',
+ settings:'Ρυθμίσεις ρυθμού', dailyLimit:'Όριο ημέρας', delay:'Αναμονή ανάμεσα σε λογαριασμούς', calm:'Χαλαρά · 3–6 λεπτά', normal:'Κανονικά · 2–4 λεπτά', fast:'Γρηγορότερα · 1–2 λεπτά (πιο ριψοκίνδυνο)', clearQ:'Άδειασμα ουράς', clearQSure:'Να αφαιρεθούν όλοι από την ουρά;', unfollowAct:'Unfollow', cancelAct:'Ακύρωση αιτήματος',
+ cancelHint:'Άνοιξε το προφίλ και πάτα «Requested» για ακύρωση.', unfHint:'Άνοιξε το προφίλ, πάτα «Following» και μετά «Unfollow». Γύρνα εδώ και πάτα «Έγινε».', remaining:'απομένουν', estDays:'περίπου {n} μέρες ακόμα', estToday:'τελειώνει σήμερα',
+ histTitle:'Ιστορικό', histEmpty:'Κάθε ZIP που ανεβάζεις αποθηκεύεται εδώ. Ανέβασε ξανά σε μια εβδομάδα για να δεις ποιοι σε έκαναν unfollow.', followersN:'followers', followingN:'following', vsPrev:'σε σχέση με πριν', first:'Πρώτο ανέβασμα', del:'Διαγραφή', delSure:'Να διαγραφεί αυτό το ανέβασμα από το ιστορικό;',
+ likesGiven:'Likes που έκανες', comments:'Σχόλια', msgsSent:'Μηνύματα που έστειλες', peak:'Πιο ενεργός', topDM:'Top DM', mostLiked:'Σε ποιους κάνεις τα περισσότερα likes', mostComm:'Τα περισσότερα σχόλια', byMonth:'Δραστηριότητα ανά μήνα', firstFollow:'Ο πρώτος που ακολούθησες', oldestFollower:'Ο παλαιότερος follower σου', allTime:'Όλα τα χρόνια', whenActive:'Πότε είσαι ενεργός', msgs:'μηνύματα',
+ needLikes:'Συμπεριέλαβε «Likes» και «Comments» στο αρχείο για να το δεις αυτό.', needMsgs:'Συμπεριέλαβε «Messages» στο αρχείο για να δεις τα top DM.',
+ secOk:'Καμία ασυνήθιστη συσκευή', secOkSub:'Όλες οι συνδέσεις έγιναν από συσκευές που χρησιμοποιείς συχνά.', secWarn:'Έλεγξε αυτές τις συσκευές', secWarnSub:'Εμφανίστηκαν μόνο μία ή δύο φορές τις τελευταίες 90 μέρες. Αν δεν ήσουν εσύ, άλλαξε κωδικό.', logins:'Συνδέσεις και συσκευές', times:'συνδέσεις', lastSeen:'τελευταία', rare:'Σπάνια', advertisers:'Διαφημιστές με τα δεδομένα σου', companies:'εταιρείες', interests:'Τα διαφημιστικά σου ενδιαφέροντα', changes:'Αλλαγές λογαριασμού', needSec:'Συμπεριέλαβε «Security and login information» στο αρχείο για να το δεις αυτό.', needAds:'Συμπεριέλαβε «Ads information» στο αρχείο για να το δεις αυτό.', needPers:'Συμπεριέλαβε «Personal information» στο αρχείο για να το δεις αυτό.', showAll:'Εμφάνιση όλων',
+ errHtml:'Αυτό το ZIP είναι σε μορφή HTML. Ζήτησέ το ξανά και διάλεξε JSON.', errNone:'Δεν βρέθηκαν δεδομένα Instagram. Βεβαιώσου ότι είναι το ZIP που σου έστειλε το Instagram.', errRead:'Δεν μπόρεσα να διαβάσω το αρχείο. Κατέβασέ το ξανά.',
+ imported:'Φορτώθηκε', rangeWarn:'Φαίνεται ότι το Date range ήταν «Last year». Ζήτησε ξανά το αρχείο με «All time», αλλιώς οι λίστες θα βγουν λάθος.', noStore:'Η αποθήκευση δεν είναι διαθέσιμη σε αυτόν τον browser, οπότε τα δεδομένα χάνονται όταν κλείσεις τη σελίδα.', wipe:'Διαγραφή όλων των δεδομένων', wipeSure:'Θα διαγραφούν τα αρχεία, το ιστορικό, η ουρά και η λίστα «Κρατάω» από αυτό το κινητό.', cancel:'Άκυρο', yes:'Ναι', privacy:'Όλα γίνονται σε αυτή τη συσκευή. Τίποτα δεν ανεβαίνει πουθενά.',
+ install:'Πρόσθεσέ το στην αρχική οθόνη', installA:'Android (Chrome): μενού ⋮ → «Προσθήκη στην αρχική οθόνη».', installI:'iPhone (Safari): κουμπί Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας».',
+ blocked:'Μπλοκαρισμένοι', restricted:'Περιορισμένοι', hidden:'Κρυμμένη story από', closeSub:'Είναι στα close friends σου αλλά δεν σε ακολουθούν', inQueue:'Στην ουρά', pendingSub:'Αιτήματα που έστειλες και δεν εγκρίθηκαν ποτέ',
+ g:[['Άνοιξε τις ρυθμίσεις','Στο Instagram πήγαινε στο προφίλ σου, πάτα το μενού ☰ πάνω δεξιά και μετά «Meta Account» (πάνω-πάνω, κάτω από «Your account»).'],['Export your information','Πάτα «Your information and permissions» → «Export your information» → «Create export».'],['Διάλεξε προφίλ','Διάλεξε το προφίλ Instagram που θέλεις να ελέγξεις (όχι Facebook ή Threads) και μετά «Export to device».'],['Customize information','Πάτα «Customize information». Υποχρεωτικό: «Followers and following». Για το Wrapped πρόσθεσε «Likes», «Comments» και «Messages». Για την Ασφάλεια πρόσθεσε «Security and login information», «Ads information» και «Personal information». Αν το αφήσεις «All available information» δουλεύει κι αυτό, αλλά το αρχείο βγαίνει πολύ μεγαλύτερο.'],['Date range: All time','Πάτα «Date range» και άλλαξε το «Last year» σε «All time». Αλλιώς λείπουν οι παλιοί followers και οι λίστες βγαίνουν λάθος.'],['Format: JSON','Πάτα «Format» και άλλαξε το «HTML» σε «JSON». Η εφαρμογή δεν διαβάζει HTML.'],['Media quality: Low','Βάλε «Media quality» σε «Low» για να μείνει μικρό το αρχείο και πάτα «Start export».'],['Περίμενε','Το Instagram ετοιμάζει το αρχείο, συνήθως σε λίγα λεπτά, μερικές φορές σε λίγες ώρες. Θα σου έρθει email όταν είναι έτοιμο.'],['Κατέβασέ το','Γύρνα στο «Export your information». Στην καρτέλα «Current activity» θα δεις το αρχείο με κουμπί Download. Στο Android πάει στα Downloads, στο iPhone στην εφαρμογή Αρχεία.'],['Ανέβασέ το εδώ','Πάτα «Ανέβασε το ZIP του Instagram» και διάλεξε το αρχείο. Αν το Instagram το χώρισε σε πολλά ZIP, διάλεξέ τα όλα μαζί.']],
+ gTip:'Κάν’ το ξανά κάθε μία-δύο εβδομάδες και το Ιστορικό θα σου δείχνει ποιοι σε έκαναν unfollow στο μεταξύ.'
+}};
+
+let lang = 'en';
+const t = (k, v) => { let s = (L[lang][k] != null ? L[lang][k] : L.en[k]) ; if (v) for (const x in v) s = s.replace('{' + x + '}', v[x]); return s; };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const loc = () => lang === 'el' ? 'el-GR' : 'en-GB';
+const fmtN = n => Number(n || 0).toLocaleString(loc());
+const fmtMY = ts => ts ? new Date(ts * 1000).toLocaleDateString(loc(), { month: 'short', year: 'numeric' }) : '';
+const fmtD = ms => new Date(ms).toLocaleDateString(loc(), { day: 'numeric', month: 'short', year: 'numeric' });
+const fmtT = ms => new Date(ms).toLocaleTimeString(loc(), { hour: '2-digit', minute: '2-digit' });
+const fmtDT = ms => new Date(ms).toLocaleString(loc(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const ig = u => 'https://www.instagram.com/' + encodeURIComponent(u) + '/';
+const rnd = (a, b) => a + Math.random() * (b - a);
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+const AVC = [['#3b2a4a', '#e0c4ff'], ['#1f3a35', '#9fe1cb'], ['#4a2f22', '#f5c4b3'], ['#22324a', '#b5d4f4'], ['#3a2a32', '#f4c0d1'], ['#3a3520', '#f5dc9c']];
+const av = (u, cls = '') => { let h = 0; for (const c of u) h = (h * 31 + c.charCodeAt(0)) | 0; const [b, f] = AVC[Math.abs(h) % AVC.length]; const ch = (u.replace(/[^a-z0-9]/gi, '')[0] || u[0] || '?'); return `<div class="av ${cls}" style="background:${b};color:${f}">${esc(ch)}</div>`; };
+
+/* storage */
+let storeOK = true; const mem = {};
+const DB = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => { try { const r = indexedDB.open('unfollowers', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }));
+  return {
+    async get(k) { try { const db = await open(); return await new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); } catch (e) { storeOK = false; return mem[k]; } },
+    async set(k, v) { mem[k] = v; try { const db = await open(); await new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); } catch (e) { storeOK = false; } },
+    async clear() { for (const k in mem) delete mem[k]; try { const db = await open(); await new Promise(res => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').clear(); tx.oncomplete = res; tx.onerror = res; }); } catch (e) { } }
+  };
+})();
+
+let D = null, SN = [];
+const defST = () => ({ kept: {}, done: {}, gone: {}, lang: null, plan: { items: [], min: 120, max: 240, daily: 80, nextAt: 0, breakUntil: 0, pausedUntil: 0, sess: 0, sessT: 25, log: {}, total: 0 } });
+let ST = defST();
+const saveST = () => DB.set('st', ST);
+
+/* derived */
+let Dv = null;
+function derive() {
+  if (!D) { Dv = null; return; }
+  const lc = a => new Set(a.map(x => x.u.toLowerCase()));
+  const fo = lc(D.followers), fg = lc(D.following);
+  const hid = u => ST.done[u.toLowerCase()] || ST.gone[u.toLowerCase()];
+  Dv = {
+    notBack: D.following.filter(x => !fo.has(x.u.toLowerCase()) && !hid(x.u)),
+    fans: D.followers.filter(x => !fg.has(x.u.toLowerCase())),
+    mutual: D.following.filter(x => fo.has(x.u.toLowerCase())),
+    pending: D.pending.filter(x => !hid(x.u)),
+    closeNB: D.close.filter(x => !fo.has(x.u.toLowerCase())),
+  };
+  Dv.keptList = Dv.notBack.filter(x => ST.kept[x.u.toLowerCase()]);
+  Dv.nbActive = Dv.notBack.filter(x => !ST.kept[x.u.toLowerCase()]);
+}
+const inQ = u => ST.plan.items.some(x => x.u.toLowerCase() === u.toLowerCase());
+
+/* routing */
+let V = { name: 'home', arg: null };
+const LS = { filter: 'all', q: '', sort: 'old', sel: new Set(), tab: 0 };
+function go(name, arg) { V = { name, arg }; LS.sel = new Set(); LS.q = ''; LS.filter = 'all'; LS.tab = 0; render(); window.scrollTo(0, 0); }
+
+const top = (title, backTo = 'home', right = '') => `<div class="top"><button class="ib" data-act="nav" data-to="${backTo}" aria-label="Back">${ic('back')}</button><h2 class="sp">${esc(title)}</h2>${right}</div>`;
+const langSw = () => `<div class="lang" role="group" aria-label="Language"><button class="${lang === 'en' ? 'on' : ''}" data-act="lang" data-l="en">EN</button><button class="${lang === 'el' ? 'on' : ''}" data-act="lang" data-l="el">ΕΛ</button></div>`;
+const navrow = (icn, label, cnt, to, arg, sub) => `<button class="navrow" data-act="nav" data-to="${to}"${arg ? ` data-arg="${arg}"` : ''}><span class="ic">${ic(icn)}</span><span style="flex:1"><span style="display:block">${esc(label)}</span>${sub ? `<span class="mu sm">${esc(sub)}</span>` : ''}</span>${cnt != null ? `<span class="cnt">${fmtN(cnt)}</span>` : `<span class="chev">${ic('chev')}</span>`}</button>`;
+
+let busy = null;
+function vHome() {
+  const up = `<label class="drop${D ? '' : ' big'}"><input type="file" accept=".zip,application/zip,application/x-zip-compressed" multiple data-act="file"><span class="ic">${ic('zip')}</span><span style="flex:1"><span style="display:block;font-weight:500">${D ? t('uploadNew') : t('upload')}</span><span class="mu sm">${D ? t('exportOf') + ' · ' + fmtD(D.date) : t('staysHere')}</span></span></label>`;
+  let h = `<div class="top"><div class="sp"><h1>${t('title')}</h1>${D && D.me ? `<div class="mu sm">@${esc(D.me)}</div>` : ''}</div>${langSw()}</div>`;
+  if (!storeOK) h += `<div class="card alert"><div class="h">${t('noStore')}</div></div>`;
+  if (busy) return h + `<div class="card" style="text-align:center;padding:28px"><div class="spin"></div><div style="margin-top:12px">${t('reading')}</div><div class="mu sm" id="busy">${esc(busy)}</div></div>`;
+  if (!D) {
+    return h + `<div style="padding:18px 2px 8px"><div style="font-size:28px;font-weight:600;line-height:1.1;letter-spacing:-.02em">${t('welcome')}</div><p class="mu" style="font-size:15px;margin:10px 0 18px">${t('welcomeSub')}</p></div>` + up +
+      navrow('book', t('howGet'), null, 'guide') + `<p class="mu sm" style="text-align:center;margin-top:18px">${t('privacy')}</p>`;
+  }
+  h += up;
+  { const yr = Date.now() / 1000 - 400 * 86400; const ts = D.following.concat(D.followers).map(x => x.t).filter(Boolean); if (ts.length > 20 && Math.min(...ts) > yr) h += `<button class="card stat alert" data-act="nav" data-to="guide"><div class="h">${t('rangeWarn')}</div></button>`; }
+  const P = ST.plan, left = P.items.length;
+  if (left) h += `<button class="navrow" data-act="nav" data-to="queue" style="border:1px solid #4b4380;background:var(--acbg)"><span class="ic">${ic('queue')}</span><span style="flex:1"><span style="display:block">${t('plan')}</span><span class="mu sm">${fmtN(P.total - left)} / ${fmtN(P.total)} · ${t('today')} ${todayCount()} / ${P.daily}</span></span><span class="chev">${ic('chev')}</span></button>`;
+  h += `<div class="grid2">${[['notBack', Dv.nbActive.length, 'list', 'notBack'], ['fans', Dv.fans.length, 'list', 'fmk:0'], ['mutual', Dv.mutual.length, 'list', 'fmk:1'], ['kept', Dv.keptList.length, 'list', 'fmk:2']].map(([k, n, to, a]) => `<button class="card stat" data-act="nav" data-to="${to}" data-arg="${a}"><span class="mu">${t(k)}</span><b>${fmtN(n)}</b></button>`).join('')}</div>`;
+  if (SN.length >= 2) { const d = diffSnap(SN[0], SN[1]); h += `<button class="card stat alert" data-act="nav" data-to="history"><div class="h">${t('since')} · ${fmtD(SN[1].d)}</div><div style="margin-top:3px"><b style="display:inline;font-size:16px">${d.lost.length}</b> ${t('unfollowedYou')} · <b style="display:inline;font-size:16px">${d.gained.length}</b> ${t('newF')}</div></button>`; }
+  h += `<div class="sec">${t('accounts')}</div>` + navrow('minus', t('notBack'), Dv.nbActive.length, 'list', 'notBack') +
+    (D.has.pending ? navrow('hour', t('pending'), Dv.pending.length, 'list', 'pending') : '') +
+    (D.has.close ? navrow('star', t('closeChk'), Dv.closeNB.length, 'list', 'close') : '') +
+    navrow('users', t('fmk'), null, 'list', 'fmk:0') + navrow('ban', t('bri'), null, 'list', 'bri') +
+    (D.has.recentUnf ? navrow('ghost', t('recentUnf'), D.recentUnf.length, 'list', 'recentUnf') : '');
+  h += `<div class="sec">${t('more')}</div><div class="grid2">${[['spark', 'wrapped'], ['shield', 'security'], ['hist', 'history'], ['book', 'guide']].map(([i, k]) => `<button class="card stat" data-act="nav" data-to="${k}" style="text-align:center;padding:16px 10px"><span style="color:var(--ac2);display:inline-flex;width:24px;height:24px">${ic(i)}</span><span style="display:block;margin-top:4px">${t(k)}</span></button>`).join('')}</div>`;
+  h += `<p class="mu sm" style="text-align:center;margin-top:20px">${t('privacy')}</p><div style="text-align:center"><button class="btn ghost" data-act="wipe">${ic('trash')} ${t('wipe')}</button></div>`;
+  return h;
+}
+
+function listDef(arg) {
+  if (arg === 'notBack') return { title: t('notBack'), items: LS.filter === 'kept' ? Dv.keptList : Dv.nbActive, sel: true, star: true, kind: 'unf', filters: true, swipe: true, sub: x => t('followed') + ' ' + fmtMY(x.t) };
+  if (arg === 'pending') return { title: t('pending'), items: Dv.pending, sel: true, kind: 'req', note: t('pendingSub'), sub: x => t('requested') + ' ' + fmtMY(x.t) };
+  if (arg === 'close') return { title: t('closeChk'), items: Dv.closeNB, note: t('closeSub'), sub: x => fmtMY(x.t) };
+  if (arg === 'recentUnf') return { title: t('recentUnf'), items: D.recentUnf, sub: x => fmtMY(x.t) };
+  if (arg && arg.startsWith('fmk')) { const tabs = [[t('fans'), Dv.fans], [t('mutual'), Dv.mutual], [t('kept'), Dv.keptList]]; return { title: t('fmk'), tabs, items: tabs[LS.tab][1], star: LS.tab === 2, sub: x => fmtMY(x.t) }; }
+  if (arg === 'bri') { const tabs = [[t('blocked'), D.blocked], [t('restricted'), D.restricted], [t('hidden'), D.hidden]]; return { title: t('bri'), tabs, items: tabs[LS.tab][1], sub: x => fmtMY(x.t) }; }
+  return { title: '', items: [] };
+}
+function filtered(def) {
+  const now = Date.now() / 1000, Y = 365 * 86400;
+  let a = def.items;
+  if (def.filters) {
+    const f = LS.filter;
+    if (f === 'y2') a = a.filter(x => x.t && now - x.t >= 2 * Y);
+    else if (f === 'y1') a = a.filter(x => x.t && now - x.t >= Y && now - x.t < 2 * Y);
+    else if (f === 'lt1') a = a.filter(x => x.t && now - x.t < Y);
+    else if (f === 'm1') a = a.filter(x => x.t && now - x.t < 31 * 86400);
+  }
+  const q = LS.q.trim().toLowerCase(); if (q) a = a.filter(x => x.u.toLowerCase().includes(q));
+  a = a.slice();
+  if (LS.sort === 'az') a.sort((x, y) => x.u.localeCompare(y.u)); else if (LS.sort === 'new') a.sort((x, y) => (y.t || 0) - (x.t || 0)); else a.sort((x, y) => (x.t || 9e12) - (y.t || 9e12));
+  return a;
+}
+const LIMIT = 300; let shown = LIMIT;
+function vList() {
+  const def = listDef(V.arg); const a = filtered(def);
+  let h = top(def.title);
+  if (def.note) h += `<p class="mu" style="margin:-6px 2px 12px">${esc(def.note)}</p>`;
+  if (def.tabs) h += `<div class="chips">${def.tabs.map((x, i) => `<button class="chip ${LS.tab === i ? 'on' : ''}" data-act="tab" data-i="${i}">${esc(x[0])} · ${fmtN(x[1].length)}</button>`).join('')}</div>`;
+  h += `<div class="search">${ic('search')}<input type="search" placeholder="${t('search')}" value="${esc(LS.q)}" data-act="q" aria-label="${t('search')}"><select data-act="sort" aria-label="Sort"><option value="old"${LS.sort === 'old' ? ' selected' : ''}>${t('sortOld')}</option><option value="new"${LS.sort === 'new' ? ' selected' : ''}>${t('sortNew')}</option><option value="az"${LS.sort === 'az' ? ' selected' : ''}>${t('sortAZ')}</option></select></div>`;
+  if (def.filters) h += `<div class="chips">${['all', 'y2', 'y1', 'lt1', 'm1', 'kept'].map(f => `<button class="chip ${LS.filter === f ? 'on' : ''}" data-act="filter" data-f="${f}">${t(f)}${f === 'kept' ? ' · ' + Dv.keptList.length : ''}</button>`).join('')}</div>`;
+  if (def.swipe && LS.filter !== 'kept') h += `<button class="btn w" data-act="nav" data-to="swipe" style="margin-bottom:10px;border-color:#4b4380;color:#d4ccff">${ic('cards')} ${t('quickSort')}</button>`;
+  if (def.star && LS.filter !== 'kept' && V.arg === 'notBack') h += `<p class="mu sm" style="margin:0 2px 10px">${t('keepHint')}</p>`;
+  if (!a.length) return h + `<div class="empty"><div style="font-size:16px;color:var(--ink)">${t('none')}</div><div class="sm">${t('noneSub')}</div></div>`;
+  h += `<div class="list">${a.slice(0, shown).map(x => {
+    const k = x.u.toLowerCase(); const q = inQ(x.u);
+    return `<div class="it">${def.sel ? `<button class="cb ${LS.sel.has(k) ? 'on' : ''}" data-act="sel" data-u="${esc(x.u)}" aria-label="Select ${esc(x.u)}" aria-pressed="${LS.sel.has(k)}">${LS.sel.has(k) ? ic('check') : ''}</button>` : ''}${av(x.u)}<div class="nm"><a href="${ig(x.u)}" target="_blank" rel="noopener">${esc(x.u)}</a><div class="mu sm">${esc(def.sub ? def.sub(x) : '')}${q ? ' · <span style="color:var(--ac2)">' + t('inQueue') + '</span>' : ''}</div></div>${def.star ? `<button class="star ${ST.kept[k] ? 'on' : ''}" data-act="keep" data-u="${esc(x.u)}" aria-label="${t('keep')}" aria-pressed="${!!ST.kept[k]}">${ic('star')}</button>` : ''}</div>`;
+  }).join('')}</div>`;
+  if (a.length > shown) h += `<button class="btn w ghost" data-act="more" style="margin-top:8px">+ ${fmtN(a.length - shown)}</button>`;
+  if (def.sel) {
+    const n = LS.sel.size;
+    h += `<div class="bar"><div class="in"><span class="mu" style="flex:1">${n ? fmtN(n) + ' ' + t('selected') : ''}</span><button class="btn ghost" data-act="selall">${n ? t('selNone') : t('selAll')}</button><button class="btn pri" data-act="addq" data-kind="${def.kind}" aria-disabled="${!n}">${ic('queue')} ${t('addQ')}</button></div></div>`;
+  }
+  return h;
+}
+
+/* swipe */
+let SW = { hist: [] };
+function swCands() { return Dv.nbActive.filter(x => !inQ(x.u)).sort((a, b) => (a.t || 9e12) - (b.t || 9e12)); }
+function vSwipe() {
+  const c = swCands();
+  let h = top(t('swipeTitle'), 'list', `<button class="ib" data-act="swundo" aria-label="${t('undo')}" ${SW.hist.length ? '' : 'aria-disabled="true" style="opacity:.4"'}>${ic('undo')}</button>`);
+  if (!c.length) return h + `<div class="card" style="text-align:center;padding:30px 16px"><div style="color:var(--ok);display:inline-flex;width:40px;height:40px">${ic('ok')}</div><h2 style="margin-top:8px">${t('allSorted')}</h2><p class="mu">${t('allSortedSub')}</p>${ST.plan.items.length ? `<button class="btn pri w" data-act="nav" data-to="queue">${t('goQueue')}</button>` : ''}</div>`;
+  const x = c[0], nx = c[1];
+  h += `<p class="mu" style="margin:-6px 2px 4px">${t('swipeHelp')}</p><div class="mu sm" style="text-align:right">${fmtN(c.length)} ${t('left')}</div>`;
+  h += `<div class="swipe">${nx ? `<div class="sc back">${av(nx.u)}<div class="u">${esc(nx.u)}</div></div>` : ''}<div class="sc" id="scard" data-u="${esc(x.u)}"><span class="lbl l">${t('toUnf')}</span><span class="lbl r">${t('keep')}</span>${av(x.u)}<div class="u">${esc(x.u)}</div><div class="mu">${t('followed')} ${fmtMY(x.t)}</div><a class="btn" href="${ig(x.u)}" target="_blank" rel="noopener" style="margin-top:10px">${ic('ig')} ${t('openProfile')}</a></div></div>`;
+  h += `<div style="display:flex;justify-content:center;gap:40px">${[['swl', 'x', 'toUnf'], ['swr', 'k', 'keep']].map(([a, c, k]) => `<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><button class="rbtn ${c}" data-act="${a}" aria-label="${t(k)}">${ic(c === 'x' ? 'x' : 'star')}</button><span class="mu sm">${t(k)}</span></div>`).join('')}</div>`;
+  return h;
+}
+function swDo(dir) {
+  const c = swCands(); if (!c.length) return; const x = c[0]; const k = x.u.toLowerCase();
+  if (dir === 'r') { ST.kept[k] = 1; SW.hist.push(['k', x.u]); }
+  else { addToPlan([{ u: x.u, kind: 'unf' }]); SW.hist.push(['q', x.u]); }
+  saveST(); derive(); render();
+}
+function swUndo() {
+  const l = SW.hist.pop(); if (!l) return; const k = l[1].toLowerCase();
+  if (l[0] === 'k') delete ST.kept[k]; else { const P = ST.plan; P.items = P.items.filter(x => x.u.toLowerCase() !== k); P.total = Math.max(0, P.total - 1); }
+  saveST(); derive(); render();
+}
+function bindSwipe() {
+  const el = document.getElementById('scard'); if (!el) return;
+  let sx = 0, sy = 0, dx = 0, on = false;
+  const L1 = el.querySelector('.lbl.l'), R1 = el.querySelector('.lbl.r');
+  el.addEventListener('pointerdown', e => { if (e.target.closest('a')) return; on = true; sx = e.clientX; sy = e.clientY; dx = 0; el.setPointerCapture(e.pointerId); el.style.transition = 'none'; });
+  el.addEventListener('pointermove', e => { if (!on) return; dx = e.clientX - sx; const dy = (e.clientY - sy) * .2; el.style.transform = `translate(${dx}px,${dy}px) rotate(${dx / 18}deg)`; L1.style.opacity = Math.max(0, -dx / 90); R1.style.opacity = Math.max(0, dx / 90); });
+  const end = () => { if (!on) return; on = false; el.style.transition = 'transform .25s'; if (Math.abs(dx) > 90) { el.style.transform = `translate(${dx > 0 ? 600 : -600}px,0) rotate(${dx > 0 ? 25 : -25}deg)`; setTimeout(() => swDo(dx > 0 ? 'r' : 'l'), 180); } else { el.style.transform = ''; L1.style.opacity = 0; R1.style.opacity = 0; } };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+
+/* plan / queue */
+function todayCount() { return ST.plan.log[dayKey()] || 0; }
+function addToPlan(list) {
+  const P = ST.plan; let n = 0;
+  for (const it of list) if (!inQ(it.u)) { P.items.push(it); n++; }
+  P.total += n; if (!P.items.length) P.total = 0;
+  return n;
+}
+let tick = null;
+function vQueue() {
+  const P = ST.plan, now = Date.now();
+  let h = top(t('plan'), 'home', `<button class="ib" data-act="pset" aria-label="${t('settings')}">${ic('gear')}</button>`);
+  if (!P.items.length) return h + `<div class="card" style="text-align:center;padding:30px 16px"><div style="color:var(--ac2);display:inline-flex;width:36px;height:36px">${ic('queue')}</div><h2 style="margin-top:8px">${t('qEmpty')}</h2><p class="mu">${t('qEmptySub')}</p><button class="btn pri w" data-act="nav" data-to="list" data-arg="notBack">${t('notBack')}</button></div>`;
+  const days = Object.keys(P.log).length || 1; const left = P.items.length; const tc = todayCount();
+  const estDays = Math.ceil(Math.max(0, left - Math.max(0, P.daily - tc)) / P.daily) + (tc < P.daily ? 1 : 0);
+  const pct = P.total ? Math.round((P.total - left) / P.total * 100) : 0;
+  h += `<div class="card"><div style="display:flex;justify-content:space-between" class="mu"><span>${t('day')} ${days} ${t('of')} ${days + estDays - 1}</span><span style="color:var(--ink);font-variant-numeric:tabular-nums">${fmtN(P.total - left)} / ${fmtN(P.total)}</span></div><div class="prog"><i style="width:${pct}%"></i></div><div class="mu sm" style="margin-top:8px">${t('today')} ${tc} / ${P.daily} · ${t('nextBreak')} ${Math.max(0, P.sessT - P.sess)} · ${estDays > 1 ? t('estDays', { n: estDays }) : t('estToday')}</div></div>`;
+  const cur = P.items[0];
+  const state = P.pausedUntil > now ? 'paused' : tc >= P.daily ? 'daily' : P.breakUntil > now ? 'break' : P.nextAt > now ? 'wait' : 'go';
+  if (state === 'paused') h += `<div class="card alert" style="text-align:center;padding:22px 16px"><div style="color:var(--pink);display:inline-flex;width:32px;height:32px">${ic('pause')}</div><h2 style="margin-top:6px">${t('paused')}</h2><p class="mu">${t('pausedSub')} ${fmtDT(P.pausedUntil)}.</p><button class="btn" data-act="resume">${ic('play')} ${t('resume')}</button></div>`;
+  else if (state === 'daily') h += `<div class="card okc" style="text-align:center;padding:22px 16px"><div style="color:var(--ok);display:inline-flex;width:32px;height:32px">${ic('ok')}</div><h2 style="margin-top:6px">${t('dailyDone')}</h2><p class="mu">${t('dailyDoneSub')}</p></div>`;
+  else if (state === 'break') h += `<div class="card" style="text-align:center;padding:22px 16px"><div style="color:var(--ac2);display:inline-flex;width:32px;height:32px">${ic('clock')}</div><h2 style="margin-top:6px">${t('breakT')}</h2><p class="mu">${t('breakSub')} ${fmtT(P.breakUntil)}.</p><div class="big" id="cd"></div></div>`;
+  else {
+    const lock = state === 'wait';
+    const hint = cur.kind === 'req' ? t('cancelHint') : t('unfHint');
+    h += `<div class="card qcard" style="${lock ? 'opacity:.55' : ''}">${av(cur.u)}<div class="u">${esc(cur.u)}</div><div class="mu sm">${cur.kind === 'req' ? t('cancelAct') : t('unfollowAct')}</div>`;
+    if (lock) h += `<div style="margin-top:14px" class="mu">${t('nextIn')}</div><div class="big" id="cd"></div>`;
+    else h += `<p class="mu sm" style="margin:10px 0 0">${hint}</p><a class="btn pri w" style="margin-top:12px" href="${ig(cur.u)}" target="_blank" rel="noopener" data-act="opened">${ic('ig')} ${t('open')}</a><div class="btns"><button class="btn" data-act="qdone">${ic('check')} ${t('done')}</button><button class="btn" data-act="qgone" style="color:var(--mu);font-size:13px">${t('gone')}</button></div><div class="btns"><button class="btn ghost" data-act="qskip">${t('skip')}</button><button class="btn ghost" data-act="qkeep">${ic('star')} ${t('keep')}</button></div>`;
+    h += `</div>`;
+  }
+  if (P.items.length > 1) h += `<div class="sec">${t('upNext')} · ${fmtN(left - 1)}</div><div class="list">${P.items.slice(1, 6).map(x => `<div class="it">${av(x.u)}<div class="nm"><span class="u">${esc(x.u)}</span><div class="mu sm">${x.kind === 'req' ? t('cancelAct') : t('unfollowAct')}</div></div></div>`).join('')}</div>`;
+  if (state !== 'paused') h += `<button class="btn danger w" data-act="pause48" style="margin-top:14px">${ic('pause')} ${t('tryLater')}</button>`;
+  return h;
+}
+function startTick() {
+  clearInterval(tick); tick = null;
+  if (V.name !== 'queue') { document.title = 'Unfollowers'; return; }
+  const P = ST.plan;
+  const upd = () => {
+    const now = Date.now(); const tgt = P.breakUntil > now ? P.breakUntil : P.nextAt;
+    const el = document.getElementById('cd');
+    if (tgt <= now) { clearInterval(tick); tick = null; document.title = 'Unfollowers'; if (el) { try { navigator.vibrate && navigator.vibrate([120, 60, 120]); } catch (e) { } beep(); render(); } return; }
+    const s = Math.ceil((tgt - now) / 1000); const txt = s >= 3600 ? Math.floor(s / 3600) + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') : Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    if (el) el.textContent = txt; document.title = txt + ' · Unfollowers';
+  };
+  if (document.getElementById('cd')) { upd(); tick = setInterval(upd, 1000); }
+}
+let actx = null;
+function beep() { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 880; g.gain.setValueAtTime(.08, actx.currentTime); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + .4); o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + .4); } catch (e) { } }
+function qAdvance(counted) {
+  const P = ST.plan; const it = P.items.shift(); const now = Date.now();
+  if (counted) {
+    ST.done[it.u.toLowerCase()] = now; P.log[dayKey()] = (P.log[dayKey()] || 0) + 1; P.sess++;
+    let wait = rnd(P.min, P.max) * 1000; if (Math.random() < .15) wait += rnd(240, 540) * 1000;
+    P.nextAt = now + wait;
+    if (P.sess >= P.sessT) { P.sess = 0; P.sessT = Math.round(rnd(20, 32)); P.breakUntil = now + rnd(60, 150) * 60000; }
+  }
+  if (!P.items.length) { P.total = 0; P.nextAt = 0; }
+  saveST(); derive(); render();
+}
+
+/* history */
+function diffSnap(a, b) { const A = new Set(a.fo), B = new Set(b.fo); return { lost: b.fo.filter(u => !A.has(u)), gained: a.fo.filter(u => !B.has(u)) }; }
+function vHistory() {
+  let h = top(t('histTitle'));
+  if (!SN.length) return h + `<div class="empty">${t('histEmpty')}</div>`;
+  h += SN.map((s, i) => {
+    const p = SN[i + 1]; const d = p ? diffSnap(s, p) : null;
+    const ul = (arr, c) => arr.length ? `<details><summary>${fmtN(arr.length)} ${c}</summary><div class="list" style="margin-top:6px">${arr.slice(0, 300).map(u => `<div class="it">${av(u)}<div class="nm"><a href="${ig(u)}" target="_blank" rel="noopener">${esc(u)}</a></div></div>`).join('')}</div></details>` : `<div class="mu sm" style="padding:6px 0">0 ${c}</div>`;
+    return `<div class="card"><div style="display:flex;align-items:center;gap:8px"><b style="font-weight:600;flex:1">${fmtD(s.d)}</b><button class="btn ghost" style="min-height:36px;padding:6px 10px" data-act="delsnap" data-i="${i}">${t('del')}</button></div><div class="mu sm">${fmtN(s.fo.length)} ${t('followersN')} · ${fmtN(s.fg.length)} ${t('followingN')}</div>${d ? `<div style="margin-top:6px">${ul(d.lost, t('unfollowedYou'))}${ul(d.gained, t('newF'))}</div>` : `<div class="mu sm" style="margin-top:6px">${t('first')}</div>`}</div>`;
+  }).join('');
+  return h;
+}
+
+/* wrapped */
+function vWrapped() {
+  const W = D.wrapped || {}; const years = Object.keys(W).filter(y => y !== 'all').sort((a, b) => b - a);
+  const sel = LS.year && W[LS.year] ? LS.year : 'all'; const w = W[sel];
+  let h = top(t('wrapped'));
+  h += `<div class="chips">${['all'].concat(years).map(y => `<button class="chip ${sel === y ? 'on' : ''}" data-act="year" data-y="${y}">${y === 'all' ? t('allTime') : y}</button>`).join('')}</div>`;
+  const hasAct = D.has.likes || D.has.comments || D.has.msgs;
+  if (!w || !hasAct) h += `<div class="card mu">${t('needLikes')}</div>`;
+  if (w && hasAct) {
+    const wd = Array(7).fill(0), hr = Array(24).fill(0); w.wh.forEach((v, i) => { wd[Math.floor(i / 24)] += v; hr[i % 24] += v; });
+    const pd = wd.indexOf(Math.max(...wd)), ph = hr.indexOf(Math.max(...hr));
+    const dayName = d => new Date(2024, 0, 7 + d).toLocaleDateString(loc(), { weekday: 'long' });
+    h += `<div class="card" style="text-align:center;padding:18px"><div class="mu">${t('likesGiven')}</div><div class="big" style="font-size:38px">${fmtN(w.likes)}</div>${Math.max(...wd) ? `<div class="mu sm">${t('peak')}: ${dayName(pd)}, ${String(ph).padStart(2, '0')}:00</div>` : ''}</div>`;
+    h += `<div class="grid2"><div class="card"><div class="mu sm">${t('comments')}</div><div class="big" style="font-size:22px">${fmtN(w.comments)}</div></div><div class="card"><div class="mu sm">${t('msgsSent')}</div><div class="big" style="font-size:22px">${D.has.msgs ? fmtN(w.sent) : '–'}</div></div></div>`;
+    const bars = (arr, unit) => { const mx = arr.length ? arr[0][1] : 1; return `<div class="hbars">${arr.map(([n, c]) => `<div class="hb"><span>${esc(n)}</span><span class="tr"><i style="width:${Math.max(3, c / mx * 100)}%"></i></span><b>${fmtN(c)}</b></div>`).join('')}</div>`; };
+    h += `<div class="card"><div class="mu sm">${t('topDM')}</div>${D.has.msgs ? (w.dms.length ? `<div style="margin-top:6px">${w.dms.slice(0, 10).map(([n, c], i) => `<div class="row" style="min-height:40px">${av(n)}<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i + 1}. ${esc(n)}</span><span class="mu sm">${fmtN(c)} ${t('msgs')}</span></div>`).join('')}</div>` : `<div class="mu">${t('none')}</div>`) : `<div class="mu" style="margin-top:4px">${t('needMsgs')}</div>`}</div>`;
+    if (w.liked.length) h += `<div class="card"><div class="mu sm">${t('mostLiked')}</div>${bars(w.liked)}</div>`;
+    if (w.commented.length) h += `<div class="card"><div class="mu sm">${t('mostComm')}</div>${bars(w.commented)}</div>`;
+    const mx = Math.max(...w.month, 1); const mi = w.month.indexOf(mx);
+    h += `<div class="card"><div class="mu sm">${t('byMonth')}</div><div class="months">${w.month.map((v, i) => `<div><i class="${i === mi && v ? 'mx' : ''}" style="height:${v / mx * 100}%"></i><span>${new Date(2024, i, 1).toLocaleDateString(loc(), { month: 'narrow' })}</span></div>`).join('')}</div></div>`;
+    const hm = Math.max(...w.wh, 1);
+    h += `<div class="card"><div class="mu sm">${t('whenActive')}</div><div class="heat">${[1, 2, 3, 4, 5, 6, 0].map(d => `<span>${new Date(2024, 0, 7 + d).toLocaleDateString(loc(), { weekday: 'short' }).slice(0, 3)}</span>` + Array.from({ length: 24 }, (_, hh) => { const v = w.wh[d * 24 + hh]; return `<i style="opacity:${v ? .15 + .85 * v / hm : .06}"></i>`; }).join('')).join('')}<span></span>${Array.from({ length: 24 }, (_, hh) => `<span style="text-align:center">${hh % 6 === 0 ? hh : ''}</span>`).join('')}</div></div>`;
+  }
+  const ff = D.following.filter(x => x.t).sort((a, b) => a.t - b.t)[0], of = D.followers.filter(x => x.t).sort((a, b) => a.t - b.t)[0];
+  h += `<div class="grid2">${ff ? `<div class="card"><div class="mu sm">${t('firstFollow')}</div><div style="margin-top:4px;overflow:hidden;text-overflow:ellipsis"><a href="${ig(ff.u)}" target="_blank" rel="noopener">${esc(ff.u)}</a></div><div class="mu sm">${fmtMY(ff.t)}</div></div>` : ''}${of ? `<div class="card"><div class="mu sm">${t('oldestFollower')}</div><div style="margin-top:4px;overflow:hidden;text-overflow:ellipsis"><a href="${ig(of.u)}" target="_blank" rel="noopener">${esc(of.u)}</a></div><div class="mu sm">${fmtMY(of.t)}</div></div>` : ''}</div>`;
+  return h;
+}
+
+/* security */
+function vSecurity() {
+  let h = top(t('security'));
+  if (!D.has.logins) h += `<div class="card mu">${t('needSec')}</div>`;
+  else {
+    const g = {}; for (const l of D.logins) { const k = l.dev; const o = g[k] = g[k] || { dev: k, n: 0, last: 0, ips: [], mobile: /iphone|ipad|android|oneplus|samsung|xiaomi|pixel|cph|sm-/i.test(l.ua + k) }; o.n++; if (l.t > o.last) o.last = l.t; if (l.ip && !o.ips.includes(l.ip) && o.ips.length < 3) o.ips.push(l.ip); }
+    const arr = Object.values(g).sort((a, b) => b.last - a.last);
+    const recent = Date.now() / 1000 - 90 * 86400;
+    const rare = arr.filter(o => o.n <= 2 && o.last >= recent && arr.length > 1);
+    h += rare.length ? `<div class="card alert"><div class="row"><span style="color:var(--warn);display:flex;width:22px;height:22px">${ic('warn')}</span><div><div>${t('secWarn')}</div><div class="mu sm">${t('secWarnSub')}</div></div></div></div>` : `<div class="card okc"><div class="row"><span style="color:var(--ok);display:flex;width:22px;height:22px">${ic('ok')}</span><div><div>${t('secOk')}</div><div class="mu sm">${t('secOkSub')}</div></div></div></div>`;
+    h += `<div class="sec">${t('logins')}</div><div class="list">${arr.slice(0, 20).map(o => { const r = rare.includes(o); return `<div class="it"><span style="color:${r ? 'var(--warn)' : 'var(--ac2)'};display:flex;width:22px;height:22px;flex:none">${ic(r ? 'warn' : o.mobile ? 'phone' : 'desk')}</span><div class="nm"><span class="u">${esc(o.dev)}${r ? ` · <span style="color:var(--warn)">${t('rare')}</span>` : ''}</span><div class="mu sm">${t('lastSeen')} ${o.last ? fmtD(o.last * 1000) : '–'} · ${t('times')}: ${fmtN(o.n)}${o.ips.length ? ' · ' + esc(o.ips.join(', ')) : ''}</div></div></div>`; }).join('')}</div>`;
+  }
+  h += `<div class="sec">${t('advertisers')}</div>`;
+  if (!D.has.advertisers) h += `<div class="card mu">${t('needAds')}</div>`;
+  else h += `<div class="card"><div class="big" style="font-size:24px">${fmtN(D.advertisers.length)} <span class="mu" style="font-size:14px;font-weight:400">${t('companies')}</span></div>${D.advertisers.length ? `<details><summary>${t('showAll')}</summary><div class="tags">${D.advertisers.slice(0, 600).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div></details>` : ''}</div>`;
+  h += `<div class="sec">${t('interests')}</div>`;
+  if (!D.has.topics) h += `<div class="card mu">${t('needAds')}</div>`;
+  else h += `<div class="card"><div class="tags" style="margin:0">${D.topics.slice(0, 40).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div>${D.topics.length > 40 ? `<details><summary>${t('showAll')} · ${D.topics.length}</summary><div class="tags">${D.topics.slice(40).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div></details>` : ''}</div>`;
+  h += `<div class="sec">${t('changes')}</div>`;
+  if (!D.has.changes) h += `<div class="card mu">${t('needPers')}</div>`;
+  else h += `<div class="list">${D.changes.length ? D.changes.slice(0, 50).map(c => `<div class="it"><span style="color:var(--ac2);display:flex;width:22px;height:22px;flex:none">${ic('hist')}</span><div class="nm"><span class="u">${esc(c.what)}</span><div class="mu sm" style="word-break:break-all">${esc(c.from || '–')} → ${esc(c.to || '–')}${c.t ? ' · ' + fmtD(c.t * 1000) : ''}</div></div></div>`).join('') : `<div class="it mu">${t('none')}</div>`}</div>`;
+  return h;
+}
+
+function vGuide() {
+  let h = top(t('guide'), D ? 'home' : 'home');
+  h += `<div class="card">${L[lang].g.map((s, i) => `<div class="step"><span class="n">${i + 1}</span><div><b>${esc(s[0])}</b><div class="mu" style="font-size:14px;margin-top:2px">${esc(s[1])}</div></div></div>`).join('')}</div>`;
+  h += `<div class="card" style="border:1px solid #4b4380;background:var(--acbg)"><div style="font-size:14px">${t('gTip')}</div></div>`;
+  h += `<div class="sec">${t('install')}</div><div class="card"><div class="row" style="align-items:flex-start;min-height:0;padding:4px 0"><span style="color:var(--ac2);display:flex;width:20px;height:20px;flex:none">${ic('phone')}</span><span style="font-size:14px">${t('installA')}</span></div><div class="row" style="align-items:flex-start;min-height:0;padding:4px 0"><span style="color:var(--ac2);display:flex;width:20px;height:20px;flex:none">${ic('phone')}</span><span style="font-size:14px">${t('installI')}</span></div></div>`;
+  h += `<label class="drop" style="margin-top:14px"><input type="file" accept=".zip,application/zip,application/x-zip-compressed" multiple data-act="file"><span class="ic">${ic('zip')}</span><span style="flex:1;font-weight:500">${t('upload')}</span></label>`;
+  return h;
+}
+
+function render() {
+  document.documentElement.lang = lang;
+  const app = document.getElementById('app');
+  const v = !D && !['guide'].includes(V.name) ? 'home' : V.name;
+  app.innerHTML = ({ home: vHome, list: vList, swipe: vSwipe, queue: vQueue, history: vHistory, wrapped: vWrapped, security: vSecurity, guide: vGuide })[v]();
+  if (v === 'swipe') bindSwipe();
+  startTick();
+}
+function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function ask(msg, yes, onYes) {
+  const ly = document.getElementById('layer');
+  ly.innerHTML = `<div class="modal" data-act="mclose"><div class="card" role="dialog" aria-modal="true"><p style="margin:0 0 14px">${esc(msg)}</p><div class="btns"><button class="btn" data-act="mclose">${t('cancel')}</button><button class="btn pri" data-act="myes">${esc(yes || t('yes'))}</button></div></div></div>`;
+  ly.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; if (a.dataset.act === 'myes') { ly.innerHTML = ''; onYes(); } else if (a.dataset.act === 'mclose' && (e.target === a)) ly.innerHTML = ''; };
+}
+function paceSheet() {
+  const P = ST.plan; const cur = P.min === 180 ? 'calm' : P.min === 60 ? 'fast' : 'normal';
+  const ly = document.getElementById('layer');
+  ly.innerHTML = `<div class="modal" data-act="mclose"><div class="card" role="dialog" aria-modal="true"><h2>${t('settings')}</h2><div style="margin-top:14px" class="mu">${t('dailyLimit')}: <b id="dlv" style="color:var(--ink)">${P.daily}</b></div><input type="range" min="20" max="150" step="5" value="${P.daily}" id="dl"><div class="mu" style="margin-top:12px">${t('delay')}</div><div class="chips" style="flex-wrap:wrap;margin-top:6px">${['calm', 'normal', 'fast'].map(k => `<button class="chip ${cur === k ? 'on' : ''}" data-act="pace" data-p="${k}">${t(k)}</button>`).join('')}</div><div class="btns"><button class="btn danger" data-act="clearq">${t('clearQ')}</button><button class="btn pri" data-act="mclose">OK</button></div></div></div>`;
+  const dl = ly.querySelector('#dl'); dl.oninput = () => { P.daily = +dl.value; ly.querySelector('#dlv').textContent = P.daily; saveST(); };
+  ly.onclick = e => {
+    const a = e.target.closest('[data-act]'); if (!a) return;
+    if (a.dataset.act === 'pace') { const m = { calm: [180, 360], normal: [120, 240], fast: [60, 120] }[a.dataset.p]; P.min = m[0]; P.max = m[1]; saveST(); ly.querySelectorAll('[data-act=pace]').forEach(b => b.classList.toggle('on', b === a)); }
+    else if (a.dataset.act === 'clearq') { ly.innerHTML = ''; ask(t('clearQSure'), t('clearQ'), () => { P.items = []; P.total = 0; P.nextAt = 0; saveST(); derive(); render(); }); }
+    else if (a.dataset.act === 'mclose' && e.target === a) { ly.innerHTML = ''; render(); }
+  };
+}
+
+/* import */
+async function importFiles(fl) {
+  if (!fl || !fl.length) return;
+  busy = [...fl].map(f => f.name).join(', '); render();
+  try {
+    const all = []; let date = 0;
+    for (const f of fl) {
+      const r = new zip.ZipReader(new zip.BlobReader(f), { useWebWorkers: false });
+      const ents = await r.getEntries();
+      for (const e of ents) { if (e.directory) continue; if (e.lastModDate && e.lastModDate.getTime() > date) date = e.lastModDate.getTime(); all.push({ name: e.filename, text: () => e.getData(new zip.TextWriter()) }); }
+    }
+    const R = await IGParser.parse(all, (d, n) => { busy = d + ' / ' + n; const m = document.getElementById('busy'); if (m) m.textContent = busy; });
+    if (!R.has.followers && !R.has.following) throw new Error('NO_DATA');
+    if (!date || date > Date.now() + 864e5) date = Date.now();
+    const prev = D;
+    if (prev && prev.me && R.me && prev.me !== R.me) { SN = []; }
+    R.date = date; D = R;
+    const fgset = new Set(R.following.map(x => x.u.toLowerCase()).concat(R.pending.map(x => x.u.toLowerCase())));
+    for (const k in ST.done) { if (!fgset.has(k) || date > ST.done[k] + 3600e3) delete ST.done[k]; }
+    for (const k in ST.gone) { if (!fgset.has(k)) delete ST.gone[k]; }
+    const snap = { d: date, fo: R.followers.map(x => x.u.toLowerCase()), fg: R.following.map(x => x.u.toLowerCase()) };
+    SN = SN.filter(s => dayKey(new Date(s.d)) !== dayKey(new Date(date))); SN.push(snap); SN.sort((a, b) => b.d - a.d); SN = SN.slice(0, 40);
+    await DB.set('data', D); await DB.set('snaps', SN); await saveST();
+    busy = null; derive(); V = { name: 'home' }; render(); toast(t('imported') + ' · ' + fmtN(R.followers.length) + ' ' + t('followersN'));
+  } catch (e) {
+    busy = null; render();
+    toast(e.message === 'HTML_FORMAT' ? t('errHtml') : e.message === 'NO_DATA' ? t('errNone') : t('errRead'));
+    console.error(e);
+  }
+}
+
+/* events */
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-act]'); if (!a || a.closest('#layer')) return;
+  const act = a.dataset.act;
+  if (act === 'nav') { if (a.dataset.to === 'list' && !a.dataset.arg) { go('list', V.name === 'swipe' ? 'notBack' : (V.arg || 'notBack')); return; } go(a.dataset.to, a.dataset.arg); if (a.dataset.arg && a.dataset.arg.startsWith('fmk:')) { LS.tab = +a.dataset.arg.split(':')[1]; render(); } }
+  else if (act === 'lang') { lang = a.dataset.l; ST.lang = lang; saveST(); render(); }
+  else if (act === 'tab') { LS.tab = +a.dataset.i; LS.sel = new Set(); shown = LIMIT; render(); }
+  else if (act === 'filter') { LS.filter = a.dataset.f; LS.sel = new Set(); shown = LIMIT; render(); }
+  else if (act === 'more') { shown += LIMIT; render(); }
+  else if (act === 'sel') { const k = a.dataset.u.toLowerCase(); LS.sel.has(k) ? LS.sel.delete(k) : LS.sel.add(k); const y = scrollY; render(); scrollTo(0, y); }
+  else if (act === 'selall') { const y = scrollY; if (LS.sel.size) LS.sel = new Set(); else LS.sel = new Set(filtered(listDef(V.arg)).map(x => x.u.toLowerCase())); render(); scrollTo(0, y); }
+  else if (act === 'keep') { const k = a.dataset.u.toLowerCase(); if (ST.kept[k]) delete ST.kept[k]; else ST.kept[k] = 1; LS.sel.delete(k); saveST(); derive(); const y = scrollY; render(); scrollTo(0, y); }
+  else if (act === 'addq') { if (!LS.sel.size) return; const def = listDef(V.arg); const list = def.items.filter(x => LS.sel.has(x.u.toLowerCase())).map(x => ({ u: x.u, kind: a.dataset.kind })); const n = addToPlan(list); saveST(); LS.sel = new Set(); toast(t('addedQ') + ' · ' + n); render(); }
+  else if (act === 'swl') swDo('l');
+  else if (act === 'swr') swDo('r');
+  else if (act === 'swundo') swUndo();
+  else if (act === 'qdone') qAdvance(true);
+  else if (act === 'qgone') { const it = ST.plan.items[0]; ST.gone[it.u.toLowerCase()] = Date.now(); qAdvance(false); }
+  else if (act === 'qskip') { const P = ST.plan; P.items.push(P.items.shift()); saveST(); render(); }
+  else if (act === 'qkeep') { const it = ST.plan.items[0]; ST.kept[it.u.toLowerCase()] = 1; ST.plan.total = Math.max(0, ST.plan.total - 1); ST.plan.items.shift(); if (!ST.plan.items.length) ST.plan.total = 0; saveST(); derive(); render(); }
+  else if (act === 'pause48') { const P = ST.plan; P.pausedUntil = Date.now() + 48 * 3600e3; P.daily = Math.max(20, Math.round(P.daily * .6 / 5) * 5); P.min = Math.max(P.min, 180); P.max = Math.max(P.max, 360); saveST(); render(); }
+  else if (act === 'resume') ask(t('resumeWarn'), t('resume'), () => { ST.plan.pausedUntil = 0; saveST(); render(); });
+  else if (act === 'pset') paceSheet();
+  else if (act === 'year') { LS.year = a.dataset.y; render(); }
+  else if (act === 'delsnap') { const i = +a.dataset.i; ask(t('delSure'), t('del'), async () => { SN.splice(i, 1); await DB.set('snaps', SN); render(); }); }
+  else if (act === 'wipe') ask(t('wipeSure'), t('wipe'), async () => { await DB.clear(); D = null; SN = []; ST = defST(); ST.lang = lang; derive(); go('home'); });
+});
+document.addEventListener('input', e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  if (a.dataset.act === 'q') { LS.q = a.value; shown = LIMIT; const pos = a.selectionStart; render(); const n = document.querySelector('[data-act=q]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) { } } }
+});
+document.addEventListener('change', e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  if (a.dataset.act === 'sort') { LS.sort = a.value; render(); }
+  if (a.dataset.act === 'file') importFiles(a.files);
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden && V.name === 'queue') render(); });
+
+(async () => {
+  try {
+    const st = await DB.get('st'); if (st) { ST = Object.assign(defST(), st); ST.plan = Object.assign(defST().plan, st.plan || {}); }
+    D = (await DB.get('data')) || null; SN = (await DB.get('snaps')) || [];
+  } catch (e) { storeOK = false; }
+  lang = ST.lang || ((navigator.language || '').toLowerCase().startsWith('el') ? 'el' : 'en');
+  derive(); render();
+})();
+}
+</script>
+<script>try{if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}</script>
+</body>
+</html>
