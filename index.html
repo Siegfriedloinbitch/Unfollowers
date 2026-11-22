@@ -180,6 +180,11 @@ details summary::-webkit-details-marker{display:none}
 .seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:6px 14px;border-radius:9px;cursor:pointer}
 .seg button.on{background:var(--btn);color:var(--btnInk)}
 .filebtn{position:relative;overflow:hidden}
+.pchip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:var(--cardB);box-shadow:var(--sh);border-radius:999px;padding:4px 12px 4px 4px;font:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;margin:-4px 0 14px;position:relative;overflow:hidden}
+.pchip .av{width:30px;height:30px;font-size:12px}
+.profrow{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:inherit;font:inherit;padding:10px 8px;border-radius:14px;cursor:pointer}
+.profrow.on{background:rgba(128,128,128,.12)}
+.field{width:100%;border:1.5px solid var(--icC);border-radius:14px;padding:12px 14px;font:inherit;font-size:16px;background:var(--solidCard,#fff);color:var(--solidInk,#1d1b2e);outline:none}
 input[type=range]{width:100%;accent-color:var(--icC)}
 a{color:var(--icC)}
 :focus-visible{outline:2px solid var(--icC);outline-offset:2px}
@@ -415,7 +420,7 @@ Object.assign(I, {
   heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>', trend:'<path d="M3 7l6 6 4-4 8 8M21 11v6h-6"/>', target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', plus:'<path d="M12 5v14M5 12h14"/>',
   download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', upload:'<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>', palette:'<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.9 1.2-1.8-.5-1-.1-2.2 1.1-2.2H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/>',
-  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', motion:'<path d="M3 12c3-6 6 6 9 0s6 6 9 0"/>', save:'<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>'
+  down:'<path d="M6 9l6 6 6-6"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>', userplus:'<circle cx="10" cy="8" r="4"/><path d="M3 21v-1a7 7 0 0 1 13-3.5M19 14v6M16 17h6"/>', mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', motion:'<path d="M3 12c3-6 6 6 9 0s6 6 9 0"/>', save:'<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>'
 });
 const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
 const L = {
@@ -476,6 +481,7 @@ Object.assign(L.en, {
   language:'Language', queueSec:'Unfollow queue', waitT:'Wait between unfollows', waitOn:'A random pause after each unfollow, plus breaks. Safest.', waitOff:'Next account right away. The daily limit still applies.',
   motion:'Moving background', motionSub:'Slowly moving colours in Fluid skins', backup:'Backup', backupSub:'Your history, kept list, queue, progress and settings, in one file. Import it on a new phone to carry on where you left off.',
   exportB:'Export', importB:'Import', exported:'Backup saved', importSure:'Replace everything on this phone with the backup from {d}?', importedB:'Backup restored', importErr:'This isn’t an Unfollowers backup file.', lastBackup:'Last export: {d}',
+  late:'Up late?', helloThere:'Hello there', yourProfiles:'Your profiles', addProfile:'Add profile (upload its ZIP)', manageProfiles:'Manage profiles in Settings', newAcc:'New account found', newAccSub:'This ZIP belongs to {u}, which isn’t one of your profiles yet.', addAsNew:'Add as new profile', whichProfile:'Which profile is this ZIP for?', newProfileOpt:'New profile', yourName:'Your name', namePh:'Type your name', showOnHome:'Show on the home screen', showName:'Name', showUser:'@username', showNone:'Nothing', askName:'What should we call you?', askNameSub:'Tap to add your name', delProfile:'Delete profile', delProfileSure:'Delete {u} and all its data from this phone?', profileN:'Profile', noData:'No ZIP yet', active:'active', open2:'Open',
   pace:'Pace', danger:'Danger zone', recentUnfS:'Unfollowed by you', more:'More', addFirst:'Upload your Instagram ZIP to start', uploadSub:'Tap + any time to upload a newer one'
 });
 Object.assign(L.el, {
@@ -485,6 +491,7 @@ Object.assign(L.el, {
   language:'Γλώσσα', queueSec:'Ουρά unfollow', waitT:'Αναμονή ανάμεσα σε unfollow', waitOn:'Τυχαία παύση μετά από κάθε unfollow, και διαλείμματα. Το πιο ασφαλές.', waitOff:'Ο επόμενος αμέσως. Το όριο ημέρας ισχύει κανονικά.',
   motion:'Κίνηση φόντου', motionSub:'Τα χρώματα κινούνται αργά στα Fluid skins', backup:'Backup', backupSub:'Το ιστορικό, τα «Κρατάω», η ουρά, η πρόοδος και οι ρυθμίσεις σε ένα αρχείο. Κάνε το Import σε νέο κινητό και συνεχίζεις από εκεί που έμεινες.',
   exportB:'Export', importB:'Import', exported:'Το backup αποθηκεύτηκε', importSure:'Να αντικατασταθούν όλα σε αυτό το κινητό με το backup της {d};', importedB:'Το backup επανήλθε', importErr:'Αυτό δεν είναι αρχείο backup του Unfollowers.', lastBackup:'Τελευταίο export: {d}',
+  late:'Ξενύχτι;', helloThere:'Γεια σου', yourProfiles:'Τα προφίλ σου', addProfile:'Νέο προφίλ (ανέβασε το ZIP του)', manageProfiles:'Διαχείριση στις Ρυθμίσεις', newAcc:'Βρέθηκε νέος λογαριασμός', newAccSub:'Αυτό το ZIP είναι του {u}, που δεν είναι ακόμα στα προφίλ σου.', addAsNew:'Προσθήκη ως νέο προφίλ', whichProfile:'Σε ποιο προφίλ ανήκει αυτό το ZIP;', newProfileOpt:'Νέο προφίλ', yourName:'Το όνομά σου', namePh:'Γράψε το όνομά σου', showOnHome:'Τι δείχνει η αρχική', showName:'Όνομα', showUser:'@username', showNone:'Τίποτα', askName:'Πώς να σε λέμε;', askNameSub:'Πάτα για να βάλεις το όνομά σου', delProfile:'Διαγραφή προφίλ', delProfileSure:'Να διαγραφεί το {u} και όλα τα δεδομένα του από αυτό το κινητό;', profileN:'Προφίλ', noData:'Χωρίς ZIP ακόμα', active:'ενεργό', open2:'Άνοιγμα',
   pace:'Ρυθμός', danger:'Προσοχή', recentUnfS:'Unfollow από εσένα', more:'Περισσότερα', addFirst:'Ανέβασε το ZIP του Instagram για να ξεκινήσεις', uploadSub:'Πάτα + όποτε θες για νεότερο αρχείο'
 });
 L.en.g[3] = ['Customize information','Tap “Customize information” and tick only these:\n• Comments\n• Likes\n• Story interactions\n• Messages (optional, makes the file bigger)\n• Personal information\n• Followers and following (required)\n• Login and profile creation\n• Your topics\n• Everything under “Ads information”\nUntick everything else (Posts, Stories, Reels, Saved…) and tap Save.'];
@@ -562,9 +569,16 @@ const DB = (() => {
 
 let D = null, SN = [];
 const defPlan = () => ({ items: [], min: 120, max: 240, daily: 80, nextAt: 0, breakUntil: 0, pausedUntil: 0, sess: 0, sessT: 25, log: {}, total: 0, wait: true });
-const defST = () => ({ kept: {}, done: {}, gone: {}, lang: null, theme: 'sage', motion: true, lastBackup: 0, plan: defPlan() });
+const newProf = (id, me) => ({ id, me: me || '', kept: {}, done: {}, gone: {}, plan: defPlan(), date: 0, nb: 0 });
+const fixProf = p => { p.kept = p.kept || {}; p.done = p.done || {}; p.gone = p.gone || {}; p.plan = Object.assign(defPlan(), p.plan || {}); return p; };
+const defST = () => ({ v: 3, lang: null, theme: 'sage', motion: true, lastBackup: 0, name: '', showWho: 'name', namePromptOff: false, active: 'main', profiles: { main: newProf('main', '') } });
 let ST = defST();
+let PR = ST.profiles.main;
 const saveST = () => DB.set('st', ST);
+const dKey = id => 'data:' + id, sKey = id => 'snaps:' + id;
+const profList = () => Object.values(ST.profiles).sort((a, b) => (b.date || 0) - (a.date || 0));
+async function loadActive() { PR = fixProf(ST.profiles[ST.active]); D = (await DB.get(dKey(ST.active))) || null; SN = (await DB.get(sKey(ST.active))) || []; }
+async function switchProfile(id) { if (!ST.profiles[id]) return; ST.active = id; await saveST(); await loadActive(); derive(); go('home'); }
 
 /* apply skin */
 function applySkin() {
@@ -589,7 +603,7 @@ function derive() {
   if (!D) { Dv = null; return; }
   const lc = a => new Set(a.map(x => x.u.toLowerCase()));
   const fo = lc(D.followers), fg = lc(D.following);
-  const hid = u => ST.done[u.toLowerCase()] || ST.gone[u.toLowerCase()];
+  const hid = u => PR.done[u.toLowerCase()] || PR.gone[u.toLowerCase()];
   Dv = {
     notBack: D.following.filter(x => !fo.has(x.u.toLowerCase()) && !hid(x.u)),
     fans: D.followers.filter(x => !fg.has(x.u.toLowerCase())),
@@ -597,10 +611,10 @@ function derive() {
     pending: D.pending.filter(x => !hid(x.u)),
     closeNB: D.close.filter(x => !fo.has(x.u.toLowerCase())),
   };
-  Dv.keptList = Dv.notBack.filter(x => ST.kept[x.u.toLowerCase()]);
-  Dv.nbActive = Dv.notBack.filter(x => !ST.kept[x.u.toLowerCase()]);
+  Dv.keptList = Dv.notBack.filter(x => PR.kept[x.u.toLowerCase()]);
+  Dv.nbActive = Dv.notBack.filter(x => !PR.kept[x.u.toLowerCase()]);
 }
-const inQ = u => ST.plan.items.some(x => x.u.toLowerCase() === u.toLowerCase());
+const inQ = u => PR.plan.items.some(x => x.u.toLowerCase() === u.toLowerCase());
 
 /* routing */
 let V = { name: 'home', arg: null };
@@ -611,21 +625,35 @@ const row = (icn, tone, label, sub, to, arg, cnt) => `<button class="c navrow" d
 const fileInput = (cls = '') => `<input type="file" accept=".zip,application/zip,application/x-zip-compressed" multiple data-act="file" aria-label="${t('upload')}" class="${cls}">`;
 
 let busy = null;
-function greet() { const h = new Date().getHours(); return h < 12 ? t('gm') : h < 18 ? t('ga') : t('ge'); }
+function greet() { const h = new Date().getHours(); return h >= 5 && h < 12 ? t('gm') : h >= 12 && h < 17 ? t('ga') : h >= 17 && h < 22 ? t('ge') : t('late'); }
+function helloWho() { const nm = (ST.name || '').trim(); if (ST.showWho === 'none') return t('helloThere'); if (ST.showWho === 'name' && nm) return t('hello') + ', ' + esc(nm); if (D && D.me) return t('hello') + ', @' + esc(D.me); return nm ? t('hello') + ', ' + esc(nm) : t('helloThere'); }
+const profLabel = p => p.me ? '@' + p.me : t('profileN');
+function profSheet() {
+  const ly = document.getElementById('layer');
+  ly.innerHTML = `<div class="modal" data-act="mclose"><div class="box" role="dialog" aria-modal="true"><div style="width:40px;height:4px;border-radius:2px;background:rgba(128,128,128,.35);margin:0 auto 12px"></div><h2 style="margin-bottom:8px">${t('yourProfiles')}</h2>${profList().map(p => `<button class="profrow ${p.id === ST.active ? 'on' : ''}" data-act="profswitch" data-id="${esc(p.id)}">${av(p.me || 'p')}<span style="flex:1;text-align:left"><b style="display:block;font-weight:600">${esc(profLabel(p))}</b><span style="font-size:12px;opacity:.7">${p.date ? fmtN(p.nb) + ' ' + t('notBackS').toLowerCase() + ' · ' + fmtD(p.date) : t('noData')}</span></span>${p.id === ST.active ? `<span style="display:inline-flex;width:20px;height:20px;color:var(--ok)">${ic('ok')}</span>` : ''}</button>`).join('')}<label class="btn sec2 filebtn w" style="margin-top:8px">${ic('plus')} ${t('addProfile')}${fileInput()}</label><button class="btn ghost w" data-act="profmanage" style="margin-top:4px">${t('manageProfiles')}</button></div></div>`;
+  ly.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; if (a.dataset.act === 'profswitch') { ly.innerHTML = ''; switchProfile(a.dataset.id); } else if (a.dataset.act === 'profmanage') { ly.innerHTML = ''; go('settings'); } else if (a.dataset.act === 'mclose' && e.target === a) ly.innerHTML = ''; };
+}
+function choose(title, sub, opts) { return new Promise(res => {
+  const ly = document.getElementById('layer');
+  ly.innerHTML = `<div class="modal"><div class="box" role="dialog" aria-modal="true"><h2>${esc(title)}</h2>${sub ? `<p style="margin:6px 0 14px;opacity:.75">${sub}</p>` : '<div style="height:10px"></div>'}${opts.map((o, i) => `<button class="btn ${o.pri ? '' : 'sec2'} w" data-i="${i}" style="margin-top:6px">${esc(o.label)}</button>`).join('')}</div></div>`;
+  ly.onchange = null; ly.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; ly.innerHTML = ''; res(opts[+b.dataset.i].v); };
+}); }
 function vHome() {
-  let h = `<div class="top" style="align-items:flex-start"><div class="sp"><div class="mu">${greet()}</div><h1>${t('hello')}, ${D && D.me ? '@' + esc(D.me) : t('you')}</h1>${D ? `<div class="mu sm" style="margin-top:2px">${t('lastExport')} · ${fmtD(D.date)}</div>` : ''}</div><button class="cir" data-act="nav" data-to="guide" aria-label="${t('guide')}">${ic('book')}</button><button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button></div>`;
+  let h = `<div class="top" style="align-items:flex-start"><div class="sp"><div class="mu">${greet()}</div><h1>${helloWho()}</h1>${D ? `<div class="mu sm" style="margin-top:2px">${t('lastExport')} · ${fmtD(D.date)}</div>` : ''}</div><button class="cir" data-act="nav" data-to="guide" aria-label="${t('guide')}">${ic('book')}</button><button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button></div>`;
   if (!storeOK) h += `<div class="c" style="border:1px solid var(--danger)"><div class="sm" style="color:var(--danger)">${t('noStore')}</div></div>`;
   if (busy) return h + `<div class="c" style="text-align:center;padding:30px"><div class="spin"></div><div style="margin-top:12px">${t('reading')}</div><div class="mu sm" id="busy">${esc(busy)}</div></div>`;
   if (!D) {
     return h + `<div class="hero" style="cursor:default;padding:22px"><div class="t" style="font-size:24px;line-height:1.15">${t('welcome')}</div><p class="s" style="margin:10px 0 16px;font-size:14px">${t('welcomeSub')}</p><label class="btn filebtn" style="background:var(--onH);color:var(--heroGo,var(--icC))">${ic('upload')} ${t('upload')}${fileInput()}</label></div>` +
       row('book', 't1', t('howGet'), '', 'guide') + `<p class="mu sm" style="text-align:center;margin-top:18px">${t('privacy')}</p>`;
   }
+  h += `<button class="pchip" data-act="profsheet" aria-label="${t('yourProfiles')}">${av(PR.me || 'p')}<span>${esc(profLabel(PR))}</span><span style="display:inline-flex;width:16px;height:16px">${ic('down')}</span></button>`;
+  if (!(ST.name || '').trim() && !ST.namePromptOff) h += `<div class="c navrow" style="border:1.5px dashed var(--icC)"><span class="ic">${ic('userplus')}</span><button class="tx" data-act="nameask" style="border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:0"><span style="display:block;font-weight:600">${t('askName')}</span><span class="mu sm">${t('askNameSub')}</span></button><button class="star" data-act="namedismiss" aria-label="${t('cancel')}">${ic('x')}</button></div>`;
   { const yr = Date.now() / 1000 - 400 * 86400; const ts = D.following.concat(D.followers).map(x => x.t).filter(Boolean); if (ts.length > 20 && Math.min(...ts) > yr) h += `<button class="c" data-act="nav" data-to="guide" style="border:1px solid var(--danger)"><div class="sm" style="color:var(--danger)">${t('rangeWarn')}</div></button>`; }
   const hasDiff = SN.length >= 2; const d = hasDiff ? diffSnap(SN[0], SN[1]) : null;
   const tiles = [['minus', 't1', Dv.nbActive.length, t('notBackS'), 'list', 'notBack'], ['heart', 't2', Dv.fans.length, t('fansS'), 'list', 'fmk:0'], hasDiff ? ['trend', 't3', d.lost.length, t('unfS'), 'history', ''] : ['star', 't3', Dv.keptList.length, t('keptS'), 'list', 'fmk:2']];
   h += `<div class="grid3">${tiles.map(([i, tone, n, l, to, a]) => `<button class="c stat" data-act="nav" data-to="${to}"${a ? ` data-arg="${a}"` : ''}><span class="ic ${tone}">${ic(i)}</span><b>${fmtN(n)}</b><span class="mu sm">${esc(l)}</span></button>`).join('')}</div>`;
-  const P = ST.plan;
-  if (P.items.length) { const days = Object.keys(P.log).length || 1; const pct = P.total ? Math.round((P.total - P.items.length) / P.total * 100) : 0; h += `<button class="hero" data-act="nav" data-to="queue"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('target')}</span>${t('plan')}</div><div class="t">${t('keepGoing')}</div><div class="s">${t('planSub', { a: fmtN(P.total - P.items.length), b: fmtN(P.total), d: days })}</div><div class="pb"><i style="width:${pct}%"></i></div></button>`; }
+  const P = PR.plan;
+  if (P.items.length) { const days = Object.keys(P.log).length || 1; const pct = P.total ? Math.round((P.total - P.items.length) / P.total * 100) : 0; h += `<button class="hero" data-act="nav" data-to="queue"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('target')}</span>${t('plan')}${PR.me ? ' · @' + esc(PR.me) : ''}</div><div class="t">${t('keepGoing')}</div><div class="s">${t('planSub', { a: fmtN(P.total - P.items.length), b: fmtN(P.total), d: days })}</div><div class="pb"><i style="width:${pct}%"></i></div></button>`; }
   else if (Dv.nbActive.length) h += `<button class="hero" data-act="nav" data-to="swipe"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('cards')}</span>${t('quickSort')}</div><div class="t">${t('ready')}</div><div class="s">${t('readySub', { n: fmtN(Dv.nbActive.length) })}</div></button>`;
   if (hasDiff) h += `<button class="c navrow" data-act="nav" data-to="history"><span class="ic t2">${ic('hist')}</span><span class="tx"><span style="display:block;font-weight:500">${t('since')}</span><span class="mu sm">${fmtN(d.lost.length)} ${t('unfollowedYou')} · ${fmtN(d.gained.length)} ${t('newF')}</span></span><span class="chev">${ic('chev')}</span></button>`;
   h += `<div class="sec"><b>${t('accounts')}</b><button class="btn ghost" style="min-height:0;padding:4px" data-act="nav" data-to="lists">${t('seeAll')}</button></div>`;
@@ -644,7 +672,7 @@ function vLists() {
     row('users', 't4', t('fmk'), `${fmtN(Dv.fans.length)} · ${fmtN(Dv.mutual.length)} · ${fmtN(Dv.keptList.length)}`, 'list', 'fmk:0') +
     row('ban', 't2', t('bri'), '', 'list', 'bri') +
     (D.has.recentUnf ? row('ghost', 't3', t('recentUnf'), '', 'list', 'recentUnf', D.recentUnf.length) : '');
-  if (ST.plan.items.length) h += row('queue', 't1', t('plan'), `${fmtN(ST.plan.total - ST.plan.items.length)} / ${fmtN(ST.plan.total)}`, 'queue');
+  if (PR.plan.items.length) h += row('queue', 't1', t('plan'), `${fmtN(PR.plan.total - PR.plan.items.length)} / ${fmtN(PR.plan.total)}`, 'queue');
   return h;
 }
 
@@ -685,7 +713,7 @@ function vList() {
   if (!a.length) return h + `<div class="empty"><div style="font-size:16px;color:var(--ink);font-weight:500">${t('none')}</div><div class="sm">${t('noneSub')}</div></div>`;
   h += a.slice(0, shown).map(x => {
     const k = x.u.toLowerCase(); const q = inQ(x.u);
-    return `<div class="it">${def.sel ? `<button class="ck ${LS.sel.has(k) ? 'on' : ''}" data-act="sel" data-u="${esc(x.u)}" aria-label="Select ${esc(x.u)}" aria-pressed="${LS.sel.has(k)}">${LS.sel.has(k) ? ic('check') : ''}</button>` : ''}${av(x.u)}<div class="nm"><a href="${ig(x.u)}" target="_blank" rel="noopener">${esc(x.u)}</a><div class="mu sm">${esc(def.sub ? def.sub(x) : '')}${q ? ' · <span style="color:var(--icC);font-weight:500">' + t('inQueue') + '</span>' : ''}</div></div>${def.star ? `<button class="star ${ST.kept[k] ? 'on' : ''}" data-act="keep" data-u="${esc(x.u)}" aria-label="${t('keep')}" aria-pressed="${!!ST.kept[k]}">${ic('star')}</button>` : ''}</div>`;
+    return `<div class="it">${def.sel ? `<button class="ck ${LS.sel.has(k) ? 'on' : ''}" data-act="sel" data-u="${esc(x.u)}" aria-label="Select ${esc(x.u)}" aria-pressed="${LS.sel.has(k)}">${LS.sel.has(k) ? ic('check') : ''}</button>` : ''}${av(x.u)}<div class="nm"><a href="${ig(x.u)}" target="_blank" rel="noopener">${esc(x.u)}</a><div class="mu sm">${esc(def.sub ? def.sub(x) : '')}${q ? ' · <span style="color:var(--icC);font-weight:500">' + t('inQueue') + '</span>' : ''}</div></div>${def.star ? `<button class="star ${PR.kept[k] ? 'on' : ''}" data-act="keep" data-u="${esc(x.u)}" aria-label="${t('keep')}" aria-pressed="${!!PR.kept[k]}">${ic('star')}</button>` : ''}</div>`;
   }).join('');
   if (a.length > shown) h += `<button class="btn w sec2" data-act="more" style="margin-top:4px">+ ${fmtN(a.length - shown)}</button>`;
   if (def.sel && LS.sel.size) h += `<div class="selbar"><span class="n">${fmtN(LS.sel.size)}</span><span style="flex:1">${t('selected')}</span><button class="lk" data-act="selclear">${t('selNone')}</button><button class="btn" data-act="addq" data-kind="${def.kind}">${t('addQ')}</button></div>`;
@@ -698,7 +726,7 @@ function swCands() { return Dv.nbActive.filter(x => !inQ(x.u)).sort((a, b) => (a
 function vSwipe() {
   const c = swCands();
   let h = top(t('swipeTitle'), 'list', `<button class="cir" data-act="swundo" aria-label="${t('undo')}" ${SW.hist.length ? '' : 'style="opacity:.4"'}>${ic('undo')}</button>`);
-  if (!c.length) return h + `<div class="c" style="text-align:center;padding:30px 16px"><div style="color:var(--ok);display:inline-flex;width:40px;height:40px">${ic('ok')}</div><h2 style="margin-top:8px">${t('allSorted')}</h2><p class="mu">${t('allSortedSub')}</p>${ST.plan.items.length ? `<button class="btn w" data-act="nav" data-to="queue">${t('goQueue')}</button>` : ''}</div>`;
+  if (!c.length) return h + `<div class="c" style="text-align:center;padding:30px 16px"><div style="color:var(--ok);display:inline-flex;width:40px;height:40px">${ic('ok')}</div><h2 style="margin-top:8px">${t('allSorted')}</h2><p class="mu">${t('allSortedSub')}</p>${PR.plan.items.length ? `<button class="btn w" data-act="nav" data-to="queue">${t('goQueue')}</button>` : ''}</div>`;
   const x = c[0], nx = c[1];
   h += `<p class="mu" style="margin:-6px 4px 4px">${t('swipeHelp')}</p><div class="mu sm" style="text-align:right;margin-right:4px">${fmtN(c.length)} ${t('left')}</div>`;
   h += `<div class="swipe">${nx ? `<div class="c sc back">${av(nx.u)}<div class="u">${esc(nx.u)}</div></div>` : ''}<div class="c sc" id="scard" data-u="${esc(x.u)}"><span class="lbl l">${t('toUnf')}</span><span class="lbl r">${t('keep')}</span>${av(x.u)}<div class="u">${esc(x.u)}</div><div class="mu">${t('followed')} ${fmtMY(x.t)}</div><a class="btn sec2" href="${ig(x.u)}" target="_blank" rel="noopener" style="margin-top:10px">${ic('ig')} ${t('openProfile')}</a></div></div>`;
@@ -707,12 +735,12 @@ function vSwipe() {
 }
 function swDo(dir) {
   const c = swCands(); if (!c.length) return; const x = c[0]; const k = x.u.toLowerCase();
-  if (dir === 'r') { ST.kept[k] = 1; SW.hist.push(['k', x.u]); } else { addToPlan([{ u: x.u, kind: 'unf' }]); SW.hist.push(['q', x.u]); }
+  if (dir === 'r') { PR.kept[k] = 1; SW.hist.push(['k', x.u]); } else { addToPlan([{ u: x.u, kind: 'unf' }]); SW.hist.push(['q', x.u]); }
   saveST(); derive(); render();
 }
 function swUndo() {
   const l = SW.hist.pop(); if (!l) return; const k = l[1].toLowerCase();
-  if (l[0] === 'k') delete ST.kept[k]; else { const P = ST.plan; P.items = P.items.filter(x => x.u.toLowerCase() !== k); P.total = Math.max(0, P.total - 1); }
+  if (l[0] === 'k') delete PR.kept[k]; else { const P = PR.plan; P.items = P.items.filter(x => x.u.toLowerCase() !== k); P.total = Math.max(0, P.total - 1); }
   saveST(); derive(); render();
 }
 function bindSwipe() {
@@ -726,12 +754,12 @@ function bindSwipe() {
 }
 
 /* plan / queue */
-function todayCount() { return ST.plan.log[dayKey()] || 0; }
-function addToPlan(list) { const P = ST.plan; let n = 0; for (const it of list) if (!inQ(it.u)) { P.items.push(it); n++; } P.total += n; if (!P.items.length) P.total = 0; return n; }
+function todayCount() { return PR.plan.log[dayKey()] || 0; }
+function addToPlan(list) { const P = PR.plan; let n = 0; for (const it of list) if (!inQ(it.u)) { P.items.push(it); n++; } P.total += n; if (!P.items.length) P.total = 0; return n; }
 let tick = null;
 const toggle = (act, on, label) => `<button class="tg ${on ? 'on' : ''}" data-act="${act}" role="switch" aria-checked="${on}" aria-label="${esc(label)}"></button>`;
 function vQueue() {
-  const P = ST.plan, now = Date.now();
+  const P = PR.plan, now = Date.now();
   let h = top(t('plan'), 'home', `<button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button>`);
   if (!P.items.length) return h + `<div class="c" style="text-align:center;padding:30px 16px"><span class="ic" style="margin:0 auto">${ic('queue')}</span><h2 style="margin-top:10px">${t('qEmpty')}</h2><p class="mu">${t('qEmptySub')}</p><button class="btn w" data-act="nav" data-to="list" data-arg="notBack">${t('notBack')}</button></div>`;
   const days = Object.keys(P.log).length || 1; const left = P.items.length; const tc = todayCount();
@@ -759,7 +787,7 @@ function vQueue() {
 function startTick() {
   clearInterval(tick); tick = null;
   if (V.name !== 'queue') { document.title = 'Unfollowers'; return; }
-  const P = ST.plan;
+  const P = PR.plan;
   const upd = () => {
     const now = Date.now(); const tgt = P.breakUntil > now ? P.breakUntil : P.nextAt;
     const el = document.getElementById('cd');
@@ -772,9 +800,9 @@ function startTick() {
 let actx = null;
 function beep() { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 880; g.gain.setValueAtTime(.08, actx.currentTime); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + .4); o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + .4); } catch (e) { } }
 function qAdvance(counted) {
-  const P = ST.plan; const it = P.items.shift(); const now = Date.now();
+  const P = PR.plan; const it = P.items.shift(); const now = Date.now();
   if (counted) {
-    ST.done[it.u.toLowerCase()] = now; P.log[dayKey()] = (P.log[dayKey()] || 0) + 1;
+    PR.done[it.u.toLowerCase()] = now; P.log[dayKey()] = (P.log[dayKey()] || 0) + 1;
     if (P.wait) {
       P.sess++;
       let wait = rnd(P.min, P.max) * 1000; if (Math.random() < .15) wait += rnd(240, 540) * 1000;
@@ -862,10 +890,13 @@ function vGuide() {
 
 function vSettings() {
   let h = top(t('settingsT'));
+  const sw = ST.showWho;
+  h += `<div class="c"><div class="rw" style="margin-bottom:10px"><span class="ic">${ic('user')}</span><b style="font-weight:600">${t('yourName')}</b></div><input class="field" id="namein" data-act="namein" type="text" maxlength="30" placeholder="${t('namePh')}" value="${esc(ST.name || '')}" autocomplete="nickname" aria-label="${t('yourName')}"><div class="mu sm" style="margin:12px 0 6px">${t('showOnHome')}</div><div class="seg" style="display:flex">${[['name', t('showName')], ['user', t('showUser')], ['none', t('showNone')]].map(([k, l]) => `<button style="flex:1" class="${sw === k ? 'on' : ''}" data-act="showwho" data-w="${k}">${l}</button>`).join('')}</div></div>`;
+  h += `<div class="c"><div class="rw" style="margin-bottom:6px"><span class="ic">${ic('users')}</span><b style="font-weight:600">${t('yourProfiles')}</b></div>${profList().map(p => `<div class="navrow" style="min-height:52px">${av(p.me || 'p')}<span class="tx"><span style="display:block;font-weight:500">${esc(profLabel(p))}${p.id === ST.active ? ` · <span style="color:var(--icC)">${t('active')}</span>` : ''}</span><span class="mu sm">${p.date ? t('lastExport') + ' · ' + fmtD(p.date) : t('noData')}</span></span>${p.id !== ST.active ? `<button class="btn sec2" style="min-height:36px;padding:6px 12px" data-act="profswitch" data-id="${esc(p.id)}">${t('open2')}</button>` : ''}<button class="star" data-act="profdel" data-id="${esc(p.id)}" aria-label="${t('delProfile')}">${ic('trash')}</button></div>`).join('')}<label class="btn sec2 filebtn w" style="margin-top:8px">${ic('plus')} ${t('addProfile')}${fileInput()}</label></div>`;
   h += `<div class="c"><div class="rw"><span class="ic">${ic('palette')}</span><b style="font-weight:600">${t('theme')}</b><span class="mu sm" style="margin-left:auto">${esc(skin(ST.theme).name)}</span></div>${GROUPS.map(g => `<div class="grp">${t('g_' + g)}</div><div class="skins">${SK.filter(s => s.g === g).map(s => `<button class="skin ${ST.theme === s.id ? 'on' : ''}" data-act="skin" data-id="${s.id}" aria-pressed="${ST.theme === s.id}"><span class="sw" style="background:${s.sw}"></span>${esc(s.name)}</button>`).join('')}</div>`).join('')}</div>`;
   h += `<div class="c navrow"><span class="ic">${ic('globe')}</span><span class="tx" style="font-weight:500">${t('language')}</span><span class="seg"><button class="${lang === 'en' ? 'on' : ''}" data-act="lang" data-l="en">EN</button><button class="${lang === 'el' ? 'on' : ''}" data-act="lang" data-l="el">ΕΛ</button></span></div>`;
   h += `<div class="c navrow"><span class="ic">${ic('motion')}</span><span class="tx"><span style="display:block;font-weight:500">${t('motion')}</span><span class="mu sm">${t('motionSub')}</span></span>${toggle('motiontg', ST.motion, t('motion'))}</div>`;
-  const P = ST.plan; const cur = P.min === 180 ? 'calm' : P.min === 60 ? 'fast' : 'normal';
+  const P = PR.plan; const cur = P.min === 180 ? 'calm' : P.min === 60 ? 'fast' : 'normal';
   h += `<div class="sec"><b>${t('queueSec')}</b></div><div class="c"><div class="navrow"><span class="ic">${ic('clock')}</span><span class="tx"><span style="display:block;font-weight:500">${t('waitT')}</span><span class="mu sm">${P.wait ? t('waitOn') : t('waitOff')}</span></span>${toggle('waittg', P.wait, t('waitT'))}</div>`;
   if (P.wait) h += `<div class="mu sm" style="margin:12px 0 6px">${t('pace')}</div><div class="chips" style="flex-wrap:wrap">${['calm', 'normal', 'fast'].map(k => `<button class="chip ${cur === k ? 'on' : ''}" data-act="pace" data-p="${k}">${t(k)}</button>`).join('')}</div>`;
   h += `<div class="mu sm" style="margin-top:12px;display:flex;justify-content:space-between"><span>${t('dailyLimit')}</span><b id="dlv" style="color:var(--ink)">${P.daily}</b></div><input type="range" min="20" max="150" step="5" value="${P.daily}" data-act="daily" aria-label="${t('dailyLimit')}">${P.items.length ? `<button class="btn danger w" data-act="clearq" style="margin-top:10px">${t('clearQ')}</button>` : ''}</div>`;
@@ -899,7 +930,8 @@ function ask(msg, yes, onYes) {
 
 /* backup */
 async function doExport() {
-  const data = { app: 'unfollowers', v: 2, at: Date.now(), D, SN, ST };
+  const data = { app: 'unfollowers', v: 3, at: Date.now(), ST, profiles: {} };
+  for (const id in ST.profiles) data.profiles[id] = { D: id === ST.active ? D : (await DB.get(dKey(id))) || null, SN: id === ST.active ? SN : (await DB.get(sKey(id))) || [] };
   const name = 'unfollowers-backup-' + new Date().toISOString().slice(0, 10) + '.json';
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
   let ok = false;
@@ -910,15 +942,26 @@ async function doExport() {
   if (!ok) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
   ST.lastBackup = Date.now(); await saveST(); render(); toast(t('exported'));
 }
+function migrate(st, D0, SN0) {
+  if (st && st.profiles) { const o = Object.assign(defST(), st); for (const k in o.profiles) fixProf(o.profiles[k]); if (!o.profiles[o.active]) o.active = Object.keys(o.profiles)[0] || 'main'; if (!Object.keys(o.profiles).length) { o.profiles.main = newProf('main', ''); o.active = 'main'; } return { st: o, moves: [] }; }
+  const o = defST(); if (st) { for (const k of ['lang', 'theme', 'motion', 'lastBackup']) if (st[k] != null) o[k] = st[k]; }
+  const me = D0 && D0.me ? D0.me : ''; const id = me ? me.toLowerCase() : 'main';
+  const p = fixProf(Object.assign(newProf(id, me), st ? { kept: st.kept, done: st.done, gone: st.gone, plan: st.plan } : {}));
+  if (D0) { p.date = D0.date || 0; }
+  o.profiles = { [id]: p }; o.active = id;
+  return { st: o, moves: [[id, D0 || null, SN0 || []]] };
+}
 async function doImport(file) {
   if (!file) return;
   let x = null; try { x = JSON.parse(await file.text()); } catch (e) { }
   if (!x || x.app !== 'unfollowers' || !x.ST) { toast(t('importErr')); return; }
   ask(t('importSure', { d: fmtDT(x.at || Date.now()) }), t('importB'), async () => {
-    D = x.D || null; SN = x.SN || [];
-    ST = Object.assign(defST(), x.ST); ST.plan = Object.assign(defPlan(), x.ST.plan || {});
-    lang = ST.lang || lang;
-    await DB.set('data', D); await DB.set('snaps', SN); await saveST();
+    await DB.clear();
+    let st, items = [];
+    if (x.profiles) { st = migrate(x.ST).st; for (const id in x.profiles) items.push([id, x.profiles[id].D, x.profiles[id].SN]); }
+    else { const m = migrate(x.ST, x.D, x.SN); st = m.st; items = m.moves; }
+    ST = st; for (const [id, d, sn] of items) { await DB.set(dKey(id), d || null); await DB.set(sKey(id), sn || []); }
+    lang = ST.lang || lang; await saveST(); await loadActive();
     derive(); applySkin(); go('home'); toast(t('importedB'));
   });
 }
@@ -937,15 +980,28 @@ async function importFiles(fl) {
     const R = await IGParser.parse(all, (d, n) => { busy = d + ' / ' + n; const m = document.getElementById('busy'); if (m) m.textContent = busy; });
     if (!R.has.followers && !R.has.following) throw new Error('NO_DATA');
     if (!date || date > Date.now() + 864e5) date = Date.now();
-    if (D && D.me && R.me && D.me !== R.me) SN = [];
-    R.date = date; D = R;
+    busy = null;
+    let target = null; const ids = Object.keys(ST.profiles);
+    const isEmpty = id => { const p = ST.profiles[id]; return !p.date && !p.me; };
+    if (R.me) {
+      const id = R.me.toLowerCase();
+      if (ST.profiles[id]) target = id;
+      else if (ids.length === 1 && isEmpty(ids[0])) { const old = ST.profiles[ids[0]]; delete ST.profiles[ids[0]]; old.id = id; old.me = R.me; ST.profiles[id] = old; target = id; }
+      else { render(); const ok = await choose(t('newAcc'), t('newAccSub', { u: '<b>@' + esc(R.me) + '</b>' }), [{ label: t('addAsNew'), v: 1, pri: 1 }, { label: t('cancel'), v: 0 }]); if (!ok) { render(); return; } ST.profiles[id] = newProf(id, R.me); target = id; }
+    } else {
+      if (ids.length === 1) target = ids[0];
+      else { render(); target = await choose(t('whichProfile'), '', profList().map(p => ({ label: profLabel(p), v: p.id })).concat([{ label: t('newProfileOpt'), v: '__new' }, { label: t('cancel'), v: null }])); if (!target) { render(); return; } if (target === '__new') { target = 'p' + Date.now(); ST.profiles[target] = newProf(target, ''); } }
+    }
+    ST.active = target; await saveST(); await loadActive();
+    R.date = date; D = R; PR.date = date; if (R.me) PR.me = R.me;
     const fgset = new Set(R.following.map(x => x.u.toLowerCase()).concat(R.pending.map(x => x.u.toLowerCase())));
-    for (const k in ST.done) { if (!fgset.has(k) || date > ST.done[k] + 3600e3) delete ST.done[k]; }
-    for (const k in ST.gone) { if (!fgset.has(k)) delete ST.gone[k]; }
+    for (const k in PR.done) { if (!fgset.has(k) || date > PR.done[k] + 3600e3) delete PR.done[k]; }
+    for (const k in PR.gone) { if (!fgset.has(k)) delete PR.gone[k]; }
     const snap = { d: date, fo: R.followers.map(x => x.u.toLowerCase()), fg: R.following.map(x => x.u.toLowerCase()) };
     SN = SN.filter(s => dayKey(new Date(s.d)) !== dayKey(new Date(date))); SN.push(snap); SN.sort((a, b) => b.d - a.d); SN = SN.slice(0, 40);
-    await DB.set('data', D); await DB.set('snaps', SN); await saveST();
-    busy = null; derive(); render(); toast(t('imported') + ' · ' + fmtN(R.followers.length) + ' ' + t('followersN'));
+    derive(); PR.nb = Dv.nbActive.length;
+    await DB.set(dKey(ST.active), D); await DB.set(sKey(ST.active), SN); await saveST();
+    busy = null; render(); toast(t('imported') + ' · ' + fmtN(R.followers.length) + ' ' + t('followersN'));
   } catch (e) {
     busy = null; render();
     toast(e.message === 'HTML_FORMAT' ? t('errHtml') : e.message === 'NO_DATA' ? t('errNone') : t('errRead'));
@@ -961,9 +1017,9 @@ document.addEventListener('click', e => {
   else if (act === 'lang') { lang = a.dataset.l; ST.lang = lang; saveST(); render(); }
   else if (act === 'skin') { ST.theme = a.dataset.id; saveST(); applySkin(); render(); }
   else if (act === 'motiontg') { ST.motion = !ST.motion; saveST(); applySkin(); render(); }
-  else if (act === 'waittg') { ST.plan.wait = !ST.plan.wait; if (!ST.plan.wait) { ST.plan.nextAt = 0; ST.plan.breakUntil = 0; } saveST(); render(); }
-  else if (act === 'pace') { const m = { calm: [180, 360], normal: [120, 240], fast: [60, 120] }[a.dataset.p]; ST.plan.min = m[0]; ST.plan.max = m[1]; saveST(); render(); }
-  else if (act === 'clearq') ask(t('clearQSure'), t('clearQ'), () => { const P = ST.plan; P.items = []; P.total = 0; P.nextAt = 0; saveST(); derive(); render(); });
+  else if (act === 'waittg') { PR.plan.wait = !PR.plan.wait; if (!PR.plan.wait) { PR.plan.nextAt = 0; PR.plan.breakUntil = 0; } saveST(); render(); }
+  else if (act === 'pace') { const m = { calm: [180, 360], normal: [120, 240], fast: [60, 120] }[a.dataset.p]; PR.plan.min = m[0]; PR.plan.max = m[1]; saveST(); render(); }
+  else if (act === 'clearq') ask(t('clearQSure'), t('clearQ'), () => { const P = PR.plan; P.items = []; P.total = 0; P.nextAt = 0; saveST(); derive(); render(); });
   else if (act === 'export') doExport();
   else if (act === 'tab') { LS.tab = +a.dataset.i; LS.sel = new Set(); shown = LIMIT; render(); }
   else if (act === 'filter') { LS.filter = a.dataset.f; LS.sel = new Set(); shown = LIMIT; render(); }
@@ -971,44 +1027,53 @@ document.addEventListener('click', e => {
   else if (act === 'sel') { const k = a.dataset.u.toLowerCase(); LS.sel.has(k) ? LS.sel.delete(k) : LS.sel.add(k); const y = scrollY; render(); scrollTo(0, y); }
   else if (act === 'selall') { const y = scrollY; if (LS.sel.size) LS.sel = new Set(); else LS.sel = new Set(filtered(listDef(V.arg)).map(x => x.u.toLowerCase())); render(); scrollTo(0, y); }
   else if (act === 'selclear') { const y = scrollY; LS.sel = new Set(); render(); scrollTo(0, y); }
-  else if (act === 'keep') { const k = a.dataset.u.toLowerCase(); if (ST.kept[k]) delete ST.kept[k]; else ST.kept[k] = 1; LS.sel.delete(k); saveST(); derive(); const y = scrollY; render(); scrollTo(0, y); }
+  else if (act === 'keep') { const k = a.dataset.u.toLowerCase(); if (PR.kept[k]) delete PR.kept[k]; else PR.kept[k] = 1; LS.sel.delete(k); saveST(); derive(); const y = scrollY; render(); scrollTo(0, y); }
   else if (act === 'addq') { if (!LS.sel.size) return; const def = listDef(V.arg); const list = def.items.filter(x => LS.sel.has(x.u.toLowerCase())).map(x => ({ u: x.u, kind: a.dataset.kind })); const n = addToPlan(list); saveST(); LS.sel = new Set(); toast(t('addedQ') + ' · ' + n); render(); }
   else if (act === 'swl') swDo('l');
   else if (act === 'swr') swDo('r');
   else if (act === 'swundo') swUndo();
   else if (act === 'qdone') qAdvance(true);
-  else if (act === 'qgone') { const it = ST.plan.items[0]; ST.gone[it.u.toLowerCase()] = Date.now(); qAdvance(false); }
-  else if (act === 'qskip') { const P = ST.plan; P.items.push(P.items.shift()); saveST(); render(); }
-  else if (act === 'qkeep') { const it = ST.plan.items[0]; ST.kept[it.u.toLowerCase()] = 1; ST.plan.total = Math.max(0, ST.plan.total - 1); ST.plan.items.shift(); if (!ST.plan.items.length) ST.plan.total = 0; saveST(); derive(); render(); }
-  else if (act === 'pause48') { const P = ST.plan; P.pausedUntil = Date.now() + 48 * 3600e3; P.daily = Math.max(20, Math.round(P.daily * .6 / 5) * 5); P.min = Math.max(P.min, 180); P.max = Math.max(P.max, 360); P.wait = true; saveST(); render(); }
-  else if (act === 'resume') ask(t('resumeWarn'), t('resume'), () => { ST.plan.pausedUntil = 0; saveST(); render(); });
+  else if (act === 'qgone') { const it = PR.plan.items[0]; PR.gone[it.u.toLowerCase()] = Date.now(); qAdvance(false); }
+  else if (act === 'qskip') { const P = PR.plan; P.items.push(P.items.shift()); saveST(); render(); }
+  else if (act === 'qkeep') { const it = PR.plan.items[0]; PR.kept[it.u.toLowerCase()] = 1; PR.plan.total = Math.max(0, PR.plan.total - 1); PR.plan.items.shift(); if (!PR.plan.items.length) PR.plan.total = 0; saveST(); derive(); render(); }
+  else if (act === 'pause48') { const P = PR.plan; P.pausedUntil = Date.now() + 48 * 3600e3; P.daily = Math.max(20, Math.round(P.daily * .6 / 5) * 5); P.min = Math.max(P.min, 180); P.max = Math.max(P.max, 360); P.wait = true; saveST(); render(); }
+  else if (act === 'resume') ask(t('resumeWarn'), t('resume'), () => { PR.plan.pausedUntil = 0; saveST(); render(); });
   else if (act === 'year') { LS.year = a.dataset.y; render(); }
-  else if (act === 'delsnap') { const i = +a.dataset.i; ask(t('delSure'), t('del'), async () => { SN.splice(i, 1); await DB.set('snaps', SN); render(); }); }
-  else if (act === 'wipe') ask(t('wipeSure'), t('wipe'), async () => { await DB.clear(); D = null; SN = []; const th = ST.theme; ST = defST(); ST.lang = lang; ST.theme = th; await saveST(); derive(); go('home'); });
+  else if (act === 'delsnap') { const i = +a.dataset.i; ask(t('delSure'), t('del'), async () => { SN.splice(i, 1); await DB.set(sKey(ST.active), SN); render(); }); }
+  else if (act === 'wipe') ask(t('wipeSure'), t('wipe'), async () => { await DB.clear(); D = null; SN = []; const keep = { theme: ST.theme, lang, name: ST.name, motion: ST.motion }; ST = defST(); Object.assign(ST, keep); PR = ST.profiles.main; await saveST(); derive(); go('home'); });
+  else if (act === 'profsheet') profSheet();
+  else if (act === 'profswitch') switchProfile(a.dataset.id);
+  else if (act === 'profdel') { const id = a.dataset.id; const p = ST.profiles[id]; ask(t('delProfileSure', { u: profLabel(p) }), t('del'), async () => { delete ST.profiles[id]; await DB.set(dKey(id), null); await DB.set(sKey(id), []); if (!Object.keys(ST.profiles).length) ST.profiles.main = newProf('main', ''); if (ST.active === id) ST.active = profList()[0].id; await saveST(); await loadActive(); derive(); render(); }); }
+  else if (act === 'showwho') { ST.showWho = a.dataset.w; saveST(); render(); }
+  else if (act === 'namedismiss') { ST.namePromptOff = true; saveST(); render(); }
+  else if (act === 'nameask') { go('settings'); setTimeout(() => { const n = document.getElementById('namein'); if (n) n.focus(); }, 60); }
 });
 document.addEventListener('input', e => {
   const a = e.target.closest('[data-act]'); if (!a) return;
   if (a.dataset.act === 'q') { LS.q = a.value; shown = LIMIT; const pos = a.selectionStart; render(); const n = document.querySelector('[data-act=q]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) { } } }
-  if (a.dataset.act === 'daily') { ST.plan.daily = +a.value; const v = document.getElementById('dlv'); if (v) v.textContent = a.value; saveST(); }
+  if (a.dataset.act === 'namein') { ST.name = a.value.slice(0, 30); if (ST.name.trim()) ST.namePromptOff = true; saveST(); }
+  if (a.dataset.act === 'daily') { PR.plan.daily = +a.value; const v = document.getElementById('dlv'); if (v) v.textContent = a.value; saveST(); }
 });
 document.addEventListener('change', e => {
   const a = e.target.closest('[data-act]'); if (!a) return;
   if (a.dataset.act === 'sort') { LS.sort = a.value; render(); }
-  if (a.dataset.act === 'file') importFiles(a.files);
+  if (a.dataset.act === 'file') { const f = [...(a.files || [])]; document.getElementById('layer').innerHTML = ''; importFiles(f); }
   if (a.dataset.act === 'import') doImport(a.files && a.files[0]);
 });
 document.addEventListener('visibilitychange', () => { if (!document.hidden && V.name === 'queue') render(); });
 
 (async () => {
   try {
-    const st = await DB.get('st'); if (st) { ST = Object.assign(defST(), st); ST.plan = Object.assign(defPlan(), st.plan || {}); if (!st.theme) ST.theme = 'sage'; }
-    D = (await DB.get('data')) || null; SN = (await DB.get('snaps')) || [];
+    const st = await DB.get('st');
+    if (st && !st.profiles) { const D0 = (await DB.get('data')) || null, SN0 = (await DB.get('snaps')) || []; const m = migrate(st, D0, SN0); ST = m.st; for (const [id, d, sn] of m.moves) { await DB.set(dKey(id), d); await DB.set(sKey(id), sn); } await DB.set('data', null); await DB.set('snaps', null); await saveST(); }
+    else if (st) ST = migrate(st).st;
+    await loadActive();
   } catch (e) { storeOK = false; }
   lang = ST.lang || ((navigator.language || '').toLowerCase().startsWith('el') ? 'el' : 'en');
   applySkin(); derive(); render();
 })();
 }
 </script>
-<script>try{if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}</script>
+<script>try{if("serviceWorker" in navigator&&isSecureContext)navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(()=>{})}catch(e){}</script>
 </body>
 </html>
