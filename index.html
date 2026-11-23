@@ -180,6 +180,12 @@ details summary::-webkit-details-marker{display:none}
 .seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:6px 14px;border-radius:9px;cursor:pointer}
 .seg button.on{background:var(--btn);color:var(--btnInk)}
 .filebtn{position:relative;overflow:hidden}
+.qa{background:var(--rowBg,var(--card));border:var(--cardB);box-shadow:var(--rowSh,var(--sh));border-radius:16px;margin-bottom:8px;overflow:hidden}
+.qa summary{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;list-style:none;font-weight:600;color:var(--ink);font-size:15px}
+.qa summary span:first-child{flex:1}
+.qa summary .chev{transition:transform .2s}
+.qa[open] summary .chev{transform:rotate(180deg)}
+.qa p{margin:0;padding:0 14px 14px;color:var(--ink);opacity:.85;font-size:14px;line-height:1.55}
 .pchip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:var(--cardB);box-shadow:var(--sh);border-radius:999px;padding:4px 12px 4px 4px;font:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;margin:-4px 0 14px;position:relative;overflow:hidden}
 .pchip .av{width:30px;height:30px;font-size:12px}
 .profrow{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:inherit;font:inherit;padding:10px 8px;border-radius:14px;cursor:pointer}
@@ -420,7 +426,7 @@ Object.assign(I, {
   heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>', trend:'<path d="M3 7l6 6 4-4 8 8M21 11v6h-6"/>', target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>', chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', plus:'<path d="M12 5v14M5 12h14"/>',
   download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', upload:'<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>', palette:'<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.9 1.2-1.8-.5-1-.1-2.2 1.1-2.2H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/>',
-  down:'<path d="M6 9l6 6 6-6"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>', userplus:'<circle cx="10" cy="8" r="4"/><path d="M3 21v-1a7 7 0 0 1 13-3.5M19 14v6M16 17h6"/>', mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', motion:'<path d="M3 12c3-6 6 6 9 0s6 6 9 0"/>', save:'<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>'
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>', lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', down:'<path d="M6 9l6 6 6-6"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>', userplus:'<circle cx="10" cy="8" r="4"/><path d="M3 21v-1a7 7 0 0 1 13-3.5M19 14v6M16 17h6"/>', mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>', motion:'<path d="M3 12c3-6 6 6 9 0s6 6 9 0"/>', save:'<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>'
 });
 const ic = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
 const L = {
@@ -474,6 +480,146 @@ el:{
 }};
 
 
+const HELP = {
+en: [
+ { id:'start', icon:'book', tone:'t4', title:'Getting started', sub:'Get your ZIP from Instagram', qs:[
+  ['Why do I need a ZIP file?', 'Instagram doesn’t let other apps peek at your followers. But it does let you download your own data. You grab that ZIP, the app reads it, and you never type your password anywhere. Win-win.'],
+  ['How long does Instagram take?', 'Usually a few minutes, sometimes a few hours. You’ll get an email when it’s ready. Go make a coffee.'],
+  ['Which options should I pick?', 'Date range: All time. Format: JSON. Media quality: Low. And only the categories in the steps above. Pick everything and you get a 9 GB monster with all your photos, which the app doesn’t even need.']
+ ]},
+ { id:'lists', icon:'list', tone:'t1', title:'Lists and ★ Kept', sub:'Who’s who, filters, the star', qs:[
+  ['Not following back, Fans, Mutual?', 'Not following back: you follow them, they don’t follow you. Fans: they follow you, you don’t follow them. Mutual: you follow each other. Nice and healthy.'],
+  ['What does the ★ do?', 'It means “I’m keeping this one”. Your favourite singer won’t follow you back and that’s fine. Starred accounts hide from the list and live under the “Kept” filter, even after a new ZIP. Tap the star again to bring them back. It does nothing on Instagram.'],
+  ['What are the filters (2+ years, Last month…)?', 'They show accounts by when you followed them. “2+ years” is great for spring cleaning old follows.'],
+  ['Why no profile photos or follower counts?', 'They’re not in Instagram’s ZIP, only usernames and dates. Getting them would mean scraping Instagram, which is exactly what we avoid. Tap a name to open the profile if you need to see who it is.'],
+  ['I unfollowed someone but they’re still in the list', 'If you tapped Done in the queue, they’re hidden right away. If you unfollowed straight from Instagram, they’ll disappear with your next ZIP.'],
+  ['Pending requests, Close friends, Blocked?', 'Pending: requests you sent to private accounts that never accepted, and you can cancel them through the queue. Close friends check: people in your close friends who don’t follow you. Blocked, restricted, hidden: everyone you’ve blocked, restricted or hidden your story from, in one place.']
+ ]},
+ { id:'queue', icon:'clock', tone:'t3', title:'Unfollow queue', sub:'Safe pace, limits, pauses', qs:[
+  ['Does the app unfollow for me?', 'Nope, and that’s on purpose. The app opens the profile, you tap Unfollow in Instagram, then come back and tap Done. To Instagram you look like a normal human, not a robot with a grudge.'],
+  ['Why wait between unfollows?', 'Unfollowing 200 people in 5 minutes is very “I’m a bot”. Random pauses and breaks keep your account safe. You can turn the wait off in Settings, but the daily limit stays.'],
+  ['What’s a safe daily limit?', 'Instagram doesn’t publish its limits. A few dozen a day, spread over the day, is the safe zone. The app starts at 80, and you can lower or raise it in Settings. 1,000 accounts take about two weeks. Slow and steady.'],
+  ['Instagram said “Try again later”', 'That’s Instagram tapping you on the shoulder. Tap the red “Try again later” button in the queue: the plan pauses for 48 hours and then continues at a slower pace. Don’t fight it.'],
+  ['Done vs Gone vs Skip vs Keep', 'Done: you unfollowed them. Gone / renamed: the profile says “page isn’t available”, so it’s deleted or changed username, and it doesn’t count towards your daily limit. Skip: move it to the end of the queue. Keep: changed your mind, they get a ★.'],
+  ['Can I close the app mid-queue?', 'Yes. The queue, your progress and the countdown are saved. Come back whenever.']
+ ]},
+ { id:'history', icon:'hist', tone:'t2', title:'History', sub:'Who unfollowed you', qs:[
+  ['How does it know who unfollowed me?', 'It compares your ZIPs. Anyone who was in your followers last time and isn’t now unfollowed you (or deleted their account). So you need at least two uploads.'],
+  ['How often should I upload?', 'Every week or two works great. Same options every time.'],
+  ['Can I delete an upload?', 'Yes, tap Delete on it in History. Your lists stay as they are.']
+ ]},
+ { id:'wrapped', icon:'spark', tone:'t4', title:'Wrapped and Security', sub:'Your stats and logins', qs:[
+  ['Wrapped is empty', 'Include “Likes”, “Comments” and “Messages” in your export. No data, no fun stats.'],
+  ['Why do Top DMs show names, not usernames?', 'Instagram’s messages file only has display names. Blame Instagram.'],
+  ['What does “Rare” mean in Security?', 'A device that logged in only once or twice in the last 90 days. Maybe it’s your friend’s phone, maybe it isn’t. If you don’t recognise it, change your password and turn on two-factor login.'],
+  ['What’s the advertisers list?', 'Companies that uploaded a list with your info (like your email) to show you ads. It’s Instagram’s own data about you, not ours.']
+ ]},
+ { id:'profiles', icon:'users', tone:'t1', title:'Profiles and name', sub:'More than one account', qs:[
+  ['How do I add another account?', 'Upload that account’s ZIP. The app reads the username and asks “Add as new profile?”. If the ZIP has no username (no “Personal information”), it asks which profile it belongs to.'],
+  ['Are profiles separate?', 'Yes: each has its own lists, history, ★ Kept, queue and daily limit. Your name, theme and language are shared.'],
+  ['How do I switch?', 'Tap the @username chip under the greeting on Home.'],
+  ['What does Home show, name or @username?', 'You choose in Settings → Your name: your name, the @username of the current profile, or nothing.'],
+  ['How do I delete a profile?', 'Settings → Your profiles → the bin icon. It only deletes it from this phone.']
+ ]},
+ { id:'themes', icon:'palette', tone:'t4', title:'Themes and settings', sub:'Skins, moving background', qs:[
+  ['How do I change the look?', 'Settings → Theme. 23 skins: Classic, Nude, Fresh, Dark, Glass and Fluid.'],
+  ['The background is moving!', 'That’s the Fluid skins. Turn it off in Settings → Moving background. It also stops if your phone has “reduce motion” turned on.'],
+  ['English or Greek?', 'Settings → Language. The whole app switches, help included.']
+ ]},
+ { id:'backup', icon:'download', tone:'t3', title:'Backup and new phone', sub:'Export, import', qs:[
+  ['What’s in the backup?', 'Everything: all profiles, history, ★ Kept, queue, progress and settings, in one file.'],
+  ['How do I move to a new phone?', 'Old phone: Settings → Backup → Export. Send the file to yourself. New phone: install the app, Settings → Backup → Import, pick the file. Carry on where you left off.'],
+  ['Where’s my data stored?', 'Only inside this browser on this phone. If you clear the browser’s data or cache, it’s gone. So export a backup now and then.']
+ ]},
+ { id:'trouble', icon:'warn', tone:'t2', title:'Troubleshooting', sub:'Stuck reading? 4 ZIPs?', qs:[
+  ['It’s stuck on “Reading your file”', 'Big ZIP plus a slower phone means it needs a few minutes. Keep the screen on, stay in the app, plug in the charger and wait 5 to 10 minutes. If you leave the app, the phone may pause it and you start over. Next time request a smaller export (see Getting started) and it takes seconds.'],
+  ['Instagram gave me 4 ZIPs', 'That happens when you include photos and videos. Try only the first ZIP, the followers are usually there. Or tap + and select all of them together. Best fix: request a new export with only the categories in Getting started.'],
+  ['“This ZIP is in HTML format”', 'You picked HTML instead of JSON. Request it again with Format: JSON.'],
+  ['“No Instagram data found”', 'Wrong file, or the followers are in another part of a split ZIP. Try the other ZIPs.'],
+  ['The lists look wrong / a warning says “Last year”', 'Your export’s date range was “Last year”, so older followers are missing. Request it again with “All time”.'],
+  ['I don’t see the new version', 'Close the app completely and open it again. Give it a couple of minutes after an update.'],
+  ['I tapped something and nobody got unfollowed', 'Correct. The app never unfollows by itself. Unfollows happen only when you tap Unfollow inside Instagram.']
+ ]},
+ { id:'install', icon:'phone', tone:'t1', title:'Install on your phone', sub:'Make it a real app icon', qs:[
+  ['Which browser?', 'Chrome on Android, Safari on iPhone. Other browsers (like the phone maker’s own) may be slow or not install it.'],
+  ['I opened it in another browser and my data is gone', 'Each browser keeps its own data. Go back to the one you used, or move it with Backup → Export / Import.']
+ ]},
+ { id:'privacy', icon:'lock', tone:'t4', title:'Privacy', sub:'What leaves your phone', qs:[
+  ['Does my data leave my phone?', 'No. Your ZIP is read inside the app on your phone. Nothing is uploaded, not even to the person who made the app.'],
+  ['Do I give my password?', 'Never. If any app asks for your Instagram password to “find unfollowers”, run.'],
+  ['How do I delete everything?', 'Settings → Delete all data. Gone from this phone.']
+ ]}
+],
+el: [
+ { id:'start', icon:'book', tone:'t4', title:'Ξεκίνημα', sub:'Πώς παίρνεις το ZIP από το Instagram', qs:[
+  ['Γιατί χρειάζομαι αρχείο ZIP;', 'Το Instagram δεν αφήνει άλλες εφαρμογές να κοιτάνε τους followers σου. Σε αφήνει όμως να κατεβάσεις τα δικά σου δεδομένα. Παίρνεις το ZIP, η εφαρμογή το διαβάζει και δεν βάζεις ποτέ κωδικό πουθενά. Όλοι κερδισμένοι.'],
+  ['Πόσο αργεί το Instagram;', 'Συνήθως λίγα λεπτά, μερικές φορές λίγες ώρες. Θα σου έρθει email όταν είναι έτοιμο. Πήγαινε φτιάξε έναν καφέ.'],
+  ['Ποιες επιλογές διαλέγω;', 'Date range: All time. Format: JSON. Media quality: Low. Και μόνο τις κατηγορίες των βημάτων από πάνω. Αν τα διαλέξεις όλα, θα πάρεις ένα τέρας 9 GB με όλες τις φωτογραφίες σου, που η εφαρμογή δεν τις χρειάζεται καν.']
+ ]},
+ { id:'lists', icon:'list', tone:'t1', title:'Λίστες και ★ Κρατάω', sub:'Ποιος είναι ποιος, φίλτρα, το αστέρι', qs:[
+  ['Δεν σε ακολουθούν πίσω, Fans, Αμοιβαίοι;', 'Δεν σε ακολουθούν πίσω: τους ακολουθείς, δεν σε ακολουθούν. Fans: σε ακολουθούν, δεν τους ακολουθείς. Αμοιβαίοι: ακολουθείτε ο ένας τον άλλον. Υγιέστατο.'],
+  ['Τι κάνει το ★;', 'Σημαίνει «αυτόν τον κρατάω». Η αγαπημένη σου τραγουδίστρια δεν θα σε ακολουθήσει πίσω, και είναι οκ. Όσοι έχουν αστέρι κρύβονται από τη λίστα και μένουν στο φίλτρο «Κρατάω», ακόμα και με νέο ZIP. Ξαναπατάς το αστέρι για να γυρίσουν. Δεν κάνει τίποτα στο Instagram.'],
+  ['Τι είναι τα φίλτρα (2+ χρόνια, Τελευταίος μήνας…);', 'Δείχνουν λογαριασμούς ανάλογα με το πότε τους ακολούθησες. Το «2+ χρόνια» είναι ιδανικό για γενική καθαριότητα.'],
+  ['Γιατί δεν έχει φωτογραφίες προφίλ ή αριθμό followers;', 'Δεν υπάρχουν στο ZIP του Instagram, μόνο usernames και ημερομηνίες. Για να τα πάρουμε θα έπρεπε να «ξύνουμε» το Instagram, και αυτό ακριβώς αποφεύγουμε. Πάτα ένα όνομα για να ανοίξει το προφίλ.'],
+  ['Έκανα unfollow αλλά είναι ακόμα στη λίστα', 'Αν πάτησες «Έγινε» στην ουρά, κρύβεται αμέσως. Αν έκανες unfollow κατευθείαν από το Instagram, θα φύγει με το επόμενο ZIP.'],
+  ['Αιτήματα, Close friends, Μπλοκαρισμένοι;', 'Αιτήματα: όσα έστειλες σε ιδιωτικούς λογαριασμούς και δεν εγκρίθηκαν ποτέ. Τα ακυρώνεις μέσα από την ουρά. Έλεγχος close friends: όσοι είναι στα close friends σου αλλά δεν σε ακολουθούν. Μπλοκαρισμένοι, περιορισμένοι, κρυφά: όλοι όσοι έχεις μπλοκάρει, περιορίσει ή τους κρύβεις τη story σου, σε ένα σημείο.']
+ ]},
+ { id:'queue', icon:'clock', tone:'t3', title:'Ουρά unfollow', sub:'Ασφαλής ρυθμός, όρια, παύσεις', qs:[
+  ['Κάνει η εφαρμογή το unfollow για μένα;', 'Όχι, και επίτηδες. Η εφαρμογή ανοίγει το προφίλ, εσύ πατάς Unfollow στο Instagram, γυρνάς και πατάς «Έγινε». Για το Instagram είσαι ένας κανονικός άνθρωπος, όχι ένα ρομπότ με κακία.'],
+  ['Γιατί υπάρχει αναμονή ανάμεσα στα unfollow;', 'Το να κάνεις unfollow 200 άτομα σε 5 λεπτά φωνάζει «είμαι bot». Οι τυχαίες παύσεις και τα διαλείμματα κρατάνε τον λογαριασμό σου ασφαλή. Μπορείς να κλείσεις την αναμονή στις Ρυθμίσεις, αλλά το όριο ημέρας μένει.'],
+  ['Ποιο είναι ένα ασφαλές όριο ημέρας;', 'Το Instagram δεν δημοσιεύει όρια. Λίγες δεκάδες τη μέρα, μοιρασμένες στη μέρα, είναι η ασφαλής ζώνη. Η εφαρμογή ξεκινάει από 80 και το αλλάζεις στις Ρυθμίσεις. Τα 1.000 θέλουν περίπου δύο εβδομάδες. Σιγά σιγά και σταθερά.'],
+  ['Το Instagram μου είπε «Try again later»', 'Είναι το Instagram που σου χτυπάει τον ώμο. Πάτα το κόκκινο κουμπί «Try again later» στην ουρά: το πλάνο σταματάει για 48 ώρες και μετά συνεχίζει πιο αργά. Μην το πεισμώνεις.'],
+  ['Έγινε, Δεν υπάρχει, Παράλειψη, Κρατάω;', 'Έγινε: τον έκανες unfollow. Δεν υπάρχει / άλλαξε όνομα: το προφίλ γράφει «page isn’t available», άρα σβήστηκε ή άλλαξε username, και δεν μετράει στο όριο ημέρας. Παράλειψη: πάει στο τέλος της ουράς. Κρατάω: άλλαξες γνώμη, παίρνει ★.'],
+  ['Μπορώ να κλείσω την εφαρμογή στη μέση;', 'Ναι. Η ουρά, η πρόοδος και η αντίστροφη μέτρηση αποθηκεύονται. Γύρνα όποτε θες.']
+ ]},
+ { id:'history', icon:'hist', tone:'t2', title:'Ιστορικό', sub:'Ποιοι σε έκαναν unfollow', qs:[
+  ['Πώς ξέρει ποιοι με έκαναν unfollow;', 'Συγκρίνει τα ZIP σου. Όποιος ήταν στους followers σου την προηγούμενη φορά και τώρα δεν είναι, σε έκανε unfollow ή έσβησε τον λογαριασμό του. Άρα θέλεις τουλάχιστον δύο ανεβάσματα.'],
+  ['Κάθε πόσο να ανεβάζω;', 'Κάθε μία-δύο εβδομάδες είναι τέλεια. Με τις ίδιες επιλογές κάθε φορά.'],
+  ['Μπορώ να σβήσω ένα ανέβασμα;', 'Ναι, πάτα «Διαγραφή» πάνω του στο Ιστορικό. Οι λίστες σου μένουν ως έχουν.']
+ ]},
+ { id:'wrapped', icon:'spark', tone:'t4', title:'Wrapped και Ασφάλεια', sub:'Τα στατιστικά σου και οι συνδέσεις', qs:[
+  ['Το Wrapped είναι άδειο', 'Συμπεριέλαβε «Likes», «Comments» και «Messages» στο export. Χωρίς δεδομένα, χωρίς πλάκα.'],
+  ['Γιατί τα Top DM δείχνουν ονόματα και όχι usernames;', 'Το αρχείο μηνυμάτων του Instagram έχει μόνο ονόματα εμφάνισης. Τα παράπονα στο Instagram.'],
+  ['Τι σημαίνει «Σπάνια» στην Ασφάλεια;', 'Μια συσκευή που συνδέθηκε μόνο μία-δύο φορές τις τελευταίες 90 μέρες. Ίσως είναι το κινητό μιας φίλης σου, ίσως και όχι. Αν δεν την αναγνωρίζεις, άλλαξε κωδικό και άνοιξε τη σύνδεση δύο βημάτων.'],
+  ['Τι είναι η λίστα διαφημιστών;', 'Εταιρείες που ανέβασαν μια λίστα με στοιχεία σου, π.χ. το email σου, για να σου δείχνουν διαφημίσεις. Είναι δεδομένα του ίδιου του Instagram για σένα, όχι δικά μας.']
+ ]},
+ { id:'profiles', icon:'users', tone:'t1', title:'Προφίλ και όνομα', sub:'Πάνω από έναν λογαριασμό', qs:[
+  ['Πώς προσθέτω κι άλλον λογαριασμό;', 'Ανέβασε το ZIP εκείνου του λογαριασμού. Η εφαρμογή διαβάζει το username και ρωτάει «Προσθήκη ως νέο προφίλ;». Αν το ZIP δεν έχει username (λείπει το «Personal information»), σε ρωτάει σε ποιο προφίλ ανήκει.'],
+  ['Είναι ξεχωριστά τα προφίλ;', 'Ναι: το καθένα έχει τις δικές του λίστες, ιστορικό, ★ Κρατάω, ουρά και όριο ημέρας. Το όνομα, το θέμα και η γλώσσα είναι κοινά.'],
+  ['Πώς αλλάζω προφίλ;', 'Πάτα το @username κάτω από τον χαιρετισμό στην αρχική.'],
+  ['Τι δείχνει η αρχική, όνομα ή @username;', 'Το διαλέγεις στις Ρυθμίσεις → Το όνομά σου: το όνομά σου, το @username του προφίλ που βλέπεις ή τίποτα.'],
+  ['Πώς διαγράφω ένα προφίλ;', 'Ρυθμίσεις → Τα προφίλ σου → το καλαθάκι. Σβήνεται μόνο από αυτό το κινητό.']
+ ]},
+ { id:'themes', icon:'palette', tone:'t4', title:'Θέματα και ρυθμίσεις', sub:'Skins, κίνηση φόντου', qs:[
+  ['Πώς αλλάζω την εμφάνιση;', 'Ρυθμίσεις → Θέμα. 23 skins: Classic, Nude, Fresh, Σκοτεινά, Glass και Fluid.'],
+  ['Το φόντο κουνιέται!', 'Αυτά είναι τα Fluid skins. Το κλείνεις στις Ρυθμίσεις → Κίνηση φόντου. Σταματάει και μόνο του αν το κινητό σου έχει ενεργή τη «μείωση κίνησης».'],
+  ['Ελληνικά ή Αγγλικά;', 'Ρυθμίσεις → Γλώσσα. Αλλάζει όλη η εφαρμογή, μαζί και η βοήθεια.']
+ ]},
+ { id:'backup', icon:'download', tone:'t3', title:'Backup και νέο κινητό', sub:'Export, import', qs:[
+  ['Τι έχει μέσα το backup;', 'Τα πάντα: όλα τα προφίλ, ιστορικό, ★ Κρατάω, ουρά, πρόοδο και ρυθμίσεις, σε ένα αρχείο.'],
+  ['Πώς πάω σε νέο κινητό;', 'Παλιό κινητό: Ρυθμίσεις → Backup → Export, και στείλε το αρχείο στον εαυτό σου. Νέο κινητό: εγκατάστησε την εφαρμογή, Ρυθμίσεις → Backup → Import, διάλεξε το αρχείο. Συνεχίζεις από εκεί που έμεινες.'],
+  ['Πού αποθηκεύονται τα δεδομένα μου;', 'Μόνο μέσα σε αυτόν τον browser σε αυτό το κινητό. Αν σβήσεις τα δεδομένα ή την cache του browser, χάνονται. Γι’ αυτό κάνε πού και πού ένα Export.']
+ ]},
+ { id:'trouble', icon:'warn', tone:'t2', title:'Προβλήματα', sub:'Κόλλησε; 4 ZIP;', qs:[
+  ['Κόλλησε στο «Διαβάζω το αρχείο σου»', 'Μεγάλο ZIP και πιο αργό κινητό σημαίνει ότι θέλει λίγα λεπτά. Κράτα την οθόνη ανοιχτή, μείνε μέσα στην εφαρμογή, βάλε τον φορτιστή και περίμενε 5 με 10 λεπτά. Αν βγεις από την εφαρμογή, το κινητό μπορεί να την παγώσει και να ξεκινήσεις από την αρχή. Την επόμενη φορά ζήτα μικρότερο export (δες το Ξεκίνημα) και θα θέλει δευτερόλεπτα.'],
+  ['Το Instagram μου έδωσε 4 ZIP', 'Αυτό γίνεται όταν βάζεις και φωτογραφίες και βίντεο. Δοκίμασε μόνο το πρώτο ZIP, συνήθως οι followers είναι εκεί. Ή πάτα + και διάλεξέ τα όλα μαζί. Η καλύτερη λύση: ζήτα νέο export μόνο με τις κατηγορίες του Ξεκινήματος.'],
+  ['«Αυτό το ZIP είναι σε μορφή HTML»', 'Διάλεξες HTML αντί για JSON. Ζήτησέ το ξανά με Format: JSON.'],
+  ['«Δεν βρέθηκαν δεδομένα Instagram»', 'Λάθος αρχείο, ή οι followers είναι σε άλλο κομμάτι ενός χωρισμένου ZIP. Δοκίμασε τα άλλα ZIP.'],
+  ['Οι λίστες φαίνονται λάθος / προειδοποίηση για «Last year»', 'Το Date range του export ήταν «Last year», οπότε λείπουν οι παλιοί followers. Ζήτησέ το ξανά με «All time».'],
+  ['Δεν βλέπω τη νέα έκδοση', 'Κλείσε εντελώς την εφαρμογή και άνοιξέ τη ξανά. Δώσε της ένα-δυο λεπτά μετά από ενημέρωση.'],
+  ['Πάτησα κάτι και δεν έγινε κανένα unfollow', 'Σωστά. Η εφαρμογή δεν κάνει ποτέ unfollow μόνη της. Τα unfollow γίνονται μόνο όταν πατάς Unfollow μέσα στο Instagram.']
+ ]},
+ { id:'install', icon:'phone', tone:'t1', title:'Εγκατάσταση στο κινητό', sub:'Κανονικό εικονίδιο εφαρμογής', qs:[
+  ['Ποιον browser;', 'Chrome στο Android, Safari στο iPhone. Άλλοι browsers (π.χ. αυτός του κατασκευαστή του κινητού) μπορεί να είναι αργοί ή να μην την εγκαθιστούν.'],
+  ['Την άνοιξα σε άλλον browser και χάθηκαν τα δεδομένα μου', 'Κάθε browser κρατάει τα δικά του δεδομένα. Γύρνα σε αυτόν που χρησιμοποιούσες, ή μετέφερέ τα με Backup → Export / Import.']
+ ]},
+ { id:'privacy', icon:'lock', tone:'t4', title:'Απόρρητο', sub:'Τι φεύγει από το κινητό σου', qs:[
+  ['Φεύγουν τα δεδομένα μου από το κινητό;', 'Όχι. Το ZIP διαβάζεται μέσα στην εφαρμογή, στο κινητό σου. Τίποτα δεν ανεβαίνει πουθενά, ούτε καν σε αυτόν που έφτιαξε την εφαρμογή.'],
+  ['Δίνω τον κωδικό μου;', 'Ποτέ. Αν κάποια εφαρμογή σού ζητήσει τον κωδικό του Instagram για να «βρει unfollowers», τρέξε.'],
+  ['Πώς σβήνω τα πάντα;', 'Ρυθμίσεις → Διαγραφή όλων των δεδομένων. Χάνονται από αυτό το κινητό.']
+ ]}
+]};
+
 Object.assign(L.en, {
   gm:'Good morning', ga:'Good afternoon', ge:'Good evening', hello:'Hello', you:'there', lastExport:'Last export', notBackS:'Not back', fansS:'Fans', unfS:'Unfollowed', keptS:'Kept',
   keepGoing:'Keep going!', planSub:'{a} of {b} done · day {d}', ready:'Ready to clean up?', readySub:'{n} accounts don’t follow you back', seeAll:'See all', waiting:'{n} waiting', notFollowing:'{n} not following you',
@@ -481,6 +627,7 @@ Object.assign(L.en, {
   language:'Language', queueSec:'Unfollow queue', waitT:'Wait between unfollows', waitOn:'A random pause after each unfollow, plus breaks. Safest.', waitOff:'Next account right away. The daily limit still applies.',
   motion:'Moving background', motionSub:'Slowly moving colours in Fluid skins', backup:'Backup', backupSub:'Your history, kept list, queue, progress and settings, in one file. Import it on a new phone to carry on where you left off.',
   exportB:'Export', importB:'Import', exported:'Backup saved', importSure:'Replace everything on this phone with the backup from {d}?', importedB:'Backup restored', importErr:'This isn’t an Unfollowers backup file.', lastBackup:'Last export: {d}',
+  helpT:'Help', helpSub:'How everything works', searchHelp:'Search help', helpNone:'Nothing found. Try another word.', helpStill:'Still stuck? Ask whoever sent you this app.', faq:'Questions', howWorks:'How it works',
   late:'Up late?', helloThere:'Hello there', yourProfiles:'Your profiles', addProfile:'Add profile (upload its ZIP)', manageProfiles:'Manage profiles in Settings', newAcc:'New account found', newAccSub:'This ZIP belongs to {u}, which isn’t one of your profiles yet.', addAsNew:'Add as new profile', whichProfile:'Which profile is this ZIP for?', newProfileOpt:'New profile', yourName:'Your name', namePh:'Type your name', showOnHome:'Show on the home screen', showName:'Name', showUser:'@username', showNone:'Nothing', askName:'What should we call you?', askNameSub:'Tap to add your name', delProfile:'Delete profile', delProfileSure:'Delete {u} and all its data from this phone?', profileN:'Profile', noData:'No ZIP yet', active:'active', open2:'Open',
   pace:'Pace', danger:'Danger zone', recentUnfS:'Unfollowed by you', more:'More', addFirst:'Upload your Instagram ZIP to start', uploadSub:'Tap + any time to upload a newer one'
 });
@@ -491,6 +638,7 @@ Object.assign(L.el, {
   language:'Γλώσσα', queueSec:'Ουρά unfollow', waitT:'Αναμονή ανάμεσα σε unfollow', waitOn:'Τυχαία παύση μετά από κάθε unfollow, και διαλείμματα. Το πιο ασφαλές.', waitOff:'Ο επόμενος αμέσως. Το όριο ημέρας ισχύει κανονικά.',
   motion:'Κίνηση φόντου', motionSub:'Τα χρώματα κινούνται αργά στα Fluid skins', backup:'Backup', backupSub:'Το ιστορικό, τα «Κρατάω», η ουρά, η πρόοδος και οι ρυθμίσεις σε ένα αρχείο. Κάνε το Import σε νέο κινητό και συνεχίζεις από εκεί που έμεινες.',
   exportB:'Export', importB:'Import', exported:'Το backup αποθηκεύτηκε', importSure:'Να αντικατασταθούν όλα σε αυτό το κινητό με το backup της {d};', importedB:'Το backup επανήλθε', importErr:'Αυτό δεν είναι αρχείο backup του Unfollowers.', lastBackup:'Τελευταίο export: {d}',
+  helpT:'Βοήθεια', helpSub:'Πώς δουλεύουν όλα', searchHelp:'Αναζήτηση στη βοήθεια', helpNone:'Δεν βρέθηκε τίποτα. Δοκίμασε άλλη λέξη.', faq:'Ερωτήσεις', helpStill:'Ακόμα κολλημένος; Ρώτα αυτόν που σου έστειλε την εφαρμογή.', howWorks:'Πώς δουλεύει',
   late:'Ξενύχτι;', helloThere:'Γεια σου', yourProfiles:'Τα προφίλ σου', addProfile:'Νέο προφίλ (ανέβασε το ZIP του)', manageProfiles:'Διαχείριση στις Ρυθμίσεις', newAcc:'Βρέθηκε νέος λογαριασμός', newAccSub:'Αυτό το ZIP είναι του {u}, που δεν είναι ακόμα στα προφίλ σου.', addAsNew:'Προσθήκη ως νέο προφίλ', whichProfile:'Σε ποιο προφίλ ανήκει αυτό το ZIP;', newProfileOpt:'Νέο προφίλ', yourName:'Το όνομά σου', namePh:'Γράψε το όνομά σου', showOnHome:'Τι δείχνει η αρχική', showName:'Όνομα', showUser:'@username', showNone:'Τίποτα', askName:'Πώς να σε λέμε;', askNameSub:'Πάτα για να βάλεις το όνομά σου', delProfile:'Διαγραφή προφίλ', delProfileSure:'Να διαγραφεί το {u} και όλα τα δεδομένα του από αυτό το κινητό;', profileN:'Προφίλ', noData:'Χωρίς ZIP ακόμα', active:'ενεργό', open2:'Άνοιγμα',
   pace:'Ρυθμός', danger:'Προσοχή', recentUnfS:'Unfollow από εσένα', more:'Περισσότερα', addFirst:'Ανέβασε το ZIP του Instagram για να ξεκινήσεις', uploadSub:'Πάτα + όποτε θες για νεότερο αρχείο'
 });
@@ -619,7 +767,7 @@ const inQ = u => PR.plan.items.some(x => x.u.toLowerCase() === u.toLowerCase());
 /* routing */
 let V = { name: 'home', arg: null };
 const LS = { filter: 'all', q: '', sort: 'old', sel: new Set(), tab: 0 };
-function go(name, arg) { V = { name, arg }; LS.sel = new Set(); LS.q = ''; LS.filter = 'all'; LS.tab = 0; shown = LIMIT; render(); window.scrollTo(0, 0); }
+function go(name, arg) { if (name === 'guide') { name = 'helpcat'; arg = 'start'; } if (name !== 'help') LS.hq = ''; V = { name, arg }; LS.sel = new Set(); LS.q = ''; LS.filter = 'all'; LS.tab = 0; shown = LIMIT; render(); window.scrollTo(0, 0); }
 const top = (title, backTo = 'home', right = '') => `<div class="top"><button class="cir" data-act="nav" data-to="${backTo}" aria-label="Back">${ic('back')}</button><h2 class="sp">${esc(title)}</h2>${right}</div>`;
 const row = (icn, tone, label, sub, to, arg, cnt) => `<button class="c navrow" data-act="nav" data-to="${to}"${arg ? ` data-arg="${arg}"` : ''}><span class="ic ${tone}">${ic(icn)}</span><span class="tx"><span style="display:block;font-weight:500">${esc(label)}</span>${sub ? `<span class="mu sm">${esc(sub)}</span>` : ''}</span>${cnt != null ? `<span class="mu" style="font-variant-numeric:tabular-nums">${fmtN(cnt)}</span>` : ''}<span class="chev">${ic('chev')}</span></button>`;
 const fileInput = (cls = '') => `<input type="file" accept=".zip,application/zip,application/x-zip-compressed" multiple data-act="file" aria-label="${t('upload')}" class="${cls}">`;
@@ -639,7 +787,7 @@ function choose(title, sub, opts) { return new Promise(res => {
   ly.onchange = null; ly.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; ly.innerHTML = ''; res(opts[+b.dataset.i].v); };
 }); }
 function vHome() {
-  let h = `<div class="top" style="align-items:flex-start"><div class="sp"><div class="mu">${greet()}</div><h1>${helloWho()}</h1>${D ? `<div class="mu sm" style="margin-top:2px">${t('lastExport')} · ${fmtD(D.date)}</div>` : ''}</div><button class="cir" data-act="nav" data-to="guide" aria-label="${t('guide')}">${ic('book')}</button><button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button></div>`;
+  let h = `<div class="top" style="align-items:flex-start"><div class="sp"><div class="mu">${greet()}</div><h1>${helloWho()}</h1>${D ? `<div class="mu sm" style="margin-top:2px">${t('lastExport')} · ${fmtD(D.date)}</div>` : ''}</div>${helpBtn('')}<button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button></div>`;
   if (!storeOK) h += `<div class="c" style="border:1px solid var(--danger)"><div class="sm" style="color:var(--danger)">${t('noStore')}</div></div>`;
   if (busy) return h + `<div class="c" style="text-align:center;padding:30px"><div class="spin"></div><div style="margin-top:12px">${t('reading')}</div><div class="mu sm" id="busy">${esc(busy)}</div></div>`;
   if (!D) {
@@ -654,13 +802,13 @@ function vHome() {
   h += `<div class="grid3">${tiles.map(([i, tone, n, l, to, a]) => `<button class="c stat" data-act="nav" data-to="${to}"${a ? ` data-arg="${a}"` : ''}><span class="ic ${tone}">${ic(i)}</span><b>${fmtN(n)}</b><span class="mu sm">${esc(l)}</span></button>`).join('')}</div>`;
   const P = PR.plan;
   if (P.items.length) { const days = Object.keys(P.log).length || 1; const pct = P.total ? Math.round((P.total - P.items.length) / P.total * 100) : 0; h += `<button class="hero" data-act="nav" data-to="queue"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('target')}</span>${t('plan')}${PR.me ? ' · @' + esc(PR.me) : ''}</div><div class="t">${t('keepGoing')}</div><div class="s">${t('planSub', { a: fmtN(P.total - P.items.length), b: fmtN(P.total), d: days })}</div><div class="pb"><i style="width:${pct}%"></i></div></button>`; }
-  else if (Dv.nbActive.length) h += `<button class="hero" data-act="nav" data-to="swipe"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('cards')}</span>${t('quickSort')}</div><div class="t">${t('ready')}</div><div class="s">${t('readySub', { n: fmtN(Dv.nbActive.length) })}</div></button>`;
+  else if (Dv.nbActive.length) h += `<button class="hero" data-act="nav" data-to="list" data-arg="notBack"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('minus')}</span>${t('notBack')}</div><div class="t">${t('ready')}</div><div class="s">${t('readySub', { n: fmtN(Dv.nbActive.length) })}</div></button>`;
   if (hasDiff) h += `<button class="c navrow" data-act="nav" data-to="history"><span class="ic t2">${ic('hist')}</span><span class="tx"><span style="display:block;font-weight:500">${t('since')}</span><span class="mu sm">${fmtN(d.lost.length)} ${t('unfollowedYou')} · ${fmtN(d.gained.length)} ${t('newF')}</span></span><span class="chev">${ic('chev')}</span></button>`;
   h += `<div class="sec"><b>${t('accounts')}</b><button class="btn ghost" style="min-height:0;padding:4px" data-act="nav" data-to="lists">${t('seeAll')}</button></div>`;
   h += row('minus', 't1', t('notBack'), t('readySub', { n: fmtN(Dv.nbActive.length) }), 'list', 'notBack') +
     (D.has.pending ? row('hour', 't3', t('pending'), t('waiting', { n: fmtN(Dv.pending.length) }), 'list', 'pending') : '') +
     (D.has.close ? row('star', 't2', t('closeChk'), t('notFollowing', { n: fmtN(Dv.closeNB.length) }), 'list', 'close') : '');
-  h += `<div class="sec"><b>${t('more')}</b></div>` + row('hist', 't4', t('history'), SN.length ? fmtN(SN.length) + ' × ZIP' : '', 'history') + row('book', 't1', t('guide'), t('howGet'), 'guide');
+  h += `<div class="sec"><b>${t('more')}</b></div>` + row('hist', 't4', t('history'), SN.length ? fmtN(SN.length) + ' × ZIP' : '', 'history') + row('help', 't1', t('helpT'), t('helpSub'), 'help');
   h += `<p class="mu sm" style="text-align:center;margin-top:18px">${t('privacy')}</p>`;
   return h;
 }
@@ -703,12 +851,11 @@ function filtered(def) {
 const LIMIT = 300; let shown = LIMIT;
 function vList() {
   const def = listDef(V.arg); const a = filtered(def);
-  let h = top(def.title, 'lists');
+  let h = top(def.title, 'lists', helpBtn('lists'));
   if (def.note) h += `<p class="mu" style="margin:-6px 4px 12px">${esc(def.note)}</p>`;
   if (def.tabs) h += `<div class="chips">${def.tabs.map((x, i) => `<button class="chip ${LS.tab === i ? 'on' : ''}" data-act="tab" data-i="${i}">${esc(x[0])} · ${fmtN(x[1].length)}</button>`).join('')}</div>`;
   h += `<div class="search">${ic('search')}<input type="search" placeholder="${t('search')}" value="${esc(LS.q)}" data-act="q" aria-label="${t('search')}"><select data-act="sort" aria-label="Sort"><option value="old"${LS.sort === 'old' ? ' selected' : ''}>${t('sortOld')}</option><option value="new"${LS.sort === 'new' ? ' selected' : ''}>${t('sortNew')}</option><option value="az"${LS.sort === 'az' ? ' selected' : ''}>${t('sortAZ')}</option></select></div>`;
   if (def.filters) h += `<div class="chips">${['all', 'y2', 'y1', 'lt1', 'm1', 'kept'].map(f => `<button class="chip ${LS.filter === f ? 'on' : ''}" data-act="filter" data-f="${f}">${t(f)}${f === 'kept' ? ' · ' + Dv.keptList.length : ''}</button>`).join('')}</div>`;
-  if (def.swipe && LS.filter !== 'kept') h += `<button class="c navrow" data-act="nav" data-to="swipe"><span class="ic">${ic('cards')}</span><span class="tx"><span style="display:block;font-weight:600">${t('quickSort')}</span><span class="mu sm">${t('swipeHelp')}</span></span><span class="chev">${ic('chev')}</span></button>`;
   if (def.sel && a.length) h += `<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 4px 8px"><span class="mu sm">${fmtN(a.length)}</span><button class="btn ghost" style="min-height:0;padding:4px 6px" data-act="selall">${LS.sel.size ? t('selNone') : t('selAll')}</button></div>`;
   if (!a.length) return h + `<div class="empty"><div style="font-size:16px;color:var(--ink);font-weight:500">${t('none')}</div><div class="sm">${t('noneSub')}</div></div>`;
   h += a.slice(0, shown).map(x => {
@@ -760,7 +907,7 @@ let tick = null;
 const toggle = (act, on, label) => `<button class="tg ${on ? 'on' : ''}" data-act="${act}" role="switch" aria-checked="${on}" aria-label="${esc(label)}"></button>`;
 function vQueue() {
   const P = PR.plan, now = Date.now();
-  let h = top(t('plan'), 'home', `<button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button>`);
+  let h = top(t('plan'), 'home', helpBtn('queue') + `<button class="cir" data-act="nav" data-to="settings" aria-label="${t('settingsT')}">${ic('gear')}</button>`);
   if (!P.items.length) return h + `<div class="c" style="text-align:center;padding:30px 16px"><span class="ic" style="margin:0 auto">${ic('queue')}</span><h2 style="margin-top:10px">${t('qEmpty')}</h2><p class="mu">${t('qEmptySub')}</p><button class="btn w" data-act="nav" data-to="list" data-arg="notBack">${t('notBack')}</button></div>`;
   const days = Object.keys(P.log).length || 1; const left = P.items.length; const tc = todayCount();
   const estDays = Math.ceil(Math.max(0, left - Math.max(0, P.daily - tc)) / P.daily) + (tc < P.daily ? 1 : 0);
@@ -817,7 +964,7 @@ function qAdvance(counted) {
 /* history */
 function diffSnap(a, b) { const A = new Set(a.fo), B = new Set(b.fo); return { lost: b.fo.filter(u => !A.has(u)), gained: a.fo.filter(u => !B.has(u)) }; }
 function vHistory() {
-  let h = top(t('histTitle'));
+  let h = top(t('histTitle'), 'home', helpBtn('history'));
   if (!SN.length) return h + `<div class="empty">${t('histEmpty')}</div>`;
   if (SN.length >= 2) { const d = diffSnap(SN[0], SN[1]); h += `<div class="hero" style="cursor:default"><div class="s">${t('since')} · ${fmtD(SN[1].d)}</div><div class="t">${fmtN(d.lost.length)} ${t('unfollowedYou')} · ${fmtN(d.gained.length)} ${t('newF')}</div></div>`; }
   h += SN.map((s, i) => {
@@ -832,7 +979,7 @@ function vHistory() {
 function vWrapped() {
   const W = D.wrapped || {}; const years = Object.keys(W).filter(y => y !== 'all').sort((a, b) => b - a);
   const sel = LS.year && W[LS.year] ? LS.year : 'all'; const w = W[sel];
-  let h = top(t('wrapped'));
+  let h = top(t('wrapped'), 'home', helpBtn('wrapped'));
   h += `<div class="chips">${['all'].concat(years).map(y => `<button class="chip ${sel === y ? 'on' : ''}" data-act="year" data-y="${y}">${y === 'all' ? t('allTime') : y}</button>`).join('')}</div>`;
   const hasAct = D.has.likes || D.has.comments || D.has.msgs;
   if (!w || !hasAct) h += `<div class="c mu">${t('needLikes')}</div>`;
@@ -858,7 +1005,7 @@ function vWrapped() {
 
 /* security */
 function vSecurity() {
-  let h = top(t('security'));
+  let h = top(t('security'), 'home', helpBtn('wrapped'));
   if (!D.has.logins) h += `<div class="c mu">${t('needSec')}</div>`;
   else {
     const g = {}; for (const l of D.logins) { const k = l.dev; const o = g[k] = g[k] || { dev: k, n: 0, last: 0, ips: [], mobile: /iphone|ipad|android|oneplus|samsung|xiaomi|pixel|cph|sm-/i.test(l.ua + k) }; o.n++; if (l.t > o.last) o.last = l.t; if (l.ip && !o.ips.includes(l.ip) && o.ips.length < 3) o.ips.push(l.ip); }
@@ -880,16 +1027,37 @@ function vSecurity() {
   return h;
 }
 
-function vGuide() {
-  let h = top(t('guide'));
-  h += `<div class="c">${L[lang].g.map((s, i) => { const parts = s[1].split('\n'); const lines = parts.filter(p => p.startsWith('• ')); const txt = parts.filter(p => !p.startsWith('• ')); return `<div class="step"><span class="n">${i + 1}</span><div><b>${esc(s[0])}</b><div class="mu" style="font-size:14px;margin-top:2px">${esc(txt[0] || '')}</div>${lines.length ? `<ul>${lines.map(l => `<li>${esc(l.slice(2))}</li>`).join('')}</ul>` : ''}${txt[1] ? `<div class="mu" style="font-size:14px;margin-top:4px">${esc(txt[1])}</div>` : ''}</div></div>`; }).join('')}</div>`;
-  h += `<div class="hero" style="cursor:default"><div class="s" style="font-size:14px;opacity:1">${t('gTip')}</div></div>`;
-  h += `<div class="sec"><b>${t('install')}</b></div><div class="c">${[t('installA'), t('installI')].map(x => `<div class="rw" style="align-items:flex-start;padding:4px 0"><span class="ic" style="width:30px;height:30px">${ic('phone')}</span><span style="font-size:14px;padding-top:5px">${x}</span></div>`).join('')}</div>`;
+const helpBtn = cat => `<button class="cir" data-act="nav" data-to="${cat ? 'helpcat' : 'help'}"${cat ? ` data-arg="${cat}"` : ''} aria-label="${t('helpT')}" style="font-weight:700;font-size:17px;color:var(--icC)">?</button>`;
+const HC = () => HELP[lang] || HELP.en;
+const qa = (q, a, open) => `<details class="qa"${open ? ' open' : ''}><summary><span>${esc(q)}</span><span class="chev">${ic('down')}</span></summary><p>${esc(a)}</p></details>`;
+function guideSteps() {
+  return `<div class="c">${L[lang].g.map((s, i) => { const parts = s[1].split('\n'); const lines = parts.filter(p => p.startsWith('• ')); const txt = parts.filter(p => !p.startsWith('• ')); return `<div class="step"><span class="n">${i + 1}</span><div><b>${esc(s[0])}</b><div class="mu" style="font-size:14px;margin-top:2px">${esc(txt[0] || '')}</div>${lines.length ? `<ul>${lines.map(l => `<li>${esc(l.slice(2))}</li>`).join('')}</ul>` : ''}${txt[1] ? `<div class="mu" style="font-size:14px;margin-top:4px">${esc(txt[1])}</div>` : ''}</div></div>`; }).join('')}</div><div class="hero" style="cursor:default"><div class="s" style="font-size:14px;opacity:1">${t('gTip')}</div></div>`;
+}
+const installCard = () => `<div class="c">${[t('installA'), t('installI')].map(x => `<div class="rw" style="align-items:flex-start;padding:4px 0"><span class="ic" style="width:30px;height:30px">${ic('phone')}</span><span style="font-size:14px;padding-top:5px">${x}</span></div>`).join('')}</div>`;
+function vHelp() {
+  let h = top(t('helpT'));
+  h += `<div class="search">${ic('search')}<input type="search" placeholder="${t('searchHelp')}" value="${esc(LS.hq || '')}" data-act="hq" aria-label="${t('searchHelp')}"></div>`;
+  const q = (LS.hq || '').trim().toLowerCase();
+  if (q) {
+    const hits = []; for (const c of HC()) for (const [qq, aa] of c.qs) if ((qq + ' ' + aa).toLowerCase().includes(q)) hits.push([c, qq, aa]);
+    if (!hits.length) return h + `<div class="empty">${t('helpNone')}</div>`;
+    return h + hits.map(([c, qq, aa]) => `<div class="mu sm" style="margin:10px 6px 4px">${esc(c.title)}</div>` + qa(qq, aa, hits.length < 4)).join('');
+  }
+  h += HC().map(c => row(c.icon, c.tone, c.title, c.sub, 'helpcat', c.id)).join('');
+  h += `<p class="mu sm" style="text-align:center;margin-top:16px">${t('helpStill')}</p>`;
+  return h;
+}
+function vHelpCat() {
+  const c = HC().find(x => x.id === V.arg) || HC()[0];
+  let h = top(c.title, 'help');
+  if (c.id === 'start') h += guideSteps() + `<div class="sec"><b>${t('faq')}</b></div>`;
+  if (c.id === 'install') h += installCard() + `<div class="sec"><b>${t('faq')}</b></div>`;
+  h += c.qs.map(([q, a], i) => qa(q, a, c.id !== 'start' && c.id !== 'install' && i < 2)).join('');
   return h;
 }
 
 function vSettings() {
-  let h = top(t('settingsT'));
+  let h = top(t('settingsT'), 'home', helpBtn('themes'));
   const sw = ST.showWho;
   h += `<div class="c"><div class="rw" style="margin-bottom:10px"><span class="ic">${ic('user')}</span><b style="font-weight:600">${t('yourName')}</b></div><input class="field" id="namein" data-act="namein" type="text" maxlength="30" placeholder="${t('namePh')}" value="${esc(ST.name || '')}" autocomplete="nickname" aria-label="${t('yourName')}"><div class="mu sm" style="margin:12px 0 6px">${t('showOnHome')}</div><div class="seg" style="display:flex">${[['name', t('showName')], ['user', t('showUser')], ['none', t('showNone')]].map(([k, l]) => `<button style="flex:1" class="${sw === k ? 'on' : ''}" data-act="showwho" data-w="${k}">${l}</button>`).join('')}</div></div>`;
   h += `<div class="c"><div class="rw" style="margin-bottom:6px"><span class="ic">${ic('users')}</span><b style="font-weight:600">${t('yourProfiles')}</b></div>${profList().map(p => `<div class="navrow" style="min-height:52px">${av(p.me || 'p')}<span class="tx"><span style="display:block;font-weight:500">${esc(profLabel(p))}${p.id === ST.active ? ` · <span style="color:var(--icC)">${t('active')}</span>` : ''}</span><span class="mu sm">${p.date ? t('lastExport') + ' · ' + fmtD(p.date) : t('noData')}</span></span>${p.id !== ST.active ? `<button class="btn sec2" style="min-height:36px;padding:6px 12px" data-act="profswitch" data-id="${esc(p.id)}">${t('open2')}</button>` : ''}<button class="star" data-act="profdel" data-id="${esc(p.id)}" aria-label="${t('delProfile')}">${ic('trash')}</button></div>`).join('')}<label class="btn sec2 filebtn w" style="margin-top:8px">${ic('plus')} ${t('addProfile')}${fileInput()}</label></div>`;
@@ -900,23 +1068,23 @@ function vSettings() {
   h += `<div class="sec"><b>${t('queueSec')}</b></div><div class="c"><div class="navrow"><span class="ic">${ic('clock')}</span><span class="tx"><span style="display:block;font-weight:500">${t('waitT')}</span><span class="mu sm">${P.wait ? t('waitOn') : t('waitOff')}</span></span>${toggle('waittg', P.wait, t('waitT'))}</div>`;
   if (P.wait) h += `<div class="mu sm" style="margin:12px 0 6px">${t('pace')}</div><div class="chips" style="flex-wrap:wrap">${['calm', 'normal', 'fast'].map(k => `<button class="chip ${cur === k ? 'on' : ''}" data-act="pace" data-p="${k}">${t(k)}</button>`).join('')}</div>`;
   h += `<div class="mu sm" style="margin-top:12px;display:flex;justify-content:space-between"><span>${t('dailyLimit')}</span><b id="dlv" style="color:var(--ink)">${P.daily}</b></div><input type="range" min="20" max="150" step="5" value="${P.daily}" data-act="daily" aria-label="${t('dailyLimit')}">${P.items.length ? `<button class="btn danger w" data-act="clearq" style="margin-top:10px">${t('clearQ')}</button>` : ''}</div>`;
-  h += `<div class="sec"><b>${t('backup')}</b></div><div class="c"><div class="mu sm">${t('backupSub')}</div>${ST.lastBackup ? `<div class="mu sm" style="margin-top:6px">${t('lastBackup', { d: fmtDT(ST.lastBackup) })}</div>` : ''}<div class="btns"><button class="btn" data-act="export">${ic('download')} ${t('exportB')}</button><label class="btn sec2 filebtn">${ic('upload')} ${t('importB')}<input type="file" accept=".json,application/json" data-act="import" aria-label="${t('importB')}"></label></div></div>`;
+  h += `<div class="sec" style="align-items:center"><b>${t('backup')}</b><button class="btn ghost" style="min-height:0;padding:4px 6px" data-act="nav" data-to="helpcat" data-arg="backup">${t('howWorks')}</button></div><div class="c"><div class="mu sm">${t('backupSub')}</div>${ST.lastBackup ? `<div class="mu sm" style="margin-top:6px">${t('lastBackup', { d: fmtDT(ST.lastBackup) })}</div>` : ''}<div class="btns"><button class="btn" data-act="export">${ic('download')} ${t('exportB')}</button><label class="btn sec2 filebtn">${ic('upload')} ${t('importB')}<input type="file" accept=".json,application/json" data-act="import" aria-label="${t('importB')}"></label></div></div>`;
   h += `<div class="sec"><b>${t('danger')}</b></div><button class="btn danger w" data-act="wipe">${ic('trash')} ${t('wipe')}</button><p class="mu sm" style="text-align:center;margin-top:16px">${t('privacy')}</p>`;
   return h;
 }
 
-const NAV_ON = { home: 'home', lists: 'lists', list: 'lists', wrapped: 'wrapped', security: 'security' };
+const NAV_ON = { home: 'home', lists: 'lists', list: 'lists', wrapped: 'wrapped', security: 'security', help: 'help', helpcat: 'help' };
 function navBar(v) {
   if (['swipe', 'queue'].includes(v)) return '';
   const on = NAV_ON[v] || '';
   const b = (id, i, l) => `<button class="${on === id ? 'on' : ''}" data-act="nav" data-to="${id}" aria-label="${esc(l)}">${ic(i)}<span>${esc(l)}</span></button>`;
-  return `<nav class="nav" aria-label="Main">${b('home', 'home', t('navHome'))}${D ? b('lists', 'list', t('navLists')) : ''}<label class="fab" aria-label="${t('upload')}">${ic('plus')}${fileInput()}</label>${D ? b('wrapped', 'chart', t('wrapped')) + b('security', 'shield', t('security')) : b('guide', 'book', t('guide'))}</nav>`;
+  return `<nav class="nav" aria-label="Main">${b('home', 'home', t('navHome'))}${D ? b('lists', 'list', t('navLists')) : ''}<label class="fab" aria-label="${t('upload')}">${ic('plus')}${fileInput()}</label>${D ? b('wrapped', 'chart', t('wrapped')) + b('security', 'shield', t('security')) : b('help', 'help', t('helpT'))}</nav>`;
 }
 function render() {
   document.documentElement.lang = lang;
   const app = document.getElementById('app');
-  const v = !D && !['guide', 'settings'].includes(V.name) ? 'home' : V.name;
-  app.innerHTML = ({ home: vHome, lists: vLists, list: vList, swipe: vSwipe, queue: vQueue, history: vHistory, wrapped: vWrapped, security: vSecurity, guide: vGuide, settings: vSettings })[v]();
+  const v = !D && !['help', 'helpcat', 'settings'].includes(V.name) ? 'home' : V.name;
+  app.innerHTML = ({ home: vHome, lists: vLists, list: vList, queue: vQueue, history: vHistory, wrapped: vWrapped, security: vSecurity, help: vHelp, helpcat: vHelpCat, settings: vSettings })[v]();
   const nb = navBar(v); document.getElementById('nav').innerHTML = nb; document.body.classList.toggle('nonav', !nb);
   if (v === 'swipe') bindSwipe();
   startTick();
@@ -1051,6 +1219,7 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const a = e.target.closest('[data-act]'); if (!a) return;
   if (a.dataset.act === 'q') { LS.q = a.value; shown = LIMIT; const pos = a.selectionStart; render(); const n = document.querySelector('[data-act=q]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) { } } }
+  if (a.dataset.act === 'hq') { LS.hq = a.value; const pos = a.selectionStart; render(); const n = document.querySelector('[data-act=hq]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (er) { } } }
   if (a.dataset.act === 'namein') { ST.name = a.value.slice(0, 30); if (ST.name.trim()) ST.namePromptOff = true; saveST(); }
   if (a.dataset.act === 'daily') { PR.plan.daily = +a.value; const v = document.getElementById('dlv'); if (v) v.textContent = a.value; saveST(); }
 });
