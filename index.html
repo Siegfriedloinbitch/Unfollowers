@@ -180,6 +180,7 @@ details summary::-webkit-details-marker{display:none}
 .seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:6px 14px;border-radius:9px;cursor:pointer}
 .seg button.on{background:var(--btn);color:var(--btnInk)}
 .filebtn{position:relative;overflow:hidden}
+.note{background:var(--soft);color:var(--ink);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45}
 .qa{background:var(--rowBg,var(--card));border:var(--cardB);box-shadow:var(--rowSh,var(--sh));border-radius:16px;margin-bottom:8px;overflow:hidden}
 .qa summary{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;list-style:none;font-weight:600;color:var(--ink);font-size:15px}
 .qa summary span:first-child{flex:1}
@@ -490,6 +491,7 @@ en: [
  { id:'lists', icon:'list', tone:'t1', title:'Lists and ★ Kept', sub:'Who’s who, filters, the star', qs:[
   ['Not following back, Fans, Mutual?', 'Not following back: you follow them, they don’t follow you. Fans: they follow you, you don’t follow them. Mutual: you follow each other. Nice and healthy.'],
   ['What does the ★ do?', 'It means “I’m keeping this one”. Your favourite singer won’t follow you back and that’s fine. Starred accounts hide from the list and live under the “Kept” filter, even after a new ZIP. Tap the star again to bring them back. It does nothing on Instagram.'],
+  ['What is Quick sort?', 'A faster way to go through your list, one account at a time. Swipe left (or tap “To queue”) to add them to your unfollow queue, swipe right (or tap “★ Keep”) to keep them. Nobody gets unfollowed here. The real unfollow happens later in the queue, inside Instagram.'],
   ['What are the filters (2+ years, Last month…)?', 'They show accounts by when you followed them. “2+ years” is great for spring cleaning old follows.'],
   ['Why no profile photos or follower counts?', 'They’re not in Instagram’s ZIP, only usernames and dates. Getting them would mean scraping Instagram, which is exactly what we avoid. Tap a name to open the profile if you need to see who it is.'],
   ['I unfollowed someone but they’re still in the list', 'If you tapped Done in the queue, they’re hidden right away. If you unfollowed straight from Instagram, they’ll disappear with your next ZIP.'],
@@ -559,6 +561,7 @@ el: [
  { id:'lists', icon:'list', tone:'t1', title:'Λίστες και ★ Κρατάω', sub:'Ποιος είναι ποιος, φίλτρα, το αστέρι', qs:[
   ['Δεν σε ακολουθούν πίσω, Fans, Αμοιβαίοι;', 'Δεν σε ακολουθούν πίσω: τους ακολουθείς, δεν σε ακολουθούν. Fans: σε ακολουθούν, δεν τους ακολουθείς. Αμοιβαίοι: ακολουθείτε ο ένας τον άλλον. Υγιέστατο.'],
   ['Τι κάνει το ★;', 'Σημαίνει «αυτόν τον κρατάω». Η αγαπημένη σου τραγουδίστρια δεν θα σε ακολουθήσει πίσω, και είναι οκ. Όσοι έχουν αστέρι κρύβονται από τη λίστα και μένουν στο φίλτρο «Κρατάω», ακόμα και με νέο ZIP. Ξαναπατάς το αστέρι για να γυρίσουν. Δεν κάνει τίποτα στο Instagram.'],
+  ['Τι είναι η Γρήγορη διαλογή;', 'Ένας πιο γρήγορος τρόπος να περάσεις τη λίστα σου, έναν-έναν. Σύρε αριστερά (ή πάτα «Στην ουρά») για να μπει στην ουρά unfollow, σύρε δεξιά (ή πάτα «★ Κρατάω») για να τον κρατήσεις. Εδώ δεν γίνεται κανένα unfollow. Το πραγματικό unfollow γίνεται αργότερα στην ουρά, μέσα στο Instagram.'],
   ['Τι είναι τα φίλτρα (2+ χρόνια, Τελευταίος μήνας…);', 'Δείχνουν λογαριασμούς ανάλογα με το πότε τους ακολούθησες. Το «2+ χρόνια» είναι ιδανικό για γενική καθαριότητα.'],
   ['Γιατί δεν έχει φωτογραφίες προφίλ ή αριθμό followers;', 'Δεν υπάρχουν στο ZIP του Instagram, μόνο usernames και ημερομηνίες. Για να τα πάρουμε θα έπρεπε να «ξύνουμε» το Instagram, και αυτό ακριβώς αποφεύγουμε. Πάτα ένα όνομα για να ανοίξει το προφίλ.'],
   ['Έκανα unfollow αλλά είναι ακόμα στη λίστα', 'Αν πάτησες «Έγινε» στην ουρά, κρύβεται αμέσως. Αν έκανες unfollow κατευθείαν από το Instagram, θα φύγει με το επόμενο ZIP.'],
@@ -627,6 +630,8 @@ Object.assign(L.en, {
   language:'Language', queueSec:'Unfollow queue', waitT:'Wait between unfollows', waitOn:'A random pause after each unfollow, plus breaks. Safest.', waitOff:'Next account right away. The daily limit still applies.',
   motion:'Moving background', motionSub:'Slowly moving colours in Fluid skins', backup:'Backup', backupSub:'Your history, kept list, queue, progress and settings, in one file. Import it on a new phone to carry on where you left off.',
   exportB:'Export', importB:'Import', exported:'Backup saved', importSure:'Replace everything on this phone with the backup from {d}?', importedB:'Backup restored', importErr:'This isn’t an Unfollowers backup file.', lastBackup:'Last export: {d}',
+  swipeHelp:'Swipe left to add to the queue, right to keep.', quickSort:'Quick sort',
+  swipeNote:'Nothing gets unfollowed here. You’re just sorting: add them to the queue for later, or keep them.', toQueue:'To queue', toQueueTag:'TO QUEUE', swipeHint:'← swipe left to queue · swipe right to keep →',
   helpT:'Help', helpSub:'How everything works', searchHelp:'Search help', helpNone:'Nothing found. Try another word.', helpStill:'Still stuck? Ask whoever sent you this app.', faq:'Questions', howWorks:'How it works',
   late:'Up late?', helloThere:'Hello there', yourProfiles:'Your profiles', addProfile:'Add profile (upload its ZIP)', manageProfiles:'Manage profiles in Settings', newAcc:'New account found', newAccSub:'This ZIP belongs to {u}, which isn’t one of your profiles yet.', addAsNew:'Add as new profile', whichProfile:'Which profile is this ZIP for?', newProfileOpt:'New profile', yourName:'Your name', namePh:'Type your name', showOnHome:'Show on the home screen', showName:'Name', showUser:'@username', showNone:'Nothing', askName:'What should we call you?', askNameSub:'Tap to add your name', delProfile:'Delete profile', delProfileSure:'Delete {u} and all its data from this phone?', profileN:'Profile', noData:'No ZIP yet', active:'active', open2:'Open',
   pace:'Pace', danger:'Danger zone', recentUnfS:'Unfollowed by you', more:'More', addFirst:'Upload your Instagram ZIP to start', uploadSub:'Tap + any time to upload a newer one'
@@ -638,6 +643,8 @@ Object.assign(L.el, {
   language:'Γλώσσα', queueSec:'Ουρά unfollow', waitT:'Αναμονή ανάμεσα σε unfollow', waitOn:'Τυχαία παύση μετά από κάθε unfollow, και διαλείμματα. Το πιο ασφαλές.', waitOff:'Ο επόμενος αμέσως. Το όριο ημέρας ισχύει κανονικά.',
   motion:'Κίνηση φόντου', motionSub:'Τα χρώματα κινούνται αργά στα Fluid skins', backup:'Backup', backupSub:'Το ιστορικό, τα «Κρατάω», η ουρά, η πρόοδος και οι ρυθμίσεις σε ένα αρχείο. Κάνε το Import σε νέο κινητό και συνεχίζεις από εκεί που έμεινες.',
   exportB:'Export', importB:'Import', exported:'Το backup αποθηκεύτηκε', importSure:'Να αντικατασταθούν όλα σε αυτό το κινητό με το backup της {d};', importedB:'Το backup επανήλθε', importErr:'Αυτό δεν είναι αρχείο backup του Unfollowers.', lastBackup:'Τελευταίο export: {d}',
+  swipeHelp:'Σύρε αριστερά για την ουρά, δεξιά για να τον κρατήσεις.', quickSort:'Γρήγορη διαλογή',
+  swipeNote:'Εδώ δεν γίνεται κανένα unfollow. Απλώς ταξινομείς: τους βάζεις στην ουρά για αργότερα ή τους κρατάς.', toQueue:'Στην ουρά', toQueueTag:'ΣΤΗΝ ΟΥΡΑ', swipeHint:'← σύρε αριστερά για την ουρά · δεξιά για να τον κρατήσεις →',
   helpT:'Βοήθεια', helpSub:'Πώς δουλεύουν όλα', searchHelp:'Αναζήτηση στη βοήθεια', helpNone:'Δεν βρέθηκε τίποτα. Δοκίμασε άλλη λέξη.', faq:'Ερωτήσεις', helpStill:'Ακόμα κολλημένος; Ρώτα αυτόν που σου έστειλε την εφαρμογή.', howWorks:'Πώς δουλεύει',
   late:'Ξενύχτι;', helloThere:'Γεια σου', yourProfiles:'Τα προφίλ σου', addProfile:'Νέο προφίλ (ανέβασε το ZIP του)', manageProfiles:'Διαχείριση στις Ρυθμίσεις', newAcc:'Βρέθηκε νέος λογαριασμός', newAccSub:'Αυτό το ZIP είναι του {u}, που δεν είναι ακόμα στα προφίλ σου.', addAsNew:'Προσθήκη ως νέο προφίλ', whichProfile:'Σε ποιο προφίλ ανήκει αυτό το ZIP;', newProfileOpt:'Νέο προφίλ', yourName:'Το όνομά σου', namePh:'Γράψε το όνομά σου', showOnHome:'Τι δείχνει η αρχική', showName:'Όνομα', showUser:'@username', showNone:'Τίποτα', askName:'Πώς να σε λέμε;', askNameSub:'Πάτα για να βάλεις το όνομά σου', delProfile:'Διαγραφή προφίλ', delProfileSure:'Να διαγραφεί το {u} και όλα τα δεδομένα του από αυτό το κινητό;', profileN:'Προφίλ', noData:'Χωρίς ZIP ακόμα', active:'ενεργό', open2:'Άνοιγμα',
   pace:'Ρυθμός', danger:'Προσοχή', recentUnfS:'Unfollow από εσένα', more:'Περισσότερα', addFirst:'Ανέβασε το ZIP του Instagram για να ξεκινήσεις', uploadSub:'Πάτα + όποτε θες για νεότερο αρχείο'
@@ -802,7 +809,7 @@ function vHome() {
   h += `<div class="grid3">${tiles.map(([i, tone, n, l, to, a]) => `<button class="c stat" data-act="nav" data-to="${to}"${a ? ` data-arg="${a}"` : ''}><span class="ic ${tone}">${ic(i)}</span><b>${fmtN(n)}</b><span class="mu sm">${esc(l)}</span></button>`).join('')}</div>`;
   const P = PR.plan;
   if (P.items.length) { const days = Object.keys(P.log).length || 1; const pct = P.total ? Math.round((P.total - P.items.length) / P.total * 100) : 0; h += `<button class="hero" data-act="nav" data-to="queue"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('target')}</span>${t('plan')}${PR.me ? ' · @' + esc(PR.me) : ''}</div><div class="t">${t('keepGoing')}</div><div class="s">${t('planSub', { a: fmtN(P.total - P.items.length), b: fmtN(P.total), d: days })}</div><div class="pb"><i style="width:${pct}%"></i></div></button>`; }
-  else if (Dv.nbActive.length) h += `<button class="hero" data-act="nav" data-to="list" data-arg="notBack"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('minus')}</span>${t('notBack')}</div><div class="t">${t('ready')}</div><div class="s">${t('readySub', { n: fmtN(Dv.nbActive.length) })}</div></button>`;
+  else if (Dv.nbActive.length) h += `<button class="hero" data-act="nav" data-to="swipe"><span class="go">${ic('chev')}</span><div class="s" style="display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:16px;height:16px">${ic('cards')}</span>${t('quickSort')}</div><div class="t">${t('ready')}</div><div class="s">${t('readySub', { n: fmtN(Dv.nbActive.length) })}</div></button>`;
   if (hasDiff) h += `<button class="c navrow" data-act="nav" data-to="history"><span class="ic t2">${ic('hist')}</span><span class="tx"><span style="display:block;font-weight:500">${t('since')}</span><span class="mu sm">${fmtN(d.lost.length)} ${t('unfollowedYou')} · ${fmtN(d.gained.length)} ${t('newF')}</span></span><span class="chev">${ic('chev')}</span></button>`;
   h += `<div class="sec"><b>${t('accounts')}</b><button class="btn ghost" style="min-height:0;padding:4px" data-act="nav" data-to="lists">${t('seeAll')}</button></div>`;
   h += row('minus', 't1', t('notBack'), t('readySub', { n: fmtN(Dv.nbActive.length) }), 'list', 'notBack') +
@@ -856,6 +863,7 @@ function vList() {
   if (def.tabs) h += `<div class="chips">${def.tabs.map((x, i) => `<button class="chip ${LS.tab === i ? 'on' : ''}" data-act="tab" data-i="${i}">${esc(x[0])} · ${fmtN(x[1].length)}</button>`).join('')}</div>`;
   h += `<div class="search">${ic('search')}<input type="search" placeholder="${t('search')}" value="${esc(LS.q)}" data-act="q" aria-label="${t('search')}"><select data-act="sort" aria-label="Sort"><option value="old"${LS.sort === 'old' ? ' selected' : ''}>${t('sortOld')}</option><option value="new"${LS.sort === 'new' ? ' selected' : ''}>${t('sortNew')}</option><option value="az"${LS.sort === 'az' ? ' selected' : ''}>${t('sortAZ')}</option></select></div>`;
   if (def.filters) h += `<div class="chips">${['all', 'y2', 'y1', 'lt1', 'm1', 'kept'].map(f => `<button class="chip ${LS.filter === f ? 'on' : ''}" data-act="filter" data-f="${f}">${t(f)}${f === 'kept' ? ' · ' + Dv.keptList.length : ''}</button>`).join('')}</div>`;
+  if (def.swipe && LS.filter !== 'kept') h += `<button class="c navrow" data-act="nav" data-to="swipe"><span class="ic">${ic('cards')}</span><span class="tx"><span style="display:block;font-weight:600">${t('quickSort')}</span><span class="mu sm">${t('swipeHelp')}</span></span><span class="chev">${ic('chev')}</span></button>`;
   if (def.sel && a.length) h += `<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 4px 8px"><span class="mu sm">${fmtN(a.length)}</span><button class="btn ghost" style="min-height:0;padding:4px 6px" data-act="selall">${LS.sel.size ? t('selNone') : t('selAll')}</button></div>`;
   if (!a.length) return h + `<div class="empty"><div style="font-size:16px;color:var(--ink);font-weight:500">${t('none')}</div><div class="sm">${t('noneSub')}</div></div>`;
   h += a.slice(0, shown).map(x => {
@@ -872,12 +880,12 @@ let SW = { hist: [] };
 function swCands() { return Dv.nbActive.filter(x => !inQ(x.u)).sort((a, b) => (a.t || 9e12) - (b.t || 9e12)); }
 function vSwipe() {
   const c = swCands();
-  let h = top(t('swipeTitle'), 'list', `<button class="cir" data-act="swundo" aria-label="${t('undo')}" ${SW.hist.length ? '' : 'style="opacity:.4"'}>${ic('undo')}</button>`);
+  let h = top(t('swipeTitle'), 'list', helpBtn('lists') + `<button class="cir" data-act="swundo" aria-label="${t('undo')}" ${SW.hist.length ? '' : 'style="opacity:.4"'}>${ic('undo')}</button>`);
   if (!c.length) return h + `<div class="c" style="text-align:center;padding:30px 16px"><div style="color:var(--ok);display:inline-flex;width:40px;height:40px">${ic('ok')}</div><h2 style="margin-top:8px">${t('allSorted')}</h2><p class="mu">${t('allSortedSub')}</p>${PR.plan.items.length ? `<button class="btn w" data-act="nav" data-to="queue">${t('goQueue')}</button>` : ''}</div>`;
   const x = c[0], nx = c[1];
-  h += `<p class="mu" style="margin:-6px 4px 4px">${t('swipeHelp')}</p><div class="mu sm" style="text-align:right;margin-right:4px">${fmtN(c.length)} ${t('left')}</div>`;
-  h += `<div class="swipe">${nx ? `<div class="c sc back">${av(nx.u)}<div class="u">${esc(nx.u)}</div></div>` : ''}<div class="c sc" id="scard" data-u="${esc(x.u)}"><span class="lbl l">${t('toUnf')}</span><span class="lbl r">${t('keep')}</span>${av(x.u)}<div class="u">${esc(x.u)}</div><div class="mu">${t('followed')} ${fmtMY(x.t)}</div><a class="btn sec2" href="${ig(x.u)}" target="_blank" rel="noopener" style="margin-top:10px">${ic('ig')} ${t('openProfile')}</a></div></div>`;
-  h += `<div style="display:flex;justify-content:center;gap:44px">${[['swl', 'x', 'x', 'toUnf'], ['swr', 'k', 'star', 'keep']].map(([a, c2, i, k]) => `<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><button class="rbtn ${c2}" data-act="${a}" aria-label="${t(k)}">${ic(i)}</button><span class="mu sm">${t(k)}</span></div>`).join('')}</div>`;
+  h += `<div class="note">${t('swipeNote')}</div><div class="mu sm" style="text-align:right;margin:6px 4px 0">${fmtN(c.length)} ${t('left')}</div>`;
+  h += `<div class="swipe">${nx ? `<div class="c sc back">${av(nx.u)}<div class="u">${esc(nx.u)}</div></div>` : ''}<div class="c sc" id="scard" data-u="${esc(x.u)}"><span class="lbl l" style="color:var(--icC);border-color:var(--icC)">${t('toQueueTag')}</span><span class="lbl r">${t('keep')}</span>${av(x.u)}<div class="u">${esc(x.u)}</div><div class="mu">${t('followed')} ${fmtMY(x.t)}</div><a class="btn sec2" href="${ig(x.u)}" target="_blank" rel="noopener" style="margin-top:10px">${ic('ig')} ${t('openProfile')}</a></div></div>`;
+  h += `<div class="btns"><button class="btn" data-act="swl">${ic('queue')} ${t('toQueue')}</button><button class="btn sec2" data-act="swr" style="color:#c9900e">${ic('star')} ${t('keep')}</button></div><p class="mu sm" style="text-align:center;margin-top:10px">${t('swipeHint')}</p>`;
   return h;
 }
 function swDo(dir) {
@@ -1084,7 +1092,7 @@ function render() {
   document.documentElement.lang = lang;
   const app = document.getElementById('app');
   const v = !D && !['help', 'helpcat', 'settings'].includes(V.name) ? 'home' : V.name;
-  app.innerHTML = ({ home: vHome, lists: vLists, list: vList, queue: vQueue, history: vHistory, wrapped: vWrapped, security: vSecurity, help: vHelp, helpcat: vHelpCat, settings: vSettings })[v]();
+  app.innerHTML = ({ home: vHome, lists: vLists, list: vList, swipe: vSwipe, queue: vQueue, history: vHistory, wrapped: vWrapped, security: vSecurity, help: vHelp, helpcat: vHelpCat, settings: vSettings })[v]();
   const nb = navBar(v); document.getElementById('nav').innerHTML = nb; document.body.classList.toggle('nonav', !nb);
   if (v === 'swipe') bindSwipe();
   startTick();
